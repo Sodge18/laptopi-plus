@@ -124,173 +124,136 @@
     </section>
     <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="text-center mb-12">
-        <h2 class="text-3xl font-semibold text-gray-800 dark:text-gray-200">
-            Odaberite laptop koji vama najviše odgovara
-        </h2>
+        <h2 class="text-3xl font-semibold text-gray-800 dark:text-gray-200">Odaberite laptop koji vama najviše odgovara</h2>
     </div>
-
     <div class="relative max-w-4xl mx-auto">
-        <!-- Carousel container -->
-        <div class="carousel-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4" id="carousel">
-            <div class="w-full flex justify-center p-4">
-                <p class="text-gray-500">Učitavanje laptopova...</p>
-            </div>
+        <div class="carousel-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth" id="carousel">
+            <!-- Ovo će biti zamenjeno dinamički -->
         </div>
-
-        <!-- Strelice -->
         <div class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-12">
-            <button id="prev-btn" class="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors opacity-70 hover:opacity-100">
+            <button class="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" id="prev-btn">
                 <span class="material-icons text-gray-800 dark:text-white">arrow_back_ios_new</span>
             </button>
         </div>
         <div class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-12">
-            <button id="next-btn" class="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors opacity-70 hover:opacity-100">
+            <button class="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" id="next-btn">
                 <span class="material-icons text-gray-800 dark:text-white">arrow_forward_ios</span>
             </button>
         </div>
     </div>
-
-    <!-- Pagination dots -->
     <div class="flex justify-center items-center mt-12 space-x-2" id="pagination-dots"></div>
 </main>
 
 <script>
-const API_URL = 'https://products-api.sergej-kaldesic.workers.dev/';
-const carousel = document.getElementById('carousel');
-const paginationDots = document.getElementById('pagination-dots');
+document.addEventListener('DOMContentLoaded', function() {
+    const API_URL = 'https://products-api.sergej-kaldesic.workers.dev/';
+    const carousel = document.getElementById('carousel');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const paginationDots = document.getElementById('pagination-dots');
+    let products = [];  // Globalna promenljiva za sve proizvode
 
-async function loadLaptops() {
-    try {
-        const res = await fetch(API_URL);
-        if (!res.ok) throw new Error('Neuspešno učitavanje');
-        const products = await res.json();
+    // Funkcija za učitavanje proizvoda iz API-ja
+    async function loadProducts() {
+        try {
+            const res = await fetch(API_URL);
+            if (!res.ok) throw new Error('Neuspešno učitavanje');
+            products = await res.json();
 
-        // Filtriramo samo laptopove (po tag-u ili po naslovu – prilagodi po potrebi)
-        const laptops = products.filter(p => 
-            p.tag === 'laptop' || 
-            p.title.toLowerCase().includes('book') || 
-            p.title.toLowerCase().includes('laptop') ||
-            p.category === 'laptop' // ako imaš polje category
-        );
+            // Filtriranje laptopova – prilagodi po potrebi (npr. ako imaš tag 'laptop' ili kategoriju)
+            const laptops = products.filter(p => 
+                p.title && p.title.toLowerCase().includes('proizvod') ||  // Filtruj po 'proizvod' jer su tvoji nazivi "Novi proizvod 1"
+                p.tag === 'new' ||  // Ako imaš tag 'new'
+                p.title.toLowerCase().includes('laptop') || 
+                p.title.toLowerCase().includes('book') ||
+                true  // PRIVREMENO: true da prikaže SVE ako nemaš filter
+            );
 
-        if (laptops.length === 0) {
-            carousel.innerHTML = `<p class="text-center text-gray-500 py-10">Trenutno nema dostupnih laptopova.</p>`;
-            return;
-        }
+            if (laptops.length === 0) {
+                carousel.innerHTML = `
+                    <div class="flex justify-center items-center h-64 w-full">
+                        <p class="text-gray-500 text-xl">Trenutno nema dostupnih laptopova.</p>
+                    </div>
+                `;
+                return;
+            }
 
-        // Generišemo kartice
-        carousel.innerHTML = laptops.map((laptop, index) => {
-            const primaryImage = laptop.images?.[0] || laptop.image || 'https://via.placeholder.com/600x600.png?text=Laptop';
-            const price = laptop.price ? `${parseFloat(laptop.price).toFixed(2)}€` : 'Cena na upit';
-            const tag = laptop.tag && laptop.tag !== 'laptop' ? laptop.tag : null;
-            const tagColor = {
-                'nov': 'blue', 'gejming': 'green', 'poslovni': 'yellow'
-            }[tag] || 'gray';
-
-            return `
-                <div class="carousel-item snap-center flex-shrink-0 w-full flex justify-center p-4">
-                    <div class="group relative flex flex-col w-full max-w-sm">
-                        <div 
-                            onclick='openProductDetails(${JSON.stringify({
-                                name: laptop.title,
-                                price: price,
-                                description: laptop.description || laptop.shortDesc || 'Nema opisa.',
-                                specs: laptop.specs || [],
-                                images: laptop.images || [primaryImage]
-                            }).replace(/'/g, "\\'")})' 
-                            class="relative w-full aspect-square bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden mb-6 flex items-center justify-center cursor-pointer">
-                            <img 
-                                alt="${laptop.title}" 
-                                class="w-full h-full object-contain p-8 transform group-hover:scale-105 transition-transform duration-300" 
-                                src="${primaryImage}"
-                                loading="lazy">
-                            ${tag ? `<span class="absolute top-4 left-4 bg-${tagColor}-100 text-${tagColor}-800 text-xs font-semibold px-3 py-1 rounded-full dark:bg-${tagColor}-900 dark:text-${tagColor}-200">${tag.toUpperCase()}</span>` : ''}
-                        </div>
-                        <h3 class="font-semibold text-3xl text-gray-900 dark:text-white mb-2 text-center">${laptop.title}</h3>
-                        <p class="text-gray-500 dark:text-gray-400 text-xl mb-4 flex-grow text-center">
-                            ${laptop.shortDesc || laptop.specs?.map(s => s.value).join(', ') || 'Detalji na upit'}
-                        </p>
-                        <div class="text-center">
-                            <p class="text-3xl font-bold text-gray-900 dark:text-white">${price}</p>
-                            <button class="mt-4 bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-90 transition-colors w-full" 
-                                    onclick="selectLaptop('${laptop.title.replace(/'/g, "\\'")}')">
-                                Izaberite Laptop
-                            </button>
-                            <button onclick='openProductDetails(${JSON.stringify({
-                                name: laptop.title,
-                                price: price,
-                                description: laptop.description || laptop.shortDesc || '',
-                                specs: laptop.specs || [],
-                                images: laptop.images || [primaryImage]
-                            }).replace(/'/g, "\\'")})' 
-                                class="mt-2 bg-gray-200 dark:bg-gray-700 text-primary dark:text-white px-6 py-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors w-full">
-                                Detalji
-                            </button>
+            // Generiši kartice za carousel
+            carousel.innerHTML = laptops.map((p, index) => {
+                const imageUrl = p.image && p.image.trim() ? p.image.trim() : 'https://via.placeholder.com/300x300.png?text=No+Image';
+                const title = p.title || 'Bez naziva';
+                const shortDesc = p.shortDesc ? `<p style="color:#6b7280; margin:0.5rem 0; font-size:0.95rem;">${p.shortDesc}</p>` : '';
+                const price = p.price ? p.price + ' RSD' : 'Cena na upit';
+                const tag = p.tag ? `<span style="background:#e0e7ff; color:#6366f1; padding:0.35rem 0.75rem; border-radius:50px; font-size:0.8rem; font-weight:600; text-transform:uppercase;">${p.tag}</span>` : '';
+                
+                return `
+                    <div class="carousel-item snap-center flex-shrink-0 w-full flex justify-center p-4">
+                        <div class="group relative flex flex-col w-full max-w-sm">
+                            <div @click="openProductDetails(${JSON.stringify(p)})" 
+                                 class="relative w-full aspect-square bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden mb-6 flex items-center justify-center cursor-pointer">
+                                <img src="${imageUrl}"
+                                     class="w-full h-full object-contain p-8 transform group-hover:scale-105 transition-transform duration-300">
+                                ${tag ? `<span class="absolute top-4 left-4 bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full dark:bg-blue-900 dark:text-blue-200">${p.tag}</span>` : ''}
+                            </div>
+                            <h3 class="font-semibold text-3xl text-gray-900 dark:text-white mb-2 text-center">${title}</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-xl mb-4 flex-grow text-center">${p.shortDesc || ''}</p>
+                            <div class="text-center">
+                                <p class="text-3xl font-bold text-gray-900 dark:text-white">${price}</p>
+                                <button class="mt-4 bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-90 transition-colors w-full" onclick="selectLaptop('${title.replace(/'/g, "\\'")}')">Izaberite Laptop</button>
+                                <button @click="openProductDetails(${JSON.stringify(p)})" class="mt-2 bg-gray-200 dark:bg-gray-700 text-primary dark:text-white px-6 py-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors w-full">Detalji</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
-        }).join('');
+                `;
+            }).join('');
 
-        // Pagination dots
-        paginationDots.innerHTML = laptops.map((_, i) => 
-            `<button class="w-3 h-3 rounded-full transition-all ${i === 0 ? 'bg-primary w-8' : 'bg-gray-300 dark:bg-gray-600'}" 
-                     onclick="scrollToSlide(${i})"></button>`
-        ).join('');
+            // Kreiraj pagination dots
+            paginationDots.innerHTML = laptops.map((_, i) => {
+                return `<button onclick="scrollToSlide(${i})" class="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors ${i === 0 ? 'bg-primary' : ''}"></button>`;
+            }).join('');
 
-        // Navigacija strelicama
-        document.getElementById('prev-btn').onclick = () => scrollCarousel(-1);
-        document.getElementById('next-btn').onclick = () => scrollCarousel(1);
+            // Dodaj event listenere za strelice
+            prevBtn.addEventListener('click', handlePrev);
+            nextBtn.addEventListener('click', handleNext);
 
-        // Scroll listener za aktivnu tačkicu
-        carousel.addEventListener('scroll', updateActiveDot);
-
-    } catch (err) {
-        console.error(err);
-        carousel.innerHTML = `<p class="text-center text-red-500 py-10">Greška pri učitavanju laptopova.</p>`;
+            // Update dots na scroll
+            carousel.addEventListener('scroll', updateDots);
+        } catch (err) {
+            console.error('Greška pri učitavanju laptopova:', err);
+            carousel.innerHTML = `<p class="text-center text-red-500 py-10">Greška pri učitavanju laptopova.</p>`;
+        }
     }
-}
 
-function scrollCarousel(direction) {
-    const items = carousel.querySelectorAll('.carousel-item');
-    const currentScroll = carousel.scrollLeft;
-    const itemWidth = carousel.clientWidth;
-    const targetScroll = currentScroll + (direction * itemWidth);
-    
-    carousel.scrollTo({
-        left: targetScroll,
-        behavior: 'smooth'
-    });
-}
+    function handlePrev() {
+        const itemWidth = carousel.querySelector('.carousel-item').offsetWidth;
+        carousel.scrollBy({ left: -itemWidth, behavior: 'smooth' });
+    }
 
-function scrollToSlide(index) {
-    const itemWidth = carousel.clientWidth;
-    carousel.scrollTo({
-        left: index * itemWidth,
-        behavior: 'smooth'
-    });
-}
+    function handleNext() {
+        const itemWidth = carousel.querySelector('.carousel-item').offsetWidth;
+        carousel.scrollBy({ left: itemWidth, behavior: 'smooth' });
+    }
 
-function updateActiveDot() {
-    const items = carousel.querySelectorAll('.carousel-item');
-    const dots = paginationDots.querySelectorAll('button');
-    const scrollPosition = carousel.scrollLeft + carousel.clientWidth / 2;
-    const itemWidth = carousel.clientWidth;
+    function scrollToSlide(index) {
+        const itemWidth = carousel.querySelector('.carousel-item').offsetWidth;
+        carousel.scrollTo({ left: index * itemWidth, behavior: 'smooth' });
+    }
 
-    let activeIndex = Math.round(scrollPosition / itemWidth);
-    activeIndex = Math.max(0, Math.min(activeIndex, items.length - 1));
+    function updateDots() {
+        const dots = paginationDots.querySelectorAll('button');
+        const scrollPosition = carousel.scrollLeft;
+        const itemWidth = carousel.querySelector('.carousel-item').offsetWidth;
+        const activeIndex = Math.round(scrollPosition / itemWidth);
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('bg-primary', i === activeIndex);
+            dot.classList.toggle('bg-gray-300', i !== activeIndex);
+            dot.classList.toggle('dark:bg-gray-600', i !== activeIndex);
+        });
+    }
 
-    dots.forEach((dot, i) => {
-        dot.classList.toggle('bg-primary', i === activeIndex);
-        dot.classList.toggle('w-8', i === activeIndex);
-        dot.classList.toggle('bg-gray-300', i !== activeIndex);
-        dot.classList.toggle('dark:bg-gray-600', i !== activeIndex);
-        dot.classList.toggle('w-3', i !== activeIndex);
-    });
-}
-
-// Pokreni učitavanje
-loadLaptops();
+    // Pokreni učitavanje
+    loadProducts();
+});
 </script>
 <section class="container mx-auto px-4 sm:px-6 lg:px-8 py-16" id="contact-form-section" x-data="{ modalOpen: false }">
 <div class="bg-primary text-white rounded-2xl p-8 md:p-12">
