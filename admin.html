@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Cockpit - Prijava</title>
+  <title>Admin Cockpit</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
@@ -15,172 +15,127 @@
       --primary: #6366f1;
       --primary-hover: #4f46e5;
       --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --success: #10b981;
       --border: #e5e7eb;
     }
     body {
       margin: 0; padding: 0;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      line-height: 1.5;
     }
-    .login-container {
-      background: white;
-      padding: 3rem 4rem;
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
+    .header {
+      background: var(--card);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      position: sticky; top: 0; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .logo {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: var(--primary);
-      margin-bottom: 1rem;
+    .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+    .toolbar {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
     }
-    .subtitle {
-      color: #6b7280;
-      margin-bottom: 2rem;
-      font-size: 1.1rem;
+    .btn {
+      padding: 0.75rem 1.25rem;
+      border: none; border-radius: 8px;
+      font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 0.5rem;
     }
-    input[type="password"] {
-      width: 100%;
-      padding: 1rem 1.2rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      transition: all 0.3s;
-      margin-bottom: 1.5rem;
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: var(--danger-hover); }
+    .stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;
     }
-    input[type="password"]:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(99,102,241,0.2);
+    .stat-card {
+      background: var(--card); padding: 1.5rem; border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
     }
-    .btn-login {
-      width: 100%;
-      padding: 1rem;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
+    .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+    .stat-label { color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem; }
+    table {
+      width: 100%; background: var(--card); border-radius: 12px;
+      overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+      border-collapse: collapse;
     }
-    .btn-login:hover {
-      background: var(--primary-hover);
-      transform: translateY(-2px);
+    th {
+      background: #f8f9ff; text-align: left; padding: 1rem 1.5rem;
+      font-weight: 600; color: #374151; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .hidden { display: none !important; }
+    td { padding: 1rem 1.5rem; vertical-align: middle; border-top: 1px solid var(--border); }
+    tr:hover { background: #f8faff; }
+    input, textarea {
+      width: 100%; padding: 0.65rem 1rem;
+      border: 1px solid #d1d5db; border-radius: 8px;
+      font-size: 1rem; transition: border 0.2s; box-sizing: border-box;
+    }
+    input:focus, textarea:focus {
+      outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    .actions button { margin-right: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem; }
+    .empty-state {
+      text-align: center; padding: 4rem 2rem; color: var(--text-light);
+    }
+    .empty-state svg { width: 80px; height: 80px; margin-bottom: 1rem; opacity: 0.3; }
   </style>
 </head>
 <body>
-
-  <!-- LOGIN EKRAN -->
-  <div id="login-screen" class="login-container">
+  <div class="header">
     <div class="logo">Cockpit</div>
-    <p class="subtitle">Unesi administratorsku lozinku za pristup</p>
-    <input type="password" id="password-input" placeholder="Lozinka..." autofocus />
-    <button class="btn-login" onclick="checkPassword()">Uloguj se</button>
-    <p style="margin-top: 1rem; color: #9ca3af; font-size: 0.9rem;">
-      Samo ovlašćeni korisnici imaju pristup
-    </p>
+    <div style="font-size:0.9rem; color:#6b7280;">
+      Products API: <strong style="color:var(--primary)">LIVE</strong>
+    </div>
   </div>
-
-  <!-- GLAVNI COCKPIT (skriven dok se ne uloguje) -->
-  <div id="cockpit" class="hidden">
-    <div class="header" style="background:var(--card); padding:1.5rem 2rem; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05); position:sticky; top:0; z-index:10; display:flex; justify-content:space-between; align-items:center;">
-      <div class="logo">Cockpit</div>
-      <div style="font-size:0.9rem; color:#6b7280;">
-        Products API: <strong style="color:var(--primary)">LIVE</strong> 
-        <button onclick="logout()" style="margin-left:1rem; background:#ef4444; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer;">Izloguj se</button>
+  <div class="container">
+    <div class="toolbar">
+      <h2 style="margin:0; font-weight:600;">Upravljanje proizvodima</h2>
+      <button class="btn btn-primary" id="add-product">
+        + Novi proizvod
+      </button>
+    </div>
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value" id="total-count">0</div>
+        <div class="stat-label">Ukupno proizvoda</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="last-updated">-</div>
+        <div class="stat-label">Poslednje ažuriranje</div>
       </div>
     </div>
 
-    <div class="container" style="max-width:1400px; margin:2rem auto; padding:0 2rem;">
-      <div class="toolbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-        <h2 style="margin:0; font-weight:600;">Upravljanje proizvodima</h2>
-        <button class="btn btn-primary" id="add-product" style="padding:0.75rem 1.25rem; background:var(--primary); color:white; border:none; border-radius:8px; cursor:pointer;">
-          + Novi proizvod
-        </button>
-      </div>
-
-      <div class="stats" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:2rem;">
-        <div class="stat-card" style="background:var(--card); padding:1.5rem; border-radius:12px; box-shadow:0 1px 3px rgba(0,0,0,0.1); border:1px solid var(--border);">
-          <div class="stat-value" id="total-count">0</div>
-          <div class="stat-label" style="color:var(--text-light); font-size:0.9rem; margin-top:0.5rem;">Ukupno proizvoda</div>
-        </div>
-        <div class="stat-card" style="background:var(--card); padding:1.5rem; border-radius:12px; box-shadow:0 1px 3px rgba(0,0,0,0.1); border:1px solid var(--border);">
-          <div class="stat-value" id="last-updated">-</div>
-          <div class="stat-label" style="color:var(--text-light); font-size:0.9rem; margin-top:0.5rem;">Poslednje ažuriranje</div>
-        </div>
-      </div>
-
-      <table id="products-table" style="width:100%; background:var(--card); border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.06); border:1px solid var(--border); border-collapse:collapse;">
-        <thead>
-          <tr>
-            <th style="background:#f8f9ff; text-align:left; padding:1rem 1.5rem; font-weight:600; color:#374151; font-size:0.9rem; text-transform:uppercase;">Naziv proizvoda</th>
-            <th style="background:#f8f9ff; text-align:left; padding:1rem 1.5rem; font-weight:600; color:#374151; font-size:0.9rem; text-transform:uppercase;">Kratak opis</th>
-            <th style="background:#f8f9ff; text-align:left; padding:1rem 1.5rem; font-weight:600; color:#374151; font-size:0.9rem; text-transform:uppercase;">Cena</th>
-            <th style="background:#f8f9ff; text-align:left; padding:1rem 1.5rem; font-weight:600; color:#374151; font-size:0.9rem; text-transform:uppercase;">Tag</th>
-            <th style="background:#f8f9ff; text-align:left; padding:1rem 1.5rem; font-weight:600; color:#374151; font-size:0.9rem; text-transform:uppercase;">Opis</th>
-            <th style="background:#f8f9ff; width:150px; text-align:left; padding:1rem 1.5rem; font-weight:600; color:#374151; font-size:0.9rem; text-transform:uppercase;">Akcije</th>
-          </tr>
-        </thead>
-        <tbody id="products-list">
-          <tr><td colspan="6" style="text-align:center; padding:4rem 2rem; color:var:var(--text-light);">
-            <div>Učitavanje proizvoda...</div>
-          </td></tr>
-        </tbody>
-      </table>
-    </div>
+    <table id="products-table">
+      <thead>
+        <tr>
+          <th>Naziv proizvoda</th>
+          <th>Kratak opis</th>
+          <th>Cena</th>
+          <th>Tag</th>
+          <th>Opis</th>
+          <th style="width:150px;">Akcije</th>
+        </tr>
+      </thead>
+      <tbody id="products-list">
+        <tr><td colspan="6" class="empty-state">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-3.5m-9 0H4"/></svg>
+          <div>Učitavanje proizvoda...</div>
+        </td></tr>
+      </tbody>
+    </table>
   </div>
 
   <script>
-    // === PROMENI OVO NA SVOJU TAJNU LOZINKU ===
-    const ADMIN_PASSWORD = "1234"; // ← PROMENI OVO ODMAH!
-
-    function checkPassword() {
-      const input = document.getElementById('password-input').value;
-      if (input === ADMIN_PASSWORD) {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('cockpit').classList.remove('hidden');
-        fetchProducts(); // tek sad učitavamo proizvode
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Pogrešna lozinka!',
-          text: 'Pokušaj ponovo.',
-          timer: 3000,
-          toast: true,
-          position: 'top-end'
-        });
-        document.getElementById('password-input').value = '';
-      }
-    }
-
-    function logout() {
-      document.getElementById('cockpit').classList.add('hidden');
-      document.getElementById('login-screen').classList.remove('hidden');
-      document.getElementById('password-input').value = '';
-      products = [];
-    }
-
-    // Pritisni Enter u polju za lozinku
-    document.getElementById('password-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') checkPassword();
-    });
-
-    // CEO TVOJ POSTOJEĆI KOD OD COCKPIT-a (sve od fetchProducts pa nadalje) ide OVDE:
-
     const API_URL = 'https://products-api.sergej-kaldesic.workers.dev/';
     let products = [];
+
     const tbody = document.getElementById('products-list');
     const totalCountEl = document.getElementById('total-count');
     const lastUpdatedEl = document.getElementById('last-updated');
@@ -200,16 +155,18 @@
       return div.innerHTML;
     }
 
+    // JEDNA JEDINA FUNKCIJA ZA PROVERU DUPLIKATA – koristi se SVUDA
     function isTitleTaken(title, excludeIndex = -1) {
       const normalized = title.trim().toLowerCase();
-      return products.some((p, i) =>
+      return products.some((p, i) => 
         i !== excludeIndex && p.title && p.title.trim().toLowerCase() === normalized
       );
     }
 
     function render() {
       if (products.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:4rem;color:#6b7280;">
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
           <div>Još nema proizvoda</div>
           <div style="font-size:0.9rem;margin-top:0.5rem;">Klikni na "+ Novi proizvod" da dodaš prvi</div>
         </td></tr>`;
@@ -232,9 +189,11 @@
       `).join('');
     }
 
+    // ČUVANJE JEDNOG REDA
     window.saveRow = async (index) => {
       const row = tbody.rows[index];
       if (!row) return;
+
       const inputs = row.querySelectorAll('input, textarea');
       const newData = {};
       let hasError = false;
@@ -243,14 +202,19 @@
         const field = el.dataset.field;
         const value = el.value.trim();
         newData[field] = value;
+
         if (field === 'title') {
-          if (!value) { el.style.borderColor = '#ef4444'; hasError = true; }
-          else if (isTitleTaken(value, index)) {
+          if (!value) {
             el.style.borderColor = '#ef4444';
+            hasError = true;
+          } else if (isTitleTaken(value, index)) {
+            el.style.borderColor = '#ef4444';
+            el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.2)';
             toast('Duplikat!', 'Proizvod sa ovim nazivom već postoji!', 'error');
             hasError = true;
           } else {
             el.style.borderColor = '#d1d5db';
+            el.style.boxShadow = 'none';
           }
         }
       });
@@ -262,6 +226,7 @@
       toast('Sačuvano!', `"${newData.title}" je ažuriran`);
     };
 
+    // BRISANJE
     window.deleteRow = (index) => {
       Swal.fire({
         title: 'Obrisati proizvod?',
@@ -281,15 +246,19 @@
       });
     };
 
+    // ČUVANJE SVIH NA SERVER
     async function saveAllToServer() {
       if (products.some(p => !p.title?.trim())) {
         toast('Greška!', 'Svi proizvodi moraju imati naziv!', 'error');
         return;
       }
+
       if (products.length > 0 && new Set(products.map(p => p.title.trim().toLowerCase())).size !== products.length) {
         toast('Greška!', 'Postoje duplirani nazivi proizvoda!', 'error');
+        render();
         return;
       }
+
       try {
         const res = await fetch(API_URL, {
           method: 'POST',
@@ -302,6 +271,7 @@
       }
     }
 
+    // DODAVANJE NOVOG PROIZVODA – NIKAD VIŠE DUPLIKATA
     document.getElementById('add-product').onclick = () => {
       let counter = 1;
       let newTitle;
@@ -319,13 +289,16 @@
         description: '',
         images: []
       });
+
       render();
       updateStats();
       toast('Dodato!', 'Novi proizvod spreman za uređivanje', 'success');
     };
 
+    // Auto-save svakih 30 sekundi
     setInterval(() => products.length > 0 && saveAllToServer(), 30000);
 
+    // Učitavanje proizvoda
     async function fetchProducts() {
       try {
         const res = await fetch(API_URL);
@@ -334,11 +307,14 @@
         render();
         updateStats();
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" style="color:#ef4444; text-align:center; padding:4rem;">
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-state" style="color:#ef4444;">
           <strong>Ne mogu da se učitaju proizvodi!</strong><br>Proveri internet ili Worker URL.
         </td></tr>`;
       }
     }
+
+    // Pokretanje
+    fetchProducts();
   </script>
 </body>
 </html>
