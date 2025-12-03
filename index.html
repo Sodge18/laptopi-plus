@@ -721,7 +721,7 @@
         const fallback = img.nextElementSibling; // .img-fallback div
 
         img.addEventListener('error', () => {
-          img.src = 'https://via.placeholder.com/300x300.png?text= ';
+          img.src = 'https://via.placeholder.com/300x300.png?text=___';
           img.style.objectFit = 'contain';
           fallback.style.opacity = '1';
         });
