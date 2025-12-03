@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <title>CMS</title>
-  <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
 </head>
-<body></body>
+<body>
+  <h1>Admin Dashboard</h1>
+  <div>
+    <label>GitHub Token:</label>
+    <input type="password" id="token" placeholder="Personal Access Token">
+  </div>
+  <div id="products-list"></div>
+  <button id="add-product">Add Product</button>
+
+  <script src="admin.js"></script>
+</body>
 </html>
