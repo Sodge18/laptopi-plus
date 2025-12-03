@@ -132,153 +132,206 @@
   </div>
 
   <script>
-    const API_URL = 'https://products-api.sergej-kaldesic.workers.dev/';
-    let products = [];
+  const API_URL = 'https://products-api.sergej-kaldesic.workers.dev/';
+  let products = [];
 
-    const tbody = document.getElementById('products-list');
-    const totalCountEl = document.getElementById('total-count');
-    const lastUpdatedEl = document.getElementById('last-updated');
+  const tbody = document.getElementById('products-list');
+  const totalCountEl = document.getElementById('total-count');
+  const lastUpdatedEl = document.getElementById('last-updated');
 
-    function toast(title, text = '', icon = 'success') {
-      Swal.fire({ title, text, icon, timer: 3000, timerProgressBar: true, toast: true, position: 'top-end', showConfirmButton: false });
-    }
+  function toast(title, text = '', icon = 'success') {
+    Swal.fire({ title, text, icon, timer: 3500, timerProgressBar: true, toast: true, position: 'top-end', showConfirmButton: false });
+  }
 
-    function updateStats() {
-      totalCountEl.textContent = products.length;
-      lastUpdatedEl.textContent = new Date().toLocaleString('sr-RS');
-    }
+  function updateStats() {
+    totalCountEl.textContent = products.length;
+    lastUpdatedEl.textContent = new Date().toLocaleString('sr-RS');
+  }
 
-    async function fetchProducts() {
-      try {
-        const res = await fetch(API_URL);
-        if (!res.ok) throw new Error('Network error');
-        products = await res.json();
-        render();
-        updateStats();
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-state" style="color:#ef4444;">
-          <strong>Connection failed!</strong><br>Check Worker URL or internet connection.
-        </td></tr>`;
-      }
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    function render() {
-      if (products.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-          <div>No products yet</div>
-          <div style="font-size:0.9rem; margin-top:0.5rem;">Click "New Product" to add one</div>
-        </td></tr>`;
-        updateStats();
-        return;
-      }
-
-      tbody.innerHTML = products.map((p, i) => `
-        <tr data-index="${i}">
-          <td><input type="text" value="${escapeHtml(p.title || '')}" data-field="title"></td>
-          <td><input type="text" value="${escapeHtml(p.shortDesc || '')}" data-field="shortDesc"></td>
-          <td><input type="text" value="${escapeHtml(p.price || '')}" data-field="price" style="width:100px;"></td>
-          <td><input type="text" value="${escapeHtml(p.tag || '')}" data-field="tag" style="width:120px;"></td>
-          <td><textarea data-field="description">${escapeHtml(p.description || '')}</textarea></td>
-          <td class="actions">
-            <button class="btn btn-primary" onclick="saveRow(${i})">Save</button>
-            <button class="btn btn-danger" onclick="deleteRow(${i})">Delete</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    // Čuvanje jednog reda
-    window.saveRow = async (index) => {
-      const row = tbody.rows[index];
-      if (!row) return;
-
-      const newData = {};
-
-      row.querySelectorAll('input, textarea').forEach(el => {
-        const field = el.dataset.field;
-        newData[field] = el.value.trim();
-      });
-
-      // Ažuriraj lokalni niz
-      products[index] = { ...products[index], ...newData };
-
-      // Sačuvaj na server
-      await saveAllToServer();
-      toast('Saved!', `"${newData.title || 'Product'}" successfully updated`);
-    };
-
-    // Brisanje reda
-    window.deleteRow = (index) => {
-      Swal.fire({
-        title: 'Delete product?',
-        text: products[index].title || 'This product',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete',
-        cancelButtonText: 'Cancel',
-        reverseButtons: true
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          products.splice(index, 1);
-          await saveAllToServer();
-          render();
-          updateStats();
-          toast('Deleted', 'Product removed', 'success');
-        }
-      });
-    };
-
-    // Čuvanje celog niza na KV
-    async function saveAllToServer() {
-      try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(products)
-        });
-
-        if (res.ok) {
-          updateStats();
-        } else {
-          throw new Error('Server error');
-        }
-      } catch (err) {
-        toast('Error', 'Failed to save – check internet connection', 'error');
-      }
-    }
-
-    // Dodaj novi proizvod
-    document.getElementById('add-product').onclick = () => {
-      products.push({
-        id: Date.now(),
-        title: 'New Product',
-        shortDesc: 'Short description...',
-        price: '99.00',
-        tag: 'new',
-        description: 'Full description of the product...',
-        images: []
-      });
+  async function fetchProducts() {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error('Network error');
+      products = await res.json();
       render();
       updateStats();
-      toast('Added', 'New product created – edit and save!', 'info');
-    };
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="6" class="empty-state" style="color:#ef4444;">
+        <strong>Greška pri konekciji!</strong><br>Proveri Worker URL ili internet vezu.
+      </td></tr>`;
+    }
+  }
 
-    // Auto-save svakih 30 sekundi
-    setInterval(() => {
-      if (products.length > 0) {
-        saveAllToServer();
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+  }
+
+  function render() {
+    if (products.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="empty-state">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        <div>Još uvek nema proizvoda</div>
+        <div style="font-size:0.9rem; margin-top:0.5rem;">Klikni na "New Product" da dodaš prvi</div>
+      </td></tr>`;
+      updateStats();
+      return;
+    }
+
+    tbody.innerHTML = products.map((p, i) => `
+      <tr data-index="${i}">
+        <td><input type="text" value="${escapeHtml(p.title)}" data-field="title"></td>
+        <td><input type="text" value="${escapeHtml(p.shortDesc)}" data-field="shortDesc"></td>
+        <td><input type="text" value="${escapeHtml(p.price)}" data-field="price" style="width:100px;"></td>
+        <td><input type="text" value="${escapeHtml(p.tag)}" data-field="tag" style="width:120px;"></td>
+        <td><textarea data-field="description">${escapeHtml(p.description)}</textarea></td>
+        <td class="actions">
+          <button class="btn btn-primary" onclick="saveRow(${i})">Sačuvaj</button>
+          <button class="btn btn-danger" onclick="deleteRow(${i})">Obriši</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // PROVERA DUPLIKATA NAZIVA
+  function hasDuplicateTitle(title, currentIndex) {
+    const lowerTitle = title.toLowerCase().trim();
+    return products.some((p, idx) => 
+      idx !== currentIndex && p.title && p.title.toLowerCase().trim() === lowerTitle
+    );
+  }
+
+  // ČUVANJE JEDNOG REDA SA PROVEROM DUPLIKATA
+  window.saveRow = async (index) => {
+    const row = tbody.rows[index];
+    if (!row) return;
+
+    const inputs = row.querySelectorAll('input, textarea');
+    const newData = {};
+    let titleInput = null;
+    let hasError = false;
+
+    inputs.forEach(el => {
+      const field = el.dataset.field;
+      const value = el.value.trim();
+      newData[field] = value;
+
+      if (field === 'title') {
+        titleInput = el;
+        if (value && hasDuplicateTitle(value, index)) {
+          el.style.borderColor = '#ef4444';
+          el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.2)';
+          hasError = true;
+        } else {
+          el.style.borderColor = '#d1d5db';
+          el.style.boxShadow = 'none';
+        }
       }
-    }, 30000);
+    });
 
-    // Pokretanje
-    fetchProducts();
-  </script>
+    if (hasError) {
+      toast('Duplikat!', 'Proizvod sa ovim nazivom već postoji!', 'error');
+      return;
+    }
+
+    if (!newData.title) {
+      toast('Greška', 'Naziv proizvoda ne sme biti prazan!', 'warning');
+      return;
+    }
+
+    // Ažuriraj lokalni niz
+    products[index] = { ...products[index], ...newData };
+
+    // Sačuvaj na server
+    await saveAllToServer();
+    toast('Sačuvano!', `"${newData.title}" uspešno ažuriran`);
+  };
+
+  // BRISANJE PROIZVODA
+  window.deleteRow = (index) => {
+    Swal.fire({
+      title: 'Obrisati proizvod?',
+      text: products[index].title || 'Ovaj proizvod',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Da, obriši',
+      cancelButtonText: 'Otkaži',
+      reverseButtons: true
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        products.splice(index, 1);
+        await saveAllToServer();
+        render();
+        updateStats();
+        toast('Obrisan', 'Proizvod je uspešno uklonjen', 'success');
+      }
+    });
+  };
+
+  // ČUVANJE SVIH PODATAKA NA SERVER (sa proverom pre slanja)
+  async function saveAllToServer() {
+    // Globalna provera duplikata pre slanja
+    const titles = products.map(p => (p.title || '').trim().toLowerCase());
+    const uniqueTitles = new Set(titles);
+    if (titles.length !== uniqueTitles.size && products.length > 0) {
+      toast('Greška!', 'Postoje proizvodi sa istim nazivom. Popravi pre čuvanja.', 'error');
+      render(); // osveži da vidi crvene okvire
+      return;
+    }
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(products)
+      });
+
+      if (res.ok) {
+        updateStats();
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      toast('Greška', 'Neuspešno čuvanje na server', 'error');
+    }
+  }
+
+  // DODAVANJE NOVOG PROIZVODA (sa jedinstvenim nazivom)
+  document.getElementById('add-product').onclick = () => {
+    let baseTitle = 'Novi proizvod';
+    let counter = 1;
+    let newTitle = baseTitle;
+
+    while (products.some(p => p.title && p.title.toLowerCase() === newTitle.toLowerCase())) {
+      newTitle = `${baseTitle} ${counter}`;
+      counter++;
+    }
+
+    products.push({
+      id: Date.now(),
+      title: newTitle,
+      shortDesc: 'Kratak opis...',
+      price: '99.00',
+      tag: 'new',
+      description: 'Ovde opiši proizvod detaljno...',
+      images: []
+    });
+
+    render();
+    updateStats();
+    toast('Dodato', 'Novi proizvod kreiran – izmeni i sačuvaj!', 'info');
+  };
+
+  // Auto-save svakih 30 sekundi
+  setInterval(() => {
+    if (products.length > 0) {
+      saveAllToServer();
+    }
+  }, 30000);
+
+  // Pokretanje aplikacije
+  fetchProducts();
+</script>
 </body>
 </html>
