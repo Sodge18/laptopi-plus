@@ -3,6 +3,7 @@ export default {
     const key = "products";
 
     if (request.method === "GET") {
+      // овде користиш binding који си дефинисао
       const products = await env.PRODUCTS.get(key);
       return new Response(products || "[]", { headers: { "Content-Type": "application/json" } });
     }
