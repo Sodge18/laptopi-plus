@@ -1,19 +1,11 @@
-const owner = 'Sodge18';
-const repo = 'laptopiplus';
-const path = 'data/products.json';
-const branch = 'main';
-
+const API_URL = 'https://products-api.sergej-kaldesic.workers.dev/';
 let products = [];
 
-async function fetchProducts(token) {
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-    headers: { Authorization: `token ${token}` }
-  });
-  const data = await res.json();
-  const content = atob(data.content);
-  products = JSON.parse(content);
+// Fetch proizvoda iz Worker KV
+async function fetchProducts() {
+  const res = await fetch(API_URL);
+  products = await res.json();
   renderProducts();
-  return data.sha; // potrebna za commit
 }
 
 function renderProducts() {
@@ -34,8 +26,7 @@ function renderProducts() {
       products[i].title = document.querySelector(`.title[data-index="${i}"]`).value;
       products[i].shortDesc = document.querySelector(`.shortDesc[data-index="${i}"]`).value;
       products[i].price = document.querySelector(`.price[data-index="${i}"]`).value;
-      const token = document.getElementById('token').value;
-      await commitProducts(token);
+      await saveProducts();
     }
   });
 
@@ -43,8 +34,7 @@ function renderProducts() {
     btn.onclick = async (e)=>{
       const i = e.target.dataset.index;
       products.splice(i,1);
-      const token = document.getElementById('token').value;
-      await commitProducts(token);
+      await saveProducts();
       renderProducts();
     }
   });
@@ -63,25 +53,14 @@ document.getElementById('add-product').onclick = ()=>{
   renderProducts();
 }
 
-let currentSha = '';
-
-async function commitProducts(token){
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-    method: 'PUT',
-    headers: { Authorization: `token ${token}` },
-    body: JSON.stringify({
-      message: 'Update products via admin dashboard',
-      content: btoa(JSON.stringify(products, null, 2)),
-      sha: currentSha,
-      branch
-    })
+// Save proizvoda u Worker KV preko POST
+async function saveProducts() {
+  await fetch(API_URL, {
+    method: 'POST',
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(products)
   });
-  const data = await res.json();
-  currentSha = data.content.sha;
 }
 
-// fetch products kada se unese token
-document.getElementById('token').onchange = async (e)=>{
-  const token = e.target.value;
-  currentSha = (await fetchProducts(token));
-};
+// initial fetch
+fetchProducts();
