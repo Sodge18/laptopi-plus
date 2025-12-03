@@ -1,7 +1,7 @@
-name = "products-api"
-main = "worker.js"
+name = "products-api"           # Ime Worker-a
+main = "worker.js"              # Tvoj Worker fajl
 compatibility_date = "2025-12-03"
 
 [[kv_namespaces]]
-binding = "PRODUCTS"       # ovo je ime koje ćeš koristiti u kodu
-id = "37a3a42f579c4ed2a343f6a6034a8513"
+binding = "PRODUCTS"            # Ovo ime koristiš u JS kodu
+id = "37a3a42f579c4ed2a343f6a6034a8513"  # ID tvog KV namespace-a
