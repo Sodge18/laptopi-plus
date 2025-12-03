@@ -1,7 +1,6 @@
 const API_URL = 'https://products-api.sergej-kaldesic.workers.dev/';
 let products = [];
 
-// Fetch proizvoda iz Worker KV
 async function fetchProducts() {
   const res = await fetch(API_URL);
   products = await res.json();
@@ -53,7 +52,6 @@ document.getElementById('add-product').onclick = ()=>{
   renderProducts();
 }
 
-// Save proizvoda u Worker KV preko POST
 async function saveProducts() {
   await fetch(API_URL, {
     method: 'POST',
@@ -62,5 +60,4 @@ async function saveProducts() {
   });
 }
 
-// initial fetch
 fetchProducts();
