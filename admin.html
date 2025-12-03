@@ -298,8 +298,9 @@
     // CEO TVOJ POSTOJEĆI KOD OD COCKPIT-a (sve od fetchProducts pa nadalje) ide OVDE:
 
     const API_URL = 'https://products-api.sergej-kaldesic.workers.dev/';
-        let products = [];
-    let lastDataChangeTime = null; // ← OVO JE NOVO – pamti samo prave izmene!
+    let products = [];
+    // Čuvamo vreme poslednje stvarne izmene u localStorage (da preživi refresh!)
+    let lastDataChangeTime = localStorage.getItem('lastDataChangeTime');
 
     const tbody = document.getElementById('products-list');
     const totalCountEl = document.getElementById('total-count');
@@ -309,22 +310,31 @@
       Swal.fire({ title, text, icon, timer: 3000, timerProgressBar: true, toast: true, position: 'top-end', showConfirmButton: false });
     }
 
-    // Ažurira statistiku – "Poslednje ažuriranje" samo ako je bilo prave izmene
     function updateStats() {
       totalCountEl.textContent = products.length;
-      if (lastDataChangeTime) {
-        lastUpdatedEl.textContent = new Date(lastDataChangeTime).toLocaleString('sr-RS');
+
+      if (lastDataChangeTime && lastDataChangeTime !== 'null') {
+        lastUpdatedEl.textContent = new Date(parseInt(lastDataChangeTime)).toLocaleString('sr-RS');
       } else {
         lastUpdatedEl.textContent = 'Još nema izmena';
       }
     }
 
-    // Ova funkcija se poziva SVAKI PUT kad se uspešno sačuva ili obriše proizvod
+    // Ova funkcija se poziva kad god se desi prava izmena (dodavanje, brisanje, čuvanje)
     function markDataChanged() {
       lastDataChangeTime = Date.now();
+      localStorage.setItem('lastDataChangeTime', lastDataChangeTime); // ČUVAMO U BRAUZERU!
       updateStats();
     }
 
+    // Kada se izloguješ – brišemo vreme (po tvojoj želji)
+    function logout() {
+      document.getElementById('cockpit').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('password-input').value = '';
+      products = [];
+      lastDataChangeTime = null;
+    }
     function escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text || '';
