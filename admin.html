@@ -63,6 +63,7 @@
       width: 100%; background: var(--card); border-radius: 12px;
       overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
       border: 1px solid var(--border);
+      border-collapse: collapse;
     }
     th {
       background: #f8f9ff; text-align: left; padding: 1rem 1.5rem;
@@ -73,14 +74,13 @@
     input, textarea {
       width: 100%; padding: 0.65rem 1rem;
       border: 1px solid #d1d5db; border-radius: 8px;
-      font-size: 1rem; transition: border 0.2s;
+      font-size: 1rem; transition: border 0.2s; box-sizing: border-box;
     }
     input:focus, textarea:focus {
       outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
     }
     textarea { min-height: 80px; resize: vertical; }
-    .actions { white-space: nowrap; }
-    .actions button { margin-right: 0.5rem; }
+    .actions button { margin-right: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem; }
     .empty-state {
       text-align: center; padding: 4rem 2rem; color: var(--text-light);
     }
@@ -88,14 +88,12 @@
   </style>
 </head>
 <body>
-
   <div class="header">
     <div class="logo">Cockpit</div>
     <div style="font-size:0.9rem; color:#6b7280;">
       Products API: <strong style="color:var(--primary)">LIVE</strong>
     </div>
   </div>
-
   <div class="container">
     <div class="toolbar">
       <h2 style="margin:0; font-weight:600;">Products Management</h2>
@@ -103,7 +101,6 @@
         New Product
       </button>
     </div>
-
     <div class="stats">
       <div class="stat-card">
         <div class="stat-value" id="total-count">0</div>
@@ -114,7 +111,6 @@
         <div class="stat-label">Last Updated</div>
       </div>
     </div>
-
     <table id="products-table">
       <thead>
         <tr>
@@ -143,27 +139,33 @@
     const totalCountEl = document.getElementById('total-count');
     const lastUpdatedEl = document.getElementById('last-updated');
 
-    function toast(title, text, icon = 'success') {
+    function toast(title, text = '', icon = 'success') {
       Swal.fire({ title, text, icon, timer: 3000, timerProgressBar: true, toast: true, position: 'top-end', showConfirmButton: false });
     }
 
     function updateStats() {
       totalCountEl.textContent = products.length;
-      lastUpdatedEl.textContent = new Date().toLocaleTimeString();
+      lastUpdatedEl.textContent = new Date().toLocaleString('sr-RS');
     }
 
     async function fetchProducts() {
       try {
         const res = await fetch(API_URL);
-        if (!res.ok) throw new Error();
+        if (!res.ok) throw new Error('Network error');
         products = await res.json();
         render();
         updateStats();
-      } catch {
+      } catch (err) {
         tbody.innerHTML = `<tr><td colspan="6" class="empty-state" style="color:#ef4444;">
-          Failed to connect to KV. Check Worker URL or CORS.
+          <strong>Connection failed!</strong><br>Check Worker URL or internet connection.
         </td></tr>`;
       }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
     function render() {
@@ -171,100 +173,111 @@
         tbody.innerHTML = `<tr><td colspan="6" class="empty-state">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
           <div>No products yet</div>
-          <div style="font-size:0.9rem; margin-top:0.5rem;">Click "New Product" to create your first one</div>
+          <div style="font-size:0.9rem; margin-top:0.5rem;">Click "New Product" to add one</div>
         </td></tr>`;
         updateStats();
         return;
       }
 
       tbody.innerHTML = products.map((p, i) => `
-        <tr>
-          <td><input value="${escape(p.title || '')}" data-index="${i}" data-field="title"></td>
-          <td><input value="${escape(p.shortDesc || '')}" data-index="${i}" data-field="shortDesc"></td>
-          <td><input value="${escape(p.price || '')}" data-index="${i}" data-field="price" style="width:100px;"></td>
-          <td><input value="${escape(p.tag || '')}" data-index="${i}" data-field="tag" style="width:120px;"></td>
-          <td><textarea data-index="${i}" data-field="description">${escape(p.description || '')}</textarea></td>
+        <tr data-index="${i}">
+          <td><input type="text" value="${escapeHtml(p.title || '')}" data-field="title"></td>
+          <td><input type="text" value="${escapeHtml(p.shortDesc || '')}" data-field="shortDesc"></td>
+          <td><input type="text" value="${escapeHtml(p.price || '')}" data-field="price" style="width:100px;"></td>
+          <td><input type="text" value="${escapeHtml(p.tag || '')}" data-field="tag" style="width:120px;"></td>
+          <td><textarea data-field="description">${escapeHtml(p.description || '')}</textarea></td>
           <td class="actions">
-            <button class="btn btn-primary" style="padding:0.5rem 1rem; font-size:0.9rem;" onclick="save(${i})">Save</button>
-            <button class="btn btn-danger" style="padding:0.5rem 1rem; font-size:0.9rem;" onclick="remove(${i})">Delete</button>
+            <button class="btn btn-primary" onclick="saveRow(${i})">Save</button>
+            <button class="btn btn-danger" onclick="deleteRow(${i})">Delete</button>
           </td>
         </tr>
       `).join('');
     }
 
-    function escape(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
+    // Čuvanje jednog reda
+    window.saveRow = async (index) => {
+      const row = tbody.rows[index];
+      if (!row) return;
 
-    window.save = async (i) => {
-      const row = tbody.rows[i];
-      const inputs = row.querySelectorAll('input, textarea');
-      inputs.forEach(el => {
+      const newData = {};
+
+      row.querySelectorAll('input, textarea').forEach(el => {
         const field = el.dataset.field;
-        products[i][field] = el.value.trim();
+        newData[field] = el.value.trim();
       });
 
-      await saveAll();
-      toast('Saved', `"${products[i].title || 'Product'}" updated`);
+      // Ažuriraj lokalni niz
+      products[index] = { ...products[index], ...newData };
+
+      // Sačuvaj na server
+      await saveAllToServer();
+      toast('Saved!', `"${newData.title || 'Product'}" successfully updated`);
     };
 
-    window.remove = (i) => {
+    // Brisanje reda
+    window.deleteRow = (index) => {
       Swal.fire({
         title: 'Delete product?',
-        text: products[i].title || 'This product',
+        text: products[index].title || 'This product',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes, delete',
         cancelButtonText: 'Cancel',
         reverseButtons: true
-      }).then(result => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          products.splice(i, 1);
-          saveAll();
+          products.splice(index, 1);
+          await saveAllToServer();
+          render();
+          updateStats();
           toast('Deleted', 'Product removed', 'success');
         }
       });
     };
 
-    async function saveAll() {
+    // Čuvanje celog niza na KV
+    async function saveAllToServer() {
       try {
         const res = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(products)
         });
+
         if (res.ok) {
-          render();
           updateStats();
+        } else {
+          throw new Error('Server error');
         }
       } catch (err) {
-        toast('Error', 'Failed to save to KV', 'error');
+        toast('Error', 'Failed to save – check internet connection', 'error');
       }
     }
 
+    // Dodaj novi proizvod
     document.getElementById('add-product').onclick = () => {
       products.push({
         id: Date.now(),
         title: 'New Product',
-        shortDesc: 'Amazing product',
+        shortDesc: 'Short description...',
         price: '99.00',
         tag: 'new',
-        description: 'Describe your product here...',
+        description: 'Full description of the product...',
         images: []
       });
       render();
       updateStats();
-      toast('Added', 'New product created – edit and save!');
+      toast('Added', 'New product created – edit and save!', 'info');
     };
 
-    // Auto-save every 30 seconds if there are unsaved changes
+    // Auto-save svakih 30 sekundi
     setInterval(() => {
-      if (products.length > 0) saveAll();
+      if (products.length > 0) {
+        saveAllToServer();
+      }
     }, 30000);
 
-    // Initial load
+    // Pokretanje
     fetchProducts();
   </script>
 </body>
