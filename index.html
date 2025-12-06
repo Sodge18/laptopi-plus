@@ -553,13 +553,14 @@ form.addEventListener("submit", function(e) {
         `Email: ${email}\n` +
         `Kontakt broj: ${broj}\n` +
         `Laptop: ${laptop}\n\n` +
-        `Poruka klijenta:\n` +
-        `${poruka}\n\n` +
+        `Poruka klijenta:\n${poruka}\n\n` +
         `Srdačan pozdrav,\nLaptopi Plus`
     );
 
+    // Ovo otvara mail klijent sa recipient, subject i body
     window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
 });
+
 </script>
 
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
