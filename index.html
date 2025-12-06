@@ -544,9 +544,7 @@ form.addEventListener("submit", function(e) {
     const poruka = document.getElementById("poruka").value.trim();
 
     const recipient = "sergej.kaldesic@gmail.com";
-
     const subject = encodeURIComponent(`Upit za laptop: ${ime} ${prezime}`);
-
     const body = encodeURIComponent(
 `Poštovani,
 
@@ -557,16 +555,16 @@ Email: ${email}
 Kontakt broj: ${broj}
 Laptop: ${laptop}
 
-Poruka klijenta:
+Poruka:
 ${poruka}
 
 Srdačan pozdrav,
 Laptopi Plus`
     );
 
-    window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
+    // ⬇⬇⬇ OVAJ DIO MIJENJAŠ
+    window.open(`mailto:${recipient}?subject=${subject}&body=${body}`, "_self");
 });
-
 
 </script>
 
