@@ -7,6 +7,8 @@ const sidebar = document.getElementById('product-sidebar');
 const content = document.getElementById('product-details');
 const addBtn = document.getElementById('add-product-btn');
 
+const TAGS = ['Novo', 'Poslovni', 'Gamer', 'Premium'];
+
 // FETCH proizvoda
 async function fetchProducts() {
   try {
@@ -67,8 +69,14 @@ function renderProductDetails(index) {
         <p class="text-sm text-gray-400 mt-1">Ako ostane prazno, prikazaće "Cena na upit"</p>
       </div>
       <div class="input-field">
-        <label class="block font-semibold">Tag</label>
-        <input type="text" id="tag" value="${p.tag || ''}" class="w-full p-2 border rounded"/>
+        <label class="block font-semibold mb-2">Tag</label>
+        <div id="tagContainer" class="flex gap-2 flex-wrap">
+          ${TAGS.map(tagValue => `
+            <button type="button" class="tag-btn px-3 py-1 border rounded ${p.tag === tagValue ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700'}">
+              ${tagValue}
+            </button>
+          `).join('')}
+        </div>
       </div>
       <div class="input-field">
         <label class="block font-semibold">Slike</label>
