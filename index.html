@@ -548,7 +548,6 @@ form.addEventListener("submit", function(e) {
     const poruka   = document.getElementById("poruka").value.trim();
 
     const subject = `Upit za laptop: ${ime} ${prezime}`;
-
     const body = `Poštovani,
 
 Dobili ste novi upit sa sajta Laptopi Plus.
@@ -566,16 +565,8 @@ Laptopi Plus`;
 
     const mailtoLink = `mailto:sergej.kaldesic@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    const a = document.createElement('a');
-    a.href = mailtoLink;
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-
-    setTimeout(() => {
-        alert("Hvala! Otvara se vaš email program...");
-    }, 400);
+    // najjednostavnije i pouzdano
+    window.location.href = mailtoLink;
 });
 
 </script>
