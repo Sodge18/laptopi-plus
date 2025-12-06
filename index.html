@@ -194,75 +194,52 @@
 
             <!-- Form -->
             <div class="lg:w-2/3">
-
-                <form id="contact-form" method="POST" action="https://products-api.sergej-kaldesic.workers.dev/send">
-                
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-200 mb-2">Ime</label>
-                            <input id="ime" name="ime"
-                                   type="text"
-                                   placeholder="Unesite Vaše ime"
-                                   class="w-full p-3 rounded-lg bg-gray-700 text-white"/>
-                            <p class="error-hint hidden">Popunite polje</p>
-                        </div>
-                
-                        <div>
-                            <label class="block text-sm font-medium text-gray-200 mb-2">Prezime</label>
-                            <input id="prezime" name="prezime"
-                                   type="text"
-                                   placeholder="Unesite Vaše prezime"
-                                   class="w-full p-3 rounded-lg bg-gray-700 text-white"/>
-                            <p class="error-hint hidden">Popunite polje</p>
-                        </div>
-                    </div>
-                
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-200 mb-2">Kontakt broj</label>
-                            <input id="kontakt-broj" name="kontakt-broj"
-                                   type="tel"
-                                   placeholder="061 234 567"
-                                   class="w-full p-3 rounded-lg bg-gray-700 text-white"/>
-                            <p class="error-hint hidden">Popunite polje</p>
-                        </div>
-                
-                        <div>
-                            <label class="block text-sm font-medium text-gray-200 mb-2">Email</label>
-                            <input id="email" name="email"
-                                   type="email"
-                                   placeholder="vas.email@example.com"
-                                   class="w-full p-3 rounded-lg bg-gray-700 text-white"/>
-                            <p class="error-hint hidden">Popunite polje</p>
-                        </div>
-                    </div>
-                
+                <form id="contact-form">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-200 mb-2">Koji laptop želite</label>
-                
-                        <input type="hidden" id="laptop-select-hidden" name="laptop"/>
-                
-                        <button id="laptop-select"
-                                @click.prevent="modalOpen = true"
-                                class="w-full p-3 rounded-lg bg-gray-700 text-white text-left flex justify-between items-center">
-                            <span id="selected-laptop-text">Odaberite laptop</span>
-                            <span class="material-icons">expand_more</span>
-                        </button>
-                
-                        <p class="error-hint hidden">Morate izabrati laptop</p>
+                      <label class="block text-sm font-medium text-gray-200 mb-2">Ime</label>
+                      <input id="ime" type="text" placeholder="Unesite Vaše ime" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
+                      <p class="error-hint hidden">Popunite polje</p>
                     </div>
-                
-                    <div class="text-right">
-                        <button type="submit"
-                                class="bg-white text-primary font-semibold px-8 py-3 rounded-lg hover:bg-gray-200 transition shadow-md">
-                            Pošalji
-                        </button>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-200 mb-2">Prezime</label>
+                      <input id="prezime" type="text" placeholder="Unesite Vaše prezime" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
+                      <p class="error-hint hidden">Popunite polje</p>
                     </div>
+                  </div>
                 
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-200 mb-2">Kontakt broj</label>
+                      <input id="kontakt-broj" type="tel" placeholder="061 234 567" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
+                      <p class="error-hint hidden">Popunite polje</p>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-200 mb-2">Email</label>
+                      <input id="email" type="email" placeholder="vas.email@example.com" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
+                      <p class="error-hint hidden">Popunite polje</p>
+                    </div>
+                  </div>
+                
+                  <div>
+                    <label class="block text-sm font-medium text-gray-200 mb-2">Koji laptop želite</label>
+                    <input type="hidden" id="laptop-select-hidden"/>
+                    <button id="laptop-select" type="button"
+                            class="w-full p-3 rounded-lg bg-gray-700 text-white text-left flex justify-between items-center"
+                            @click="modalOpen = true">
+                      <span id="selected-laptop-text">Odaberite laptop</span>
+                      <span class="material-icons">expand_more</span>
+                    </button>
+                    <p class="error-hint hidden">Morate izabrati laptop</p>
+                  </div>
+                
+                  <div class="text-right mt-4">
+                    <button type="submit" class="bg-white text-primary font-semibold px-8 py-3 rounded-lg hover:bg-gray-200 transition shadow-md">
+                      Pošalji
+                    </button>
+                  </div>
                 </form>
-
             </div>
-
         </div>
     </div>
 
@@ -564,7 +541,6 @@ function selectAndCloseModal() {
     closeModal();
 }
 
-
 /* =============================
    CONTACT FORMA VALIDACIJA + SLANJE
 ============================= */
@@ -576,13 +552,11 @@ const laptopButton = document.getElementById("laptop-select");
 function validate(fieldId) {
     const el = document.getElementById(fieldId);
     const hint = el.nextElementSibling;
-
     if (!el.value.trim()) {
         el.classList.add("invalid-field");
         hint.classList.remove("hidden");
         return false;
     }
-
     el.classList.remove("invalid-field");
     hint.classList.add("hidden");
     return true;
@@ -600,47 +574,44 @@ function validateLaptop() {
     return true;
 }
 
-form.addEventListener("submit", async e => {
-    e.preventDefault();
-
-    let valid = true;
-
-    requiredFields.forEach(f => {
-        if (!validate(f)) valid = false;
-    });
-
-    if (!validateLaptop()) valid = false;
-
-    if (!valid) return;
-
-    // Ako je sve validno, šaljemo formu
-    const formData = new FormData(form);
-
-    try {
-        const res = await fetch("https://products-api.sergej-kaldesic.workers.dev/send", {
-            method: "POST",
-            body: formData
-        });
-
-        if (!res.ok) throw new Error("Greška pri slanju forme");
-
-        alert("Poruka uspešno poslata!");
-        form.reset();
-        hiddenLaptopInput.value = "";
-        document.getElementById("selected-laptop-text").textContent = "Odaberite laptop";
-
-    } catch (err) {
-        console.error(err);
-        alert("Došlo je do greške. Pokušajte ponovo kasnije.");
-    }
-});
-
 // Real-time validacija dok korisnik kuca
 requiredFields.forEach(f => {
     document.getElementById(f).addEventListener("input", () => validate(f));
 });
 
+// Funkcija za izbor laptopa
+function selectLaptop(name) {
+    document.getElementById("selected-laptop-text").textContent = name;
+    hiddenLaptopInput.value = name;
+    laptopButton.classList.remove("invalid-field");
+    laptopButton.nextElementSibling.classList.add("hidden");
+}
 
+// Submit listener koji otvara mailto
+form.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let valid = true;
+    requiredFields.forEach(f => { if(!validate(f)) valid = false; });
+    if(!validateLaptop()) valid = false;
+    if(!valid) return;
+
+    const ime = document.getElementById("ime").value;
+    const prezime = document.getElementById("prezime").value;
+    const email = document.getElementById("email").value;
+    const broj = document.getElementById("kontakt-broj").value;
+    const laptop = hiddenLaptopInput.value;
+
+    // Gde želiš da stigne email
+    const recipient = "tvoj.email@gmail.com";
+
+    const subject = encodeURIComponent(`Upit za laptop od ${ime} ${prezime}`);
+    const body = encodeURIComponent(
+        `Ime: ${ime}\nPrezime: ${prezime}\nEmail: ${email}\nKontakt broj: ${broj}\nLaptop: ${laptop}`
+    );
+
+    window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
+});
 
 /* =============================
    SELECT LAPTOP (form)
