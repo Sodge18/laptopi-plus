@@ -177,100 +177,86 @@
 <!-- KRAJ DETALJ MODALA -->
 
 
-<!-- CONTACT FORMA + SELECT LAPTOP MODAL -->
-<section class="container mx-auto px-4 sm:px-6 lg:px-8 py-16"
-         id="contact-form-section"
-         x-data="{ modalOpen: false }">
+<!-- CONTACT FORM + LAPTOP SELECT MODAL -->
+<section id="contact-form-section" class="container mx-auto px-4 sm:px-6 lg:px-8 py-16" x-data="{ modalOpen: false }">
+  <div class="bg-primary text-white rounded-2xl p-8 md:p-12">
+    <div class="flex flex-col lg:flex-row gap-8 lg:gap-16">
+      
+      <!-- Left -->
+      <div class="lg:w-1/3">
+        <h2 class="text-4xl font-bold mb-4">Spremni da kupite laptop?</h2>
+        <p class="text-gray-300">Popunite formu i bićemo u kontaktu.</p>
+      </div>
 
-    <div class="bg-primary text-white rounded-2xl p-8 md:p-12">
-
-        <div class="flex flex-col lg:flex-row gap-8 lg:gap-16">
-
-            <!-- Left -->
-            <div class="lg:w-1/3">
-                <h2 class="text-4xl font-bold mb-4">Spremni da kupite laptop?</h2>
-                <p class="text-gray-300">Popunite formu i bićemo u kontaktu.</p>
+      <!-- Form -->
+      <div class="lg:w-2/3">
+        <form id="contact-form">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-200 mb-2">Ime</label>
+              <input id="ime" type="text" placeholder="Unesite Vaše ime" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
+              <p class="error-hint hidden">Popunite polje</p>
             </div>
-
-            <!-- Form -->
-            <div class="lg:w-2/3">
-                <form id="contact-form">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-200 mb-2">Ime</label>
-                      <input id="ime" type="text" placeholder="Unesite Vaše ime" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
-                      <p class="error-hint hidden">Popunite polje</p>
-                    </div>
-                    <div>
-                      <label class="block text-sm font-medium text-gray-200 mb-2">Prezime</label>
-                      <input id="prezime" type="text" placeholder="Unesite Vaše prezime" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
-                      <p class="error-hint hidden">Popunite polje</p>
-                    </div>
-                  </div>
-                
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-200 mb-2">Kontakt broj</label>
-                      <input id="kontakt-broj" type="tel" placeholder="061 234 567" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
-                      <p class="error-hint hidden">Popunite polje</p>
-                    </div>
-                    <div>
-                      <label class="block text-sm font-medium text-gray-200 mb-2">Email</label>
-                      <input id="email" type="email" placeholder="vas.email@example.com" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
-                      <p class="error-hint hidden">Popunite polje</p>
-                    </div>
-                  </div>
-                  <div>
-                      <label class="block text-sm font-medium text-gray-200 mb-2">Poruka</label>
-                      <textarea id="poruka" placeholder="Unesite Vašu poruku" class="w-full p-3 rounded-lg bg-gray-700 text-white" required></textarea>
-                      <p class="error-hint hidden">Popunite polje</p>
-                    </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-200 mb-2">Koji laptop želite</label>
-                    <input type="hidden" id="laptop-select-hidden"/>
-                    <button id="laptop-select" type="button"
-                            class="w-full p-3 rounded-lg bg-gray-700 text-white text-left flex justify-between items-center"
-                            @click="modalOpen = true">
-                      <span id="selected-laptop-text">Odaberite laptop</span>
-                      <span class="material-icons">expand_more</span>
-                    </button>
-                    <p class="error-hint hidden">Morate izabrati laptop</p>
-                  </div>
-                
-                  <div class="text-right mt-4">
-                    <button type="submit" class="bg-white text-primary font-semibold px-8 py-3 rounded-lg hover:bg-gray-200 transition shadow-md">
-                      Pošalji
-                    </button>
-                  </div>
-                </form>
+            <div>
+              <label class="block text-sm font-medium text-gray-200 mb-2">Prezime</label>
+              <input id="prezime" type="text" placeholder="Unesite Vaše prezime" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
+              <p class="error-hint hidden">Popunite polje</p>
             </div>
-        </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-200 mb-2">Kontakt broj</label>
+              <input id="kontakt-broj" type="tel" placeholder="061 234 567" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
+              <p class="error-hint hidden">Popunite polje</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-200 mb-2">Email</label>
+              <input id="email" type="email" placeholder="vas.email@example.com" class="w-full p-3 rounded-lg bg-gray-700 text-white" required/>
+              <p class="error-hint hidden">Popunite polje</p>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-200 mb-2">Koji laptop želite</label>
+            <input type="hidden" id="laptop-select-hidden"/>
+            <button type="button" id="laptop-select" class="w-full p-3 rounded-lg bg-gray-700 text-white text-left flex justify-between items-center"
+                    @click="modalOpen = true">
+              <span id="selected-laptop-text">Odaberite laptop</span>
+              <span class="material-icons">expand_more</span>
+            </button>
+            <p class="error-hint hidden">Morate izabrati laptop</p>
+          </div>
+
+          <div class="text-right mt-4">
+            <button type="submit" class="bg-white text-primary font-semibold px-8 py-3 rounded-lg hover:bg-gray-200 transition shadow-md">
+              Pošalji
+            </button>
+          </div>
+        </form>
+      </div>
+
     </div>
+  </div>
 
-    <!-- LAPTOP SELECT MODAL -->
-    <div x-cloak x-show="modalOpen"
-         @click.away="modalOpen = false"
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4">
-
-        <div class="bg-background-light dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
-
-            <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-xl font-semibold">Odaberite Laptop</h3>
-                <button @click="modalOpen = false"
-                        class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
-                    <span class="material-icons">close</span>
-                </button>
-            </div>
-
-            <div class="p-6 overflow-y-auto">
-                <div id="modal-laptop-grid"
-                     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    <!-- Dinamički prikaz proizvoda -->
-                </div>
-            </div>
-
+  <!-- Modal -->
+  <div x-cloak x-show="modalOpen" @click.away="modalOpen = false"
+       class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4">
+    <div class="bg-background-light dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+      <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Odaberite Laptop</h3>
+        <button @click="modalOpen = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="p-6 overflow-y-auto">
+        <div id="modal-laptop-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- JS će ovde ubaciti laptopove -->
         </div>
+      </div>
     </div>
+  </div>
+</section>
 
 </section>
 
