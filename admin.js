@@ -89,10 +89,24 @@ function renderProductDetails(index) {
     </div>
   `;
 
+  // event listener za cijenu
   const priceInput = document.getElementById('price');
     priceInput.addEventListener('input', (e) => {
       // Dozvoli samo cifre i decimalnu tačku
       e.target.value = e.target.value.replace(/[^0-9.]/g, '');
+    });
+
+  // event listener za dugmiće tagova
+  const tagButtons = document.querySelectorAll('.tag-btn');
+    tagButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // postavi izabrani tag u proizvod
+        document.getElementById('tagContainer').querySelectorAll('button').forEach(b => {
+          b.classList.remove('bg-indigo-500','text-white');
+          b.classList.add('bg-white','text-gray-700');
+        });
+        btn.classList.add('bg-indigo-500','text-white');
+      });
     });
   
   // Upload slike preview
