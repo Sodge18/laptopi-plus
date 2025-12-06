@@ -196,72 +196,71 @@
             <div class="lg:w-2/3">
 
                 <form id="contact-form" method="POST" action="https://products-api.sergej-kaldesic.workers.dev/send">
-
+                
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-200 mb-2">Ime</label>
-                            <input id="ime"
+                            <input id="ime" name="ime"
                                    type="text"
                                    placeholder="Unesite Vaše ime"
                                    class="w-full p-3 rounded-lg bg-gray-700 text-white"/>
                             <p class="error-hint hidden">Popunite polje</p>
                         </div>
-
+                
                         <div>
                             <label class="block text-sm font-medium text-gray-200 mb-2">Prezime</label>
-                            <input id="prezime"
+                            <input id="prezime" name="prezime"
                                    type="text"
                                    placeholder="Unesite Vaše prezime"
                                    class="w-full p-3 rounded-lg bg-gray-700 text-white"/>
                             <p class="error-hint hidden">Popunite polje</p>
                         </div>
                     </div>
-
+                
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-200 mb-2">Kontakt broj</label>
-                            <input id="kontakt-broj"
+                            <input id="kontakt-broj" name="kontakt-broj"
                                    type="tel"
                                    placeholder="061 234 567"
                                    class="w-full p-3 rounded-lg bg-gray-700 text-white"/>
                             <p class="error-hint hidden">Popunite polje</p>
                         </div>
-
+                
                         <div>
                             <label class="block text-sm font-medium text-gray-200 mb-2">Email</label>
-                            <input id="email"
+                            <input id="email" name="email"
                                    type="email"
                                    placeholder="vas.email@example.com"
                                    class="w-full p-3 rounded-lg bg-gray-700 text-white"/>
                             <p class="error-hint hidden">Popunite polje</p>
                         </div>
                     </div>
-
-                    <!-- SELECT LAPTOP BUTTON -->
+                
                     <div>
                         <label class="block text-sm font-medium text-gray-200 mb-2">Koji laptop želite</label>
-
-                        <input type="hidden" id="laptop-select-hidden"/>
-
+                
+                        <input type="hidden" id="laptop-select-hidden" name="laptop"/>
+                
                         <button id="laptop-select"
                                 @click.prevent="modalOpen = true"
                                 class="w-full p-3 rounded-lg bg-gray-700 text-white text-left flex justify-between items-center">
                             <span id="selected-laptop-text">Odaberite laptop</span>
                             <span class="material-icons">expand_more</span>
                         </button>
-
+                
                         <p class="error-hint hidden">Morate izabrati laptop</p>
                     </div>
-
-                    <!-- Submit -->
+                
                     <div class="text-right">
                         <button type="submit"
                                 class="bg-white text-primary font-semibold px-8 py-3 rounded-lg hover:bg-gray-200 transition shadow-md">
                             Pošalji
                         </button>
                     </div>
-
+                
                 </form>
+
             </div>
 
         </div>
