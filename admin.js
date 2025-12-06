@@ -136,7 +136,7 @@ async function saveProduct(index){
   const description = document.getElementById('description').value.trim();
   const specsText = document.getElementById('specs').value.trim();
   const price = document.getElementById('price').value.trim();
-  const tag = document.getElementById('tag').value.trim();
+  const tag = document.getElementById('tagContainer').querySelector('.bg-indigo-500')?.textContent || '';
   const imageSrc = document.getElementById('imagePreview').src;
 
   if(!title || !shortDesc || !description || !specsText || !tag || !imageSrc){
