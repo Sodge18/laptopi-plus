@@ -129,7 +129,7 @@ function renderProductDetails(index) {
   document.getElementById('deleteBtn').onclick = () => deleteProduct(index);
 }
 
-// SAVE proizvod
+
 async function saveProduct(index){
   const p = products[index];
   const title = document.getElementById('title').value.trim();
@@ -150,7 +150,22 @@ async function saveProduct(index){
     return { label: label?.trim() || '', value: value?.trim() || '' };
   });
 
-  products[index] = { ...p, title, shortDesc, description, specs, price: price || 'Cena na upit', tag, images:[imageSrc] };
+  // update localnog proizvoda
+  products[index] = { 
+    ...p, 
+    title, 
+    shortDesc, 
+    description, 
+    specs, 
+    price: price || 'Cena na upit', 
+    tag, 
+    images:[imageSrc] 
+  };
+
+  // Prikaži spinner i tekst “Sačuvano”
+  const saveConfirm = document.getElementById('saveConfirm');
+  saveConfirm.innerHTML = `<span class="spinner"></span> Sačuvano!`;
+  saveConfirm.style.display = 'inline-flex';
 
   try{
     await fetch(API_URL, {
@@ -158,14 +173,16 @@ async function saveProduct(index){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({products})
     });
-    document.getElementById('saveConfirm').style.display='inline';
-    setTimeout(()=>document.getElementById('saveConfirm').style.display='none',2000);
     renderSidebar();
+    // spinner nestaje nakon 2 sekunde
+    setTimeout(()=>saveConfirm.style.display='none',2000);
   }catch(err){
     console.error(err);
+    saveConfirm.style.display = 'none';
     Swal.fire({icon:'error', text:'Greška pri čuvanju!'});
   }
 }
+
 
 // DELETE proizvod
 async function deleteProduct(index){
