@@ -535,11 +535,13 @@ laptopSelectEl.addEventListener("change", validateLaptop);
 form.addEventListener("submit", function(e) {
     e.preventDefault();
 
+    // Validacija – sve ostaje isto kao kod tebe
     let valid = true;
     requiredFields.forEach(f => { if(!validate(f)) valid = false; });
     if(!validateLaptop()) valid = false;
     if(!valid) return;
 
+    // Podaci iz forme
     const ime      = document.getElementById("ime").value.trim();
     const prezime  = document.getElementById("prezime").value.trim();
     const email    = document.getElementById("email").value.trim();
@@ -548,6 +550,7 @@ form.addEventListener("submit", function(e) {
     const poruka   = document.getElementById("poruka").value.trim();
 
     const subject = `Upit za laptop: ${ime} ${prezime}`;
+
     const body = `Poštovani,
 
 Dobili ste novi upit sa sajta Laptopi Plus.
@@ -565,10 +568,19 @@ Laptopi Plus`;
 
     const mailtoLink = `mailto:sergej.kaldesic@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    // najjednostavnije i pouzdano
-    window.location.href = mailtoLink;
-});
+    // OVO JE JEDINO ŠTO 100% RADI SVUDA (telefon + računar)
+    const link = document.createElement('a');
+    link.href = mailtoLink;
+    link.style.position = 'fixed';
+    link.style.opacity = '0';
+    link.style.pointerEvents = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
+    // Poruka korisniku da zna da je sve OK
+    alert("Hvala na upitu! Otvara se tvoj email program...");
+});
 </script>
 
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
