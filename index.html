@@ -543,21 +543,20 @@ form.addEventListener("submit", function(e) {
     const laptop = laptopSelectEl.value;
     const poruka = document.getElementById("poruka").value;
 
-    const recipient = "sergej.kaldesic@gmail.com";
+    const recipient = "sergej.kaldesic@gmail.com"; // Tvoj mejl
     const subject = encodeURIComponent(`Upit za laptop od ${ime} ${prezime}`);
     const body = encodeURIComponent(
         `Poštovani,\n\n` +
         `Dobili ste novi upit sa sajta Laptopi Plus.\n\n` +
         `Podaci o klijentu:\n` +
         `Ime i prezime: ${ime} ${prezime}\n` +
-        `Email: ${email}\n` +
+        `Email: ${email}\n` + // ovde je email korisnika
         `Kontakt broj: ${broj}\n` +
         `Laptop: ${laptop}\n\n` +
         `Poruka klijenta:\n${poruka}\n\n` +
         `Srdačan pozdrav,\nLaptopi Plus`
     );
 
-    // Ovo otvara mail klijent sa recipient, subject i body
     window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
 });
 
