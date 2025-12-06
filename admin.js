@@ -64,6 +64,7 @@ function renderProductDetails(index) {
       <div class="input-field">
         <label class="block font-semibold">Cena</label>
         <input type="text" id="price" value="${p.price || ''}" class="w-full p-2 border rounded"/>
+        <p class="text-sm text-gray-400 mt-1">Ako ostane prazno, prikazaće "Cena na upit"</p>
       </div>
       <div class="input-field">
         <label class="block font-semibold">Tag</label>
