@@ -540,12 +540,11 @@ form.addEventListener("submit", function(e) {
     if(!validateLaptop()) valid = false;
     if(!valid) return;
 
-    // Prikupljamo podatke
     const ime      = document.getElementById("ime").value.trim();
     const prezime  = document.getElementById("prezime").value.trim();
     const email    = document.getElementById("email").value.trim();
     const broj     = document.getElementById("kontakt-broj").value.trim();
-    const laptop   = laptopSelectEl.value.trim();                    // samo title
+    const laptop   = laptopSelectEl.value.trim();
     const poruka   = document.getElementById("poruka").value.trim();
 
     const subject = `Upit za laptop: ${ime} ${prezime}`;
@@ -565,7 +564,6 @@ ${poruka}
 Srdačan pozdrav,
 Laptopi Plus`;
 
-    // OVO JE KLJUČ – najpouzdaniji način za mailto na svim uređajima 2025.
     const mailtoLink = `mailto:sergej.kaldesic@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     const a = document.createElement('a');
@@ -575,7 +573,6 @@ Laptopi Plus`;
     a.click();
     document.body.removeChild(a);
 
-    // Opcionalno – lijepa poruka korisniku
     setTimeout(() => {
         alert("Hvala! Otvara se vaš email program...");
     }, 400);
