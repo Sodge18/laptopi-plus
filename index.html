@@ -536,29 +536,37 @@ form.addEventListener("submit", function(e) {
     if(!validateLaptop()) valid = false;
     if(!valid) return;
 
-    const ime = document.getElementById("ime").value;
-    const prezime = document.getElementById("prezime").value;
-    const email = document.getElementById("email").value;
-    const broj = document.getElementById("kontakt-broj").value;
-    const laptop = laptopSelectEl.value;
-    const poruka = document.getElementById("poruka").value;
+    const ime = document.getElementById("ime").value.trim();
+    const prezime = document.getElementById("prezime").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const broj = document.getElementById("kontakt-broj").value.trim();
+    const laptop = laptopSelectEl.value.trim();
+    const poruka = document.getElementById("poruka").value.trim();
 
-    const recipient = "sergej.kaldesic@gmail.com"; // Tvoj mejl
-    const subject = encodeURIComponent(`Upit za laptop od ${ime} ${prezime}`);
+    const recipient = "sergej.kaldesic@gmail.com";
+
+    const subject = encodeURIComponent(`Upit za laptop: ${ime} ${prezime}`);
+
     const body = encodeURIComponent(
-        `Poštovani,\n\n` +
-        `Dobili ste novi upit sa sajta Laptopi Plus.\n\n` +
-        `Podaci o klijentu:\n` +
-        `Ime i prezime: ${ime} ${prezime}\n` +
-        `Email: ${email}\n` + // ovde je email korisnika
-        `Kontakt broj: ${broj}\n` +
-        `Laptop: ${laptop}\n\n` +
-        `Poruka klijenta:\n${poruka}\n\n` +
-        `Srdačan pozdrav,\nLaptopi Plus`
+`Poštovani,
+
+Dobili ste novi upit sa sajta Laptopi Plus.
+
+Ime i prezime: ${ime} ${prezime}
+Email: ${email}
+Kontakt broj: ${broj}
+Laptop: ${laptop}
+
+Poruka klijenta:
+${poruka}
+
+Srdačan pozdrav,
+Laptopi Plus`
     );
 
     window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
 });
+
 
 </script>
 
