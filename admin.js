@@ -83,7 +83,7 @@ function renderProductDetails(index) {
 
   const priceInput = document.getElementById('price');
     priceInput.addEventListener('input', (e) => {
-      // Dozvoli samo brojeve i decimalnu tačku
+      // Dozvoli samo cifre i decimalnu tačku
       e.target.value = e.target.value.replace(/[^0-9.]/g, '');
     });
   
