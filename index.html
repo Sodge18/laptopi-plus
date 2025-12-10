@@ -476,6 +476,9 @@ function openModal(product) {
     const modal = document.getElementById("product-modal");
     modal.classList.remove("hidden");
     modal.classList.add("flex");
+
+    // --- BLOKIRAJ BODY SCROLL ---
+    document.body.style.overflow = 'hidden';
 }
 
 
