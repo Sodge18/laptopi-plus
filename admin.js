@@ -1,3 +1,4 @@
+// --- DEBOUNCE ---
 function debounce(fn, delay=300){
   let timer;
   return function(...args){
@@ -6,6 +7,7 @@ function debounce(fn, delay=300){
   };
 }
 
+// --- KONFIG ---
 const API_URL = 'https://products-api.sergej-kaldesic.workers.dev/';
 let products = [];
 let currentIndex = null;
@@ -35,26 +37,19 @@ function renderSidebar() {
 
 // --- RENDER DETALJA ---
 function renderProductDetails(index) {
+  if(index === null || !products[index]) return;
   const p = products[index];
 
-  // Fiksne specifikacije
-  const fixedSpecs = [
-    'CPU', 'RAM', 'GPU', 'Memorija', 'Ekran', 'Baterija', 'OS', 'Težina', 
-    'Dimenzije', 'Portovi', 'Bežične konekcije', 'Kamera', 'Audio'
-  ];
-
-  // Inicijalizuj vrednosti ako nisu postavljene
+  const fixedSpecs = ['CPU','RAM','GPU','Memorija','Ekran','Baterija','OS','Težina','Dimenzije','Portovi','Bežične konekcije','Kamera','Audio'];
   if(!p.specs) p.specs = {};
-  fixedSpecs.forEach(label => {
-    if(!(label in p.specs)) p.specs[label] = '';
-  });
+  fixedSpecs.forEach(label => { if(!(label in p.specs)) p.specs[label]=''; });
 
   content.innerHTML = `
   <div class="grid grid-cols-3 gap-6">
     <div class="col-span-2 space-y-6">
       <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-8 py-4 bg-white dark:bg-slate-900 sticky top-0 z-10">
         <h2 id="productHeader" class="text-slate-900 dark:text-white text-lg font-bold">
-          Detalji proizvoda: ${p.title || ''}
+          Detalji proizvoda: ${p.title||''}
         </h2>
       </header>
 
@@ -127,9 +122,8 @@ function renderProductDetails(index) {
   </div>
   `;
 
+  // --- SPECS UPDATE ---
   const specsContainer = document.getElementById('specsContainer');
-
-  // --- UPDATE vrednosti specova ---
   specsContainer.addEventListener('input', debounce(()=>{
     if(currentIndex===null) return;
     const specValues = Array.from(specsContainer.querySelectorAll('div')).reduce((acc, div)=>{
@@ -217,7 +211,7 @@ function renderProductDetails(index) {
   document.getElementById('deleteBtn').addEventListener('click', ()=>deleteProduct(currentIndex));
 }
 
-// --- SAVE FUNCTION ---
+// --- SAVE ---
 async function saveProduct(index){
   const p = products[index];
   const title = document.getElementById('title').value.trim();
@@ -249,7 +243,7 @@ async function saveProduct(index){
   }
 }
 
-// --- DELETE FUNCTION ---
+// --- DELETE ---
 async function deleteProduct(index){
   Swal.fire({
     title:'Obrisati proizvod?', 
@@ -276,10 +270,8 @@ async function deleteProduct(index){
 
 // --- ADD NOVI ---
 addBtn.addEventListener('click', ()=>{
-
-  // ✅ GENERIŠEMO UNIKATAN ID – trajno, stabilno, bez konflikta
   const newProd = {
-    id: crypto.randomUUID(),                 // <── KLJUČNA LINIJA
+    id: crypto.randomUUID(),
     title: '',
     shortDesc: '',
     description: '',
@@ -288,7 +280,6 @@ addBtn.addEventListener('click', ()=>{
     tag: 'Novo',
     images: []
   };
-
   products.push(newProd);
   currentIndex = products.length - 1;
   renderSidebar();
@@ -304,7 +295,8 @@ async function fetchProducts() {
     const data = await res.json();
     products = data.products || data;
 
-    ensureIds();   // <── OVO DODAJEŠ
+    // --- osiguraj ID-jeve ---
+    ensureIds();
 
     renderSidebar();
   } catch(err) {
@@ -331,4 +323,3 @@ function ensureIds() {
     }).catch(err => console.error("Greška pri auto-upisu ID-jeva:", err));
   }
 }
-
