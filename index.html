@@ -447,12 +447,13 @@ function openModal(product) {
     const specs = document.getElementById("modal-specs");
     specs.innerHTML = "";
 
-    if (product.specs?.length) {
-        product.specs.forEach(s => {
+    // Novo: specs je objekat {CPU:"...", RAM:"..."}
+    if (product.specs && Object.keys(product.specs).length) {
+        Object.entries(product.specs).forEach(([label, value]) => {
             specs.innerHTML += `
                 <div class="flex justify-between p-3 rounded-lg bg-gray-100 dark:bg-gray-700/50">
-                    <span class="font-medium">${s.label}</span>
-                    <span class="font-semibold">${s.value}</span>
+                    <span class="font-medium">${label}</span>
+                    <span class="font-semibold">${value || "-"}</span>
                 </div>`;
         });
     } else {
@@ -476,6 +477,7 @@ function openModal(product) {
     modal.classList.remove("hidden");
     modal.classList.add("flex");
 }
+
 
 function closeModal() {
     const modal = document.getElementById("product-modal");
