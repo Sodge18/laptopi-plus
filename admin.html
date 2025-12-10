@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Admin Panel - Laptopi Plus</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -12,6 +12,9 @@
 body { font-family:'Inter',sans-serif; }
 .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 .material-symbols-outlined.active { font-variation-settings: 'FILL' 1; }
+.save-confirm { display:none; font-weight:bold; margin-left:8px; }
+.product-image-preview { width:100%; border-radius:.75rem; object-fit:cover; }
+.tag-btn.active { background-color:#197fe6; color:white; border-color:#197fe6; }
 </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200">
@@ -21,6 +24,15 @@ body { font-family:'Inter',sans-serif; }
   <!-- SIDEBAR -->
   <aside class="w-80 flex-shrink-0 bg-white dark:bg-background-dark border-r border-slate-200 dark:border-slate-800 flex flex-col">
     <div class="p-4 flex flex-col h-full">
+      <div class="flex items-center gap-3 mb-4 p-2">
+        <div class="bg-primary/20 text-primary p-2 rounded-lg">
+          <span class="material-symbols-outlined">laptop_chromebook</span>
+        </div>
+        <div class="flex flex-col">
+          <h1 class="text-slate-900 dark:text-white text-base font-bold leading-normal">Laptopi Plus</h1>
+          <p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Product Management</p>
+        </div>
+      </div>
       <div class="px-2 mb-4">
         <button id="add-product-btn" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
           <span class="material-symbols-outlined">add_circle</span>
