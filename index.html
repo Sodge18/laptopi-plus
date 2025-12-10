@@ -469,7 +469,7 @@ function openModal(product) {
     images.forEach(src => {
         gallery.innerHTML += `
             <div class="aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
-                <img src="${src}" class="w-full h-full object-contain">
+                <img src="${src}" loading="lazy" class="w-full h-full object-contain">
             </div>`;
     });
 
