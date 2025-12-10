@@ -59,14 +59,13 @@ function updateActiveSidebarButton() {
 function renderProductDetails(index) {
   const p = products[index];
   content.innerHTML = `
-    <div class="grid grid-cols-3 gap-8">
-    <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-8 py-4 bg-white dark:bg-slate-900 sticky top-0 z-10">
-      <h2 id="productHeader" class="text-slate-900 dark:text-white text-lg font-bold">
-        Detalji proizvoda
-      </h2>
-    </header>
-    </div>
-    <div class="grid grid-cols-3 gap-8">
+      <div class="col-span-2 space-y-6">
+      <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-8 py-4 bg-white dark:bg-slate-900 sticky top-0 z-10">
+        <h2 id="productHeader" class="text-slate-900 dark:text-white text-lg font-bold">
+          Detalji proizvoda
+        </h2>
+      </header>
+      </div
       <!-- Lijeva strana: Detalji i Specifikacije -->
       <div class="col-span-2 space-y-6">
         <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
@@ -94,12 +93,17 @@ function renderProductDetails(index) {
 
       <!-- Desna strana: Slike, Cena i Tagovi -->
       <div class="col-span-1 space-y-6">
-        <!-- Slike -->
+        // --- Slike ---
         <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
           <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Slike</h3>
-          <div class="grid grid-cols-2 gap-4">
-            ${(p.images||[]).map(src=>`<img src="${src}" class="aspect-square w-full rounded-lg object-cover">`).join('')}
-            <div class="flex aspect-square w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary hover:text-primary transition-colors text-slate-500 dark:text-slate-400">
+          <div class="grid grid-cols-2 gap-4" id="imageContainer">
+            ${(p.images||[]).map((src, i)=>`
+              <div class="relative group">
+                <img src="${src}" class="aspect-square w-full rounded-lg object-cover">
+                <button class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs" data-index="${i}" title="Obriši sliku">×</button>
+              </div>
+            `).join('')}
+            <div class="flex aspect-square w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary hover:text-primary transition-colors text-slate-500 dark:text-slate-400" id="uploadImage">
               <div class="text-center">
                 <span class="material-symbols-outlined text-4xl">upload</span>
                 <p class="mt-1 text-sm">Upload Image</p>
