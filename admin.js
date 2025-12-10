@@ -23,9 +23,6 @@ async function fetchProducts() {
     const data = await res.json();
     products = data.products || data;
     renderSidebar();
-    if(products.length) {
-      currentIndex = 0;
-      renderProductDetails(currentIndex);
     }
   } catch(err) {
     console.error(err);
@@ -224,7 +221,7 @@ async function deleteProduct(index){
       try{
         await fetch(API_URL,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({products})});
         currentIndex = null;
-        content.innerHTML='<p class="text-gray-500">Izaberi proizvod sa leve strane ili kreiraj novi.</p>';
+        content.innerHTML='<p class="text-gray-500 text-center mt-20">Počnite sa dodavanjem novih proizvoda klikom na <strong>+ Novi proizvod</strong>,<br>  ili odaberite postojeći sa leve strane za uređivanje ili brisanje.</p>';
         renderSidebar();
       }catch(err){ console.error(err); Swal.fire({icon:'error', text:'Greška pri brisanju!'}); }
     }
