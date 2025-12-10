@@ -32,24 +32,30 @@ async function fetchProducts() {
 
 // --- SIDEBAR ---
 function renderSidebar() {
-  // izbriši samo dugmad za proizvode
   sidebar.querySelectorAll('button.product-tab').forEach(b => b.remove());
 
   products.forEach((p, i) => {
     const btn = document.createElement('button');
     btn.textContent = p.title || 'Bez naziva';
     btn.className = 'product-tab';
-      if(i === currentIndex) btn.classList.add('active');
+    if(i === currentIndex) btn.classList.add('active');
+
     btn.addEventListener('click', () => {
       currentIndex = i;
-      // update klasa aktivnog dugmeta
-      sidebar.querySelectorAll('button.product-tab').forEach(b2 => b2.classList.remove('active'));
-      btn.classList.add('active');
-      // update detalja
+      renderSidebar(); // refresh sidebar da istakne aktivni
       renderProductDetails(currentIndex);
     });
+
     sidebar.appendChild(btn);
   });
+
+  // Ako nema selektovanog proizvoda, prikaži početni tekst
+  if(currentIndex === null){
+    content.innerHTML = `<p class="text-gray-500 text-center mt-20">
+      Počnite sa dodavanjem novih proizvoda klikom na <strong>+ Novi proizvod</strong>,<br>
+      ili odaberite postojeći sa leve strane za uređivanje ili brisanje.
+    </p>`;
+  }
 }
 
 // --- UPDATE UI ---
