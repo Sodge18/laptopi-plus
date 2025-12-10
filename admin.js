@@ -59,11 +59,13 @@ function updateActiveSidebarButton() {
 function renderProductDetails(index) {
   const p = products[index];
   content.innerHTML = `
+    <div class="grid grid-cols-3 gap-8">
     <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-8 py-4 bg-white dark:bg-slate-900 sticky top-0 z-10">
       <h2 id="productHeader" class="text-slate-900 dark:text-white text-lg font-bold">
         Detalji proizvoda
       </h2>
     </header>
+    </div>
     <div class="grid grid-cols-3 gap-8">
       <!-- Lijeva strana: Detalji i Specifikacije -->
       <div class="col-span-2 space-y-6">
