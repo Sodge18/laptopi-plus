@@ -498,7 +498,9 @@ function populateLaptopDropdown(products) {
    VALIDACIJA I SUBMIT FORME
 ============================= */
 const form = document.getElementById("contact-form");
-const requiredFields = ["ime", "prezime", "kontakt-broj", "email", "poruka"];
+
+// poruka NIJE required → izbaci je iz liste
+const requiredFields = ["ime", "prezime", "kontakt-broj", "email"];
 const laptopSelectEl = document.getElementById("laptop-select");
 
 function validate(fieldId) {
@@ -535,13 +537,11 @@ laptopSelectEl.addEventListener("change", validateLaptop);
 form.addEventListener("submit", function(e) {
     e.preventDefault();
 
-    // Validacija – sve ostaje isto kao kod tebe
     let valid = true;
-    requiredFields.forEach(f => { if(!validate(f)) valid = false; });
-    if(!validateLaptop()) valid = false;
-    if(!valid) return;
+    requiredFields.forEach(f => { if (!validate(f)) valid = false; });
+    if (!validateLaptop()) valid = false;
+    if (!valid) return;
 
-    // Podaci iz forme
     const ime      = document.getElementById("ime").value.trim();
     const prezime  = document.getElementById("prezime").value.trim();
     const email    = document.getElementById("email").value.trim();
@@ -566,21 +566,25 @@ ${poruka}
 Srdačan pozdrav,
 Laptopi Plus`;
 
-    const mailtoLink = `mailto:sergej.kaldesic@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const mailtoLink =
+        `mailto:sergej.kaldesic@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    // OVO JE JEDINO ŠTO 100% RADI SVUDA (telefon + računar)
-    const link = document.createElement('a');
-    link.href = mailtoLink;
-    link.style.position = 'fixed';
-    link.style.opacity = '0';
-    link.style.pointerEvents = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // PRIMARNO — NAJPOUZDANIJE
+    window.location.href = mailtoLink;
 
-    // Poruka korisniku da zna da je sve OK
+    // FALLBACK (ako browser blokira) — 100% radi
+    setTimeout(() => {
+        const a = document.createElement("a");
+        a.href = mailtoLink;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }, 200);
+
     alert("Hvala na upitu! Otvara se tvoj email program...");
 });
+
 </script>
 
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
