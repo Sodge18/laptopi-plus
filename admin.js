@@ -38,7 +38,8 @@ function renderSidebar() {
   products.forEach((p, i) => {
     const btn = document.createElement('button');
     btn.textContent = p.title || 'Bez naziva';
-    btn.className = 'product-tab' + (i === currentIndex ? ' active' : '');
+    btn.className = 'product-tab';
+      if(i === currentIndex) btn.classList.add('active');
     btn.addEventListener('click', () => {
       currentIndex = i;
       // update klasa aktivnog dugmeta
