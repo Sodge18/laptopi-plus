@@ -1,135 +1,176 @@
+function debounce(fn, delay=300){
+  let timer;
+  return function(...args){
+    clearTimeout(timer);
+    timer = setTimeout(()=>fn.apply(this, args), delay);
+  };
+}
+
+
 const API_URL = 'https://products-api.sergej-kaldesic.workers.dev/';
 let products = [];
 let currentIndex = null;
 
-// DOM elementi
 const sidebar = document.getElementById('product-sidebar');
 const content = document.getElementById('product-details');
 const addBtn = document.getElementById('add-product-btn');
 
 const TAGS = ['Novo', 'Poslovni', 'Gamer', 'Premium'];
 
-// FETCH proizvoda
+// --- FETCH proizvoda ---
 async function fetchProducts() {
   try {
     const res = await fetch(API_URL);
     const data = await res.json();
     products = data.products || data;
     renderSidebar();
-  } catch (err) {
+    if(products.length) {
+      currentIndex = 0;
+      renderProductDetails(currentIndex);
+    }
+  } catch(err) {
     console.error(err);
     alert('Ne mogu da učitam proizvode.');
   }
 }
 
-// RENDER sidebar
+// --- SIDEBAR ---
 function renderSidebar() {
-  // Očisti sve osim "Add" dugmeta
   sidebar.querySelectorAll('button.product-tab').forEach(b => b.remove());
-
-  products.forEach((p, i) => {
+  products.forEach((p,i) => {
     const btn = document.createElement('button');
     btn.textContent = p.title || 'Bez naziva';
-    btn.className = 'product-tab';
-    if(i===currentIndex) btn.classList.add('active');
-    btn.onclick = () => {
+    btn.className = 'product-tab' + (i===currentIndex ? ' active' : '');
+    btn.addEventListener('click', () => {
       currentIndex = i;
       renderSidebar();
-      renderProductDetails(i);
-    };
+      s(i);
+    });
     sidebar.appendChild(btn);
   });
 }
 
-// RENDER detalja proizvoda
+// --- UPDATE UI ---
+function updateProductDetailsUI(index) {
+  const p = products[index];
+  document.getElementById('title').value = p.title || '';
+  document.getElementById('shortDesc').value = p.shortDesc || '';
+  document.getElementById('description').value = p.description || '';
+  document.getElementById('specs').value = p.specs.map(s=>`${s.label}:${s.value}`).join('\n');
+  document.getElementById('price').value = p.price==='Cena na upit' ? '' : p.price;
+
+  // Tag dugmići
+  const tagContainer = document.getElementById('tagContainer');
+  tagContainer.querySelectorAll('button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tag === p.tag);
+  });
+
+  // Slike
+  const imgContainer = document.getElementById('imagePreviewContainer');
+  imgContainer.innerHTML = '';
+  (p.images||[]).forEach(src => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.className = 'product-image-preview';
+    imgContainer.appendChild(img);
+  });
+}
+
+// --- RENDER DETALJA ---
 function renderProductDetails(index) {
   const p = products[index];
   content.innerHTML = `
     <div>
-      <div class="input-field">
-        <label class="block font-semibold">Naziv proizvoda</label>
-        <input type="text" id="title" value="${p.title || ''}" class="w-full p-2 border rounded"/>
-      </div>
-      <div class="input-field">
-        <label class="block font-semibold">Kratak opis</label>
-        <input type="text" id="shortDesc" value="${p.shortDesc || ''}" class="w-full p-2 border rounded"/>
-      </div>
-      <div class="input-field">
-        <label class="block font-semibold">Detaljan opis</label>
-        <textarea id="description" class="w-full p-2 border rounded h-24">${p.description || ''}</textarea>
-      </div>
-      <div class="input-field">
-        <label class="block font-semibold">Specifikacije</label>
-        <textarea id="specs" class="w-full p-2 border rounded h-20">${p.specs ? p.specs.map(s=>`${s.label}:${s.value}`).join('\n') : ''}</textarea>
-        <p class="text-sm text-gray-400 mt-1">Format: label:value po liniji</p>
-      </div>
-      <div class="input-field">
-        <label class="block font-semibold">Cena</label>
-        <input type="text" id="price" value="${p.price || ''}" class="w-full p-2 border rounded"/>
-        <p class="text-sm text-gray-400 mt-1">Ako ostane prazno, prikazaće "Cena na upit"</p>
-      </div>
-      <div class="input-field">
-        <label class="block font-semibold mb-2">Tag</label>
-        <div id="tagContainer" class="flex gap-2 flex-wrap">
-          ${TAGS.map(tagValue => `
-            <button type="button" class="tag-btn px-3 py-1 border rounded ${p.tag === tagValue ? 'bg-indigo-500 text-white' : 'bg-white text-gray-700'}">
-              ${tagValue}
-            </button>
-          `).join('')}
-        </div>
-      </div>
-      <div class="input-field">
-        <label class="block font-semibold">Slike</label>
-        <input type="file" id="imageUpload" accept="image/*"/>
-        <img id="imagePreview" src="${p.images?.[0] || ''}" class="product-image-preview"/>
-      </div>
+      <div class="input-field"><label>Naziv proizvoda</label><input type="text" id="title" class="w-full p-2 border rounded"/></div>
+      <div class="input-field"><label>Kratak opis</label><input type="text" id="shortDesc" class="w-full p-2 border rounded"/></div>
+      <div class="input-field"><label>Detaljan opis</label><textarea id="description" class="w-full p-2 border rounded h-24"></textarea></div>
+      <div class="input-field"><label>Specifikacije</label><textarea id="specs" class="w-full p-2 border rounded h-20"></textarea>
+        <p class="text-sm text-gray-400 mt-1">Format: label:value po liniji</p></div>
+      <div class="input-field"><label>Cena</label><input type="text" id="price" class="w-full p-2 border rounded"/>
+        <p class="text-sm text-gray-400 mt-1">Ako ostane prazno, prikazaće "Cena na upit"</p></div>
+      <div class="input-field"><label>Tag</label><div id="tagContainer" class="flex gap-2 flex-wrap">
+        ${TAGS.map(tag => `<button type="button" data-tag="${tag}" class="tag-btn px-3 py-1 border rounded">${tag}</button>`).join('')}
+      </div></div>
+      <div class="input-field"><label>Slike</label><input type="file" id="imageUpload" accept="image/*" multiple/>
+        <div id="imagePreviewContainer" class="flex flex-wrap gap-3"></div></div>
       <button id="saveBtn" class="bg-indigo-500 text-white px-4 py-2 rounded">Sačuvaj</button>
       <button id="deleteBtn" class="bg-red-500 text-white px-4 py-2 rounded ml-2">Obriši</button>
       <span class="save-confirm" id="saveConfirm">Sačuvano!</span>
     </div>
   `;
+  updateProductDetailsUI(index);
+  // AUTOMATSKI UPDATE POLJA SA DEBOUNCE
+  const inputs = ['title','shortDesc','description','specs','price'];
+  inputs.forEach(id=>{
+    const el = document.getElementById(id);
+    el.addEventListener('input', debounce(()=>{
+      if(currentIndex===null) return;
+      const val = el.value.trim();
+      switch(id){
+        case 'title': products[currentIndex].title = val; break;
+        case 'shortDesc': products[currentIndex].shortDesc = val; break;
+        case 'description': products[currentIndex].description = val; break;
+        case 'specs': 
+          products[currentIndex].specs = val.split('\n').map(line=>{
+            const [label,...rest] = line.split(':');
+            return {label: label?.trim()||'', value: rest.join(':').trim()||''};
+          });
+          break;
+        case 'price':
+          products[currentIndex].price = val || 'Cena na upit';
+          break;
+      }
+    }, 300));
+  });
 
-  // event listener za cijenu
-  const priceInput = document.getElementById('price');
-    priceInput.addEventListener('input', (e) => {
-      let val = e.target.value;
-      val = val.replace(/[^0-9.]/g, ''); // samo cifre i tačka
-      const parts = val.split('.');
-      if(parts.length > 2) val = parts[0] + '.' + parts[1]; // maksi 1 tačka
-      e.target.value = val;
-    });
 
-  // event listener za dugmiće tagova
-  const tagContainer = document.getElementById('tagContainer');
-    tagContainer.querySelectorAll('button').forEach(btn => {
-      btn.onclick = () => {
-        // ukloni klasu active sa svih dugmića
-        tagContainer.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-        // dodaj klasu active na kliknuti dugme
-        btn.classList.add('active');
-      };
-    });
+  // --- EVENT LISTENERS ---
 
-  // Upload slike preview
+  // Cena input
+  document.getElementById('price').addEventListener('input', e=>{
+    let val = e.target.value.replace(/[^0-9.]/g,'');
+    const parts = val.split('.');
+    if(parts.length>2) val = parts[0]+'.'+parts[1];
+    e.target.value = val;
+  });
+
+  // Tagovi
+  document.getElementById('tagContainer').addEventListener('click', e=>{
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    document.querySelectorAll('#tagContainer button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    products[currentIndex].tag = btn.dataset.tag;
+  });
+
+  // Upload slika
   const imgInput = document.getElementById('imageUpload');
-  const imgPreview = document.getElementById('imagePreview');
-  imgInput.onchange = e => {
-    const file = e.target.files[0];
-    if(file){
+  const imgContainer = document.getElementById('imagePreviewContainer');
+  imgInput.addEventListener('change', e=>{
+    const files = [...e.target.files];
+    if(files.length>30){ Swal.fire({icon:'error', text:'Maksimalno 30 slika!'}); return; }
+    imgContainer.innerHTML=''; products[currentIndex].images=[];
+    files.forEach(file=>{
       const reader = new FileReader();
-      reader.onload = ev => imgPreview.src = ev.target.result;
+      reader.onload = ev=>{
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        img.className='product-image-preview';
+        imgContainer.appendChild(img);
+        products[currentIndex].images.push(ev.target.result);
+      };
       reader.readAsDataURL(file);
-    }
-  };
+    });
+  });
 
-  // Save dugme
-  document.getElementById('saveBtn').onclick = () => saveProduct(index);
+  // Save
+  document.getElementById('saveBtn').addEventListener('click', ()=>saveProduct(currentIndex));
 
-  // Delete dugme
-  document.getElementById('deleteBtn').onclick = () => deleteProduct(index);
+  // Delete
+  document.getElementById('deleteBtn').addEventListener('click', ()=>deleteProduct(currentIndex));
 }
 
-
+// --- SAVE ---
 async function saveProduct(index){
   const p = products[index];
   const title = document.getElementById('title').value.trim();
@@ -137,84 +178,58 @@ async function saveProduct(index){
   const description = document.getElementById('description').value.trim();
   const specsText = document.getElementById('specs').value.trim();
   const price = document.getElementById('price').value.trim();
-  const tag = document.getElementById('tagContainer').querySelector('.active')?.textContent || '';
-  const imageSrc = document.getElementById('imagePreview').src;
-
-  if(!title || !shortDesc || !description || !specsText || !tag || !imageSrc){
-    Swal.fire({icon:'error', text:'Popunite sva polja!'}); 
-    return;
+  const tag = document.getElementById('tagContainer').querySelector('.active')?.dataset.tag || '';
+  const imgs = products[index].images || [];
+  if(!title||!shortDesc||!description||!specsText||!tag||imgs.length===0){
+    Swal.fire({icon:'error', text:'Popunite sva polja!'}); return;
   }
-
   const specs = specsText.split('\n').map(line=>{
-    const [label,value] = line.split(':'); 
-    return { label: label?.trim() || '', value: value?.trim() || '' };
+    const [label,...rest]=line.split(':');
+    return {label:label?.trim()||'', value:rest.join(':').trim()||''};
   });
-
-  products[index] = { ...p, title, shortDesc, description, specs, price: price || 'Cena na upit', tag, images:[imageSrc] };
+  products[index] = {...p, title, shortDesc, description, specs, price:price||'Cena na upit', tag, images:imgs};
 
   const saveConfirm = document.getElementById('saveConfirm');
-
-  // 1️⃣ PRIKAŽI SPINNER dok traje fetch
-  saveConfirm.innerHTML = `<span class="spinner"></span> Čuvanje...`;
-  saveConfirm.style.display = 'inline-flex';
+  saveConfirm.innerHTML=`<span class="spinner"></span> Čuvanje...`;
+  saveConfirm.style.display='inline-flex';
 
   try{
-    await fetch(API_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({products})
-    });
-
-    // 2️⃣ Kada je fetch uspešno završen
-    saveConfirm.innerHTML = '✔ Sačuvano!';
-    setTimeout(()=>saveConfirm.style.display='none', 2000);
-
+    await fetch(API_URL,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({products})});
+    saveConfirm.innerHTML='✔ Sačuvano!';
+    setTimeout(()=>saveConfirm.style.display='none',2000);
     renderSidebar();
   }catch(err){
-    console.error(err);
-    saveConfirm.style.display = 'none';
+    console.error(err); saveConfirm.style.display='none';
     Swal.fire({icon:'error', text:'Greška pri čuvanju!'});
   }
 }
 
-
-// DELETE proizvod
+// --- DELETE ---
 async function deleteProduct(index){
   Swal.fire({
-    title:'Obrisati proizvod?',
-    text: products[index].title || '',
-    icon:'warning',
-    showCancelButton:true,
-    confirmButtonText:'Da',
-    cancelButtonText:'Otkaži'
+    title:'Obrisati proizvod?', text: products[index].title||'',
+    icon:'warning', showCancelButton:true, confirmButtonText:'Da', cancelButtonText:'Otkaži'
   }).then(async result=>{
     if(result.isConfirmed){
       products.splice(index,1);
       try{
-        await fetch(API_URL, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({products})
-        });
+        await fetch(API_URL,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({products})});
         currentIndex = null;
-        content.innerHTML = '<p class="text-gray-500">Izaberi proizvod sa leve strane ili kreiraj novi.</p>';
+        content.innerHTML='<p class="text-gray-500">Izaberi proizvod sa leve strane ili kreiraj novi.</p>';
         renderSidebar();
-      }catch(err){
-        console.error(err);
-        Swal.fire({icon:'error', text:'Greška pri brisanju!'});
-      }
+      }catch(err){ console.error(err); Swal.fire({icon:'error', text:'Greška pri brisanju!'}); }
     }
   });
 }
 
-// ADD novi proizvod
-addBtn.onclick = ()=>{
-  const newProd = { title:'', shortDesc:'', description:'', specs:[], price:'', tag:'', images:[] };
+// --- ADD NOVI ---
+addBtn.addEventListener('click', ()=>{
+  const newProd = {title:'', shortDesc:'', description:'', specs:[], price:'', tag:'', images:[]};
   products.push(newProd);
   currentIndex = products.length-1;
   renderSidebar();
   renderProductDetails(currentIndex);
-}
+});
 
-// INIT
+// --- INIT ---
 fetchProducts();
