@@ -50,24 +50,17 @@ function renderSidebar() {
 function renderProductDetails(index) {
   const p = products[index];
 
-  // Inicijalizuj default specs ako prazno
-  if(!p.specs || !p.specs.length){
-    p.specs = [
-      {label:'CPU', value:'', active:true},
-      {label:'RAM', value:'', active:true},
-      {label:'GPU', value:'', active:true},
-      {label:'Memorija', value:'', active:true},
-      {label:'Ekran', value:'', active:true},
-      {label:'Baterija', value:'', active:true},
-      {label:'OS', value:'', active:true},
-      {label:'Težina', value:'', active:false},
-      {label:'Dimenzije', value:'', active:false},
-      {label:'Portovi', value:'', active:false},
-      {label:'Bežične konekcije', value:'', active:false},
-      {label:'Kamera', value:'', active:false},
-      {label:'Audio', value:'', active:false},
-    ];
-  }
+  // Fiksne specifikacije
+  const fixedSpecs = [
+    'CPU', 'RAM', 'GPU', 'Memorija', 'Ekran', 'Baterija', 'OS', 'Težina', 
+    'Dimenzije', 'Portovi', 'Bežične konekcije', 'Kamera', 'Audio'
+  ];
+
+  // Inicijalizuj vrednosti ako nisu postavljene
+  if(!p.specs) p.specs = {};
+  fixedSpecs.forEach(label => {
+    if(!(label in p.specs)) p.specs[label] = '';
+  });
 
   content.innerHTML = `
   <div class="grid grid-cols-3 gap-6">
@@ -98,31 +91,18 @@ function renderProductDetails(index) {
 
       <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
         <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Specifikacije</h3>
-        <div id="activeSpecs" class="space-y-2">
-          ${p.specs.filter(s=>s.active).map((s,i)=>`
+        <div id="specsContainer" class="space-y-2">
+          ${fixedSpecs.map(label => `
             <div class="flex gap-2 items-center">
-              <input type="text" class="spec-label flex-1 rounded-lg border p-1" value="${s.label}"/>
-              <input type="text" class="spec-value flex-1 rounded-lg border p-1" value="${s.value}"/>
-              <button class="deactivate-spec bg-gray-400 text-white px-2 rounded">×</button>
+              <span class="spec-label flex-1 font-semibold">${label}</span>
+              <input type="text" class="spec-value flex-1 rounded-lg border p-1" value="${p.specs[label]}"/>
             </div>
           `).join('')}
         </div>
-
-        <div id="inactiveSpecs" class="mt-4 text-sm text-gray-400">
-          <h4>Dodatne specifikacije (klikom aktiviraj)</h4>
-          ${p.specs.filter(s=>!s.active).map((s,i)=>`
-            <div class="flex gap-2 items-center opacity-50 cursor-pointer activate-spec" data-index="${i}">
-              <span>${s.label}</span>
-            </div>
-          `).join('')}
-        </div>
-
-        <button type="button" id="addSpecBtn" class="mt-2 bg-green-500 text-white px-3 py-1 rounded">+ Dodaj specifikaciju</button>
       </div>
     </div>
 
     <div class="col-span-1 space-y-6">
-      <!-- Slike, cena i tagovi ostaje isto -->
       <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
         <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2">Slike</h3>
         <div class="mb-2 text-sm text-slate-600 dark:text-slate-400" id="imageCount">Trenutni broj slika: ${p.images.length}</div>
@@ -160,51 +140,21 @@ function renderProductDetails(index) {
   </div>
   `;
 
-  const activeSpecsContainer = document.getElementById('activeSpecs');
-  const inactiveSpecsContainer = document.getElementById('inactiveSpecs');
+  const specsContainer = document.getElementById('specsContainer');
 
-  // --- UPDATE aktivnih specova ---
-  activeSpecsContainer.addEventListener('input', debounce(()=>{
+  // --- UPDATE vrednosti specova ---
+  specsContainer.addEventListener('input', debounce(()=>{
     if(currentIndex===null) return;
-    const newSpecs = Array.from(activeSpecsContainer.querySelectorAll('div')).map(div=>{
-      const label = div.querySelector('.spec-label').value.trim();
+    const specValues = Array.from(specsContainer.querySelectorAll('div')).reduce((acc, div)=>{
+      const label = div.querySelector('.spec-label').textContent;
       const value = div.querySelector('.spec-value').value.trim();
-      return {label,value,active:true};
-    });
-    const inactiveSpecs = products[currentIndex].specs.filter(s=>!s.active);
-    products[currentIndex].specs = [...newSpecs, ...inactiveSpecs];
+      acc[label] = value;
+      return acc;
+    }, {});
+    products[currentIndex].specs = {...products[currentIndex].specs, ...specValues};
   },300));
 
-  // --- Deaktiviraj spec ---
-  activeSpecsContainer.addEventListener('click', e=>{
-    if(e.target.classList.contains('deactivate-spec')){
-      const div = e.target.closest('div');
-      const index = Array.from(activeSpecsContainer.children).indexOf(div);
-      const spec = products[currentIndex].specs.filter(s=>s.active)[index];
-      const globalIndex = products[currentIndex].specs.indexOf(spec);
-      products[currentIndex].specs[globalIndex].active = false;
-      renderProductDetails(currentIndex);
-    }
-  });
-
-  // --- Aktiviraj spec ---
-  inactiveSpecsContainer.addEventListener('click', e=>{
-    const div = e.target.closest('.activate-spec');
-    if(!div) return;
-    const idx = parseInt(div.dataset.index);
-    const spec = products[currentIndex].specs.filter(s=>!s.active)[idx];
-    const globalIndex = products[currentIndex].specs.indexOf(spec);
-    products[currentIndex].specs[globalIndex].active = true;
-    renderProductDetails(currentIndex);
-  });
-
-  // Dodavanje nove specifikacije
-  document.getElementById('addSpecBtn').addEventListener('click', ()=>{
-    products[currentIndex].specs.push({label:'', value:'', active:true});
-    renderProductDetails(currentIndex);
-  });
-
-  // --- SLIKA ---
+  // --- SLIKE ---
   function updateImageCount() {
     const countEl = document.getElementById('imageCount');
     if(countEl) countEl.textContent = `Trenutni broj slika: ${products[currentIndex].images.length}`;
@@ -286,7 +236,7 @@ async function saveProduct(index){
   const title = document.getElementById('title').value.trim();
   const shortDesc = document.getElementById('shortDesc').value.trim();
   const description = document.getElementById('description').value.trim();
-  const specs = products[index].specs.filter(s=>s.active) || [];
+  const specs = products[index].specs || {};
   const price = document.getElementById('price').value.trim() || 'Cena na upit';
   const tag = document.getElementById('tagContainer').querySelector('.active')?.dataset.tag || '';
   const images = products[index].images || [];
@@ -339,7 +289,7 @@ async function deleteProduct(index){
 
 // --- ADD NOVI ---
 addBtn.addEventListener('click', ()=>{
-  const newProd = {title:'', shortDesc:'', description:'', specs:[], price:'', tag:'Novo', images:[]};
+  const newProd = {title:'', shortDesc:'', description:'', specs:{}, price:'', tag:'Novo', images:[]};
   products.push(newProd);
   currentIndex=products.length-1;
   renderSidebar();
