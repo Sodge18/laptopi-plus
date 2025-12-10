@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detalji proizvoda - Laptopi Plus</title>
+
+<link href="https://cdn.tailwindcss.com?plugins=forms" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+<!-- WRAPPER -->
+<div class="max-w-6xl mx-auto py-10 px-4">
+
+    <!-- BACK -->
+    <a href="index.html"
+       class="inline-block mb-6 text-primary font-semibold hover:underline">
+       ← Nazad
+    </a>
+
+    <!-- PRODUCT HEADER -->
+    <h1 id="p-title" class="text-4xl font-bold mb-3"></h1>
+    <p id="p-price" class="text-2xl font-semibold text-primary mb-8"></p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+        <!-- LEFT: GALLERY -->
+        <div>
+            <div id="gallery-main"
+                 class="w-full h-80 bg-white shadow rounded-xl flex items-center justify-center overflow-hidden">
+            </div>
+
+            <div id="gallery-thumbs"
+                 class="flex gap-3 mt-4 overflow-x-auto">
+            </div>
+        </div>
+
+        <!-- RIGHT: DETAILS -->
+        <div>
+            <h2 class="text-2xl font-semibold mb-4">Opis</h2>
+            <p id="p-desc" class="text-gray-700 leading-relaxed mb-10"></p>
+
+            <h2 class="text-2xl font-semibold mb-4">Specifikacije</h2>
+            <div id="p-specs" class="space-y-2"></div>
+
+            <button id="chooseBtn"
+                class="mt-10 w-full bg-primary text-white py-4 rounded-xl font-bold hover:bg-primary/90 transition">
+                Izaberi ovaj laptop
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script src="product.js"></script>
+</body>
+</html>
