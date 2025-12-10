@@ -33,6 +33,23 @@ button.product-tab.active { background-color:#197fe6; color:white; border-color:
 button.product-tab:hover { background-color:#e0f2ff; }
 input, textarea { border-radius:.75rem; border:1px solid #cbd5e1; background-color:#f8fafc; padding:.5rem; width:100%; color:#1e293b; }
 input:focus, textarea:focus { outline:none; border-color:#197fe6; ring:1px #197fe6; }
+
+/* SPINNER */
+.loader {
+  border-top-color: #197fe6;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  border-left-color: #ccc;
+  animation: spin 1s linear infinite;
+  border-width: 8px;
+  border-style: solid;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.flex-center { display:flex; justify-content:center; align-items:center; height:100%; }
 </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200">
