@@ -42,9 +42,6 @@
             display: none;
         }
 
-        body:has([x-show='searchModalOpen'][style*='display: block;']) {
-            overflow: hidden;
-        }
         .carousel-item {
             scroll-snap-align: start;
         }
@@ -244,13 +241,14 @@ function renderCarousel(products) {
 
     carousel.innerHTML = products.map(p => {
         const img = p.image || p.images?.[0] || "https://via.placeholder.com/600?text=Laptop";
+        const altText = p.title || "Laptop";
 
         return `
         <div class="carousel-item snap-center flex-shrink-0 w-full flex justify-center p-4">
             <div class="group relative flex flex-col w-full max-w-sm">
                 <div onclick='goToProduct("${p.id}")' class="cursor-pointer">
                     <div class="relative w-full aspect-square bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden mb-6">
-                        <img src="${img}" class="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-300" alt="${p.title}">
+                        <img src="${img}" alt="${altText}" class="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-300">
                     </div>
                 </div>
 
@@ -285,21 +283,22 @@ function renderCarousel(products) {
 ============================= */
 function scrollCarousel(dir) {
     const carousel = document.getElementById("carousel");
-    const width = carousel.clientWidth;
-    carousel.scrollBy({ left: dir * width, behavior: "smooth" });
+    const itemWidth = carousel.querySelector(".carousel-item")?.clientWidth || carousel.clientWidth;
+    carousel.scrollBy({ left: dir * itemWidth, behavior: "smooth" });
 }
 
 function scrollToSlide(i) {
     const carousel = document.getElementById("carousel");
-    const width = carousel.clientWidth;
-    carousel.scrollTo({ left: i * width, behavior: "smooth" });
+    const itemWidth = carousel.querySelector(".carousel-item")?.clientWidth || carousel.clientWidth;
+    carousel.scrollTo({ left: i * itemWidth, behavior: "smooth" });
 }
 
 function updateActiveDot() {
     const carousel = document.getElementById("carousel");
     const dots = document.querySelectorAll("#pagination-dots button");
-    const width = carousel.clientWidth;
-    const active = Math.round(carousel.scrollLeft / width);
+    const items = carousel.querySelectorAll(".carousel-item");
+    const itemWidth = items[0]?.clientWidth || carousel.clientWidth;
+    const active = Math.round(carousel.scrollLeft / itemWidth);
 
     dots.forEach((d, i) => {
         const isActive = i === active;
@@ -324,13 +323,14 @@ function renderGrid(products) {
 
     grid.innerHTML = products.map(p => {
         const img = p.images?.[0] || p.image || "https://via.placeholder.com/600?text=Laptop";
+        const altText = p.title || "Laptop";
         const shortDesc = p.shortDesc || "";
 
         return `
         <div onclick='goToProduct("${p.id}")'
              class="group relative flex flex-col text-center bg-gray-50 dark:bg-gray-800 rounded-2xl overflow-hidden p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 cursor-pointer">
             <div class="relative w-full h-48 mb-4">
-                <img src="${img}" alt="${p.title}"
+                <img src="${img}" alt="${altText}"
                      class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
             </div>
 
@@ -353,11 +353,12 @@ function populateLaptopDropdown(products) {
 
     products.forEach(p => {
         const option = document.createElement("option");
-        option.value = p.title;
+        option.value = p.id;       // ← ID umesto title
         option.textContent = p.title;
         laptopSelect.appendChild(option);
     });
 }
+
 
 /* =============================
    VALIDACIJA I SUBMIT FORME
@@ -403,12 +404,12 @@ form.addEventListener("submit", async e => {
         prezime: form["prezime"].value.trim(),
         kontakt: form["kontakt-broj"].value.trim(),
         email: form["email"].value.trim(),
-        laptop: laptopSelectEl.value,
+        laptopId: laptopSelectEl.value, // ID laptopa
         poruka: form["poruka"].value.trim()
     };
 
     try {
-        const res = await fetch("https://formsubmit.co/ajax/YOUR_EMAIL_HERE", {
+        const res = await fetch("https://formsubmit.co/ajax/sergej.kaldesic@gmail.com", {
             method: "POST",
             headers: { "Content-Type": "application/json", Accept: "application/json" },
             body: JSON.stringify(data),
