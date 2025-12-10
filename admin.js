@@ -79,8 +79,18 @@ function renderProductDetails(index) {
 
       <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
         <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Specifikacije</h3>
-        <textarea id="specs" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white h-20">${p.specs.map(s=>`${s.label}:${s.value}`).join('\n')}</textarea>
+        <div id="specsContainer" class="space-y-2">
+          ${p.specs.map((s,i)=>`
+            <div class="flex gap-2">
+              <input type="text" placeholder="Naziv specifikacije" class="spec-label flex-1 rounded-lg border p-1" value="${s.label}"/>
+              <input type="text" placeholder="Vrednost" class="spec-value flex-1 rounded-lg border p-1" value="${s.value}"/>
+              <button type="button" class="remove-spec bg-red-500 text-white px-2 rounded">×</button>
+            </div>
+          `).join('')}
+        </div>
+        <button type="button" id="addSpecBtn" class="mt-2 bg-green-500 text-white px-3 py-1 rounded">+ Dodaj specifikaciju</button>
       </div>
+
     </div>
 
     <!-- Desna strana: Slike, Cena i Tagovi -->
@@ -131,6 +141,40 @@ function renderProductDetails(index) {
   `;
 
   const imageContainer = document.getElementById('imageContainer');
+  const specsContainer = document.getElementById('specsContainer');
+  
+  // SPECIFIKACIJE ///////////////////////////////////////////////////////////////
+  
+  // UPDATE proizvoda kada se menja polje
+  specsContainer.addEventListener('input', debounce(()=>{
+    if(currentIndex===null) return;
+    const newSpecs = Array.from(specsContainer.querySelectorAll('div')).map(div=>{
+      const label = div.querySelector('.spec-label').value.trim();
+      const value = div.querySelector('.spec-value').value.trim();
+      return {label,value};
+    }).filter(s=>s.label || s.value);
+    products[currentIndex].specs = newSpecs;
+  }, 300));
+  
+  // DODAJ novu specifikaciju
+  document.getElementById('addSpecBtn').addEventListener('click', ()=>{
+    products[currentIndex].specs.push({label:'', value:''});
+    renderProductDetails(currentIndex);
+  });
+  
+  // UKLONI specifikaciju
+  specsContainer.addEventListener('click', e=>{
+    if(e.target.classList.contains('remove-spec')){
+      const div = e.target.closest('div');
+      const idx = Array.from(specsContainer.children).indexOf(div);
+      if(idx>-1){
+        products[currentIndex].specs.splice(idx,1);
+        renderProductDetails(currentIndex);
+      }
+    }
+  });
+
+  // FOTOGRAFIJE ////////////////////////////////////////////////////////////////////////////////////
 
   function updateImageCount() {
     const countEl = document.getElementById('imageCount');
@@ -175,7 +219,7 @@ function renderProductDetails(index) {
   });
 
   // --- INPUTS ---
-  ['title','shortDesc','description','specs','price'].forEach(id=>{
+  ['title','shortDesc','description','price'].forEach(id=>{
     document.getElementById(id).addEventListener('input', debounce(()=>{
       if(currentIndex===null) return;
       const val = document.getElementById(id).value.trim();
@@ -183,12 +227,6 @@ function renderProductDetails(index) {
         case 'title': products[currentIndex].title=val; break;
         case 'shortDesc': products[currentIndex].shortDesc=val; break;
         case 'description': products[currentIndex].description=val; break;
-        case 'specs':
-          products[currentIndex].specs = val.split('\n').map(line=>{
-            const [label,...rest]=line.split(':');
-            return {label:label?.trim()||'', value:rest.join(':').trim()||''};
-          });
-          break;
         case 'price': products[currentIndex].price=val||'Cena na upit'; break;
       }
     },300));
@@ -222,10 +260,7 @@ async function saveProduct(index){
   const title = document.getElementById('title').value.trim();
   const shortDesc = document.getElementById('shortDesc').value.trim();
   const description = document.getElementById('description').value.trim();
-  const specs = document.getElementById('specs').value.trim().split('\n').map(line=>{
-    const [label,...rest]=line.split(':');
-    return {label:label?.trim()||'', value:rest.join(':').trim()||''};
-  });
+  const specs = products[index].specs || [];
   const price = document.getElementById('price').value.trim() || 'Cena na upit';
   const tag = document.getElementById('tagContainer').querySelector('.active')?.dataset.tag || '';
   const images = products[index].images || [];
