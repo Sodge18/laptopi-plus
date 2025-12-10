@@ -1,102 +1,102 @@
 <!DOCTYPE html>
-<html lang="sr" class="scroll-smooth">
+<html lang="sr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="pageTitle">Laptopi Plus</title>
 
-  <!-- Tailwind + Font + Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  
+
   <script>
     tailwind.config = {
-      darkMode: "class",
       theme: {
         extend: {
-          fontFamily: { sans: ['Poppins', 'sans-serif'] },
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
           colors: {
             primary: "#333333",
-            "primary-light": "#555555",
-            "background-light": "#ffffff",
-            "background-dark": "#1f2937",
-          },
-          borderRadius: { DEFAULT: "0.75rem", xl: "1.25rem", "2xl": "1.5rem" },
-          boxShadow: { 'card': '0 10px 30px -5px rgba(0,0,0,0.1)' }
+          }
         }
       }
     }
   </script>
 
   <style>
-    .thumbnail { transition: all 0.3s ease; border: 3px solid transparent; }
-    .thumbnail.active { border-color: #333333; transform: scale(1.05); }
-    .img-zoom { transition: transform 0.5s ease; }
-    .img-zoom:hover { transform: scale(1.03); }
-    .spec-item { transition: background 0.3s ease; }
-    .spec-item:hover { background: #f8f8f8; }
-    @media (prefers-color-scheme: dark) {
-      .spec-item:hover { background: #2d3748; }
+    .thumbnail {
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      opacity: 0.7;
+    }
+    .thumbnail:hover, .thumbnail.active {
+      border-color: #333333;
+      opacity: 1;
+      transform: scale(1.05;
+    }
+    .main-image {
+      transition: transform 0.5s ease;
+    }
+    .main-image:hover {
+      transform: scale(1.02);
     }
   </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200">
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen">
 
 <!-- HEADER -->
-<header class="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md">
-  <div class="container mx-auto px-6 py-5 flex items-center justify-between">
-    <a href="index.html" class="flex items-center gap-3 text-primary font-bold text-xl hover:text-primary-light transition">
+<header class="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+  <div class="container mx-auto px-6 py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3 text-primary font-bold hover:opacity-80 transition">
       <span class="material-icons text-3xl">arrow_back</span>
       Nazad na prodavnicu
     </a>
-    <div class="text-2xl font-bold text-primary">Laptopi Plus</div>
+    <h1 class="text-2xl font-bold">Laptopi Plus</h1>
   </div>
 </header>
 
 <main class="container mx-auto px-6 py-12 max-w-7xl">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
 
     <!-- LEVO: GALERIJA -->
     <div class="space-y-6">
-      <!-- Glavna slika -->
-      <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-card overflow-hidden img-zoom">
-        <img id="mainImage" src="" alt="Glavna slika" class="w-full h-96 lg:h-full object-contain p-8">
-        <div id="tagBadge" class="absolute top-6 right-6 bg-primary text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg">
-          NOVO
-        </div>
+      <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg main-image">
+        <img id="mainImage" src="" alt="Laptop" class="w-full h-full object-contain p-8 lg:p-12">
       </div>
 
-      <!-- Thumbnailovi -->
-      <div id="thumbnails" class="flex gap-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-400">
-        <!-- JS generiše -->
+      <div id="thumbnails" class="grid grid-cols-4 gap-4">
+        <!-- JS popunjava -->
       </div>
     </div>
 
-    <!-- DESNO: DETALJI -->
-    <div class="space-y-10">
-      <!-- Naslov + cena -->
+    <!-- DESNO: SADRŽAJ -->
+    <div class="space-y-12">
       <div>
-        <h1 id="title" class="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-4 leading-tight"></h1>
-        <div class="text-5xl font-black text-primary mb-2" id="price"></div>
+        <h1 id="title" class="text-5xl lg:text-6xl font-black text-gray-900 dark:text-white mb-4"></h1>
+        <p id="shortDesc" class="text-xl text-gray-600 dark:text-gray-400 mb-8"></p>
+        
+        <div class="text-5xl font-black text-primary mb-12" id="price"></div>
+
+        <button id="chooseBtn" 
+                class="w-full bg-primary text-white font-bold text-xl py-5 rounded-xl hover:bg-gray-800 transition shadow-lg">
+          IZABERI OVAJ LAPTOP I POŠALJI UPIT
+        </button>
       </div>
 
-      <!-- Opis -->
-      <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 shadow-card">
-        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Opis proizvoda</h2>
-        <p id="description" class="text-lg leading-relaxed text-gray-700 dark:text-gray-300"></p>
+      <!-- DETALJAN OPIS -->
+      <div>
+        <h2 class="text-3xl font-bold mb-8 border-b-2 border-gray-300 dark:border-gray-700 pb-4">
+          Detaljan opis
+        </h2>
+        <div id="description" class="prose prose-lg text-gray-700 dark:text-gray-300 leading-relaxed"></div>
       </div>
 
-      <!-- Specifikacije -->
-      <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 shadow-card">
-        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Tehničke specifikacije</h2>
-        <div id="specs" class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-lg"></div>
+      <!-- SPECIFIKACIJE -->
+      <div>
+        <h2 class="text-3xl font-bold mb-8 border-b-2 border-gray-300 dark:border-gray-700 pb-4">
+          Tehničke specifikacije
+        </h2>
+        <div id="specs" class="space-y-4"></div>
       </div>
-
-      <!-- CTA dugme -->
-      <button id="chooseBtn" class="w-full bg-primary hover:bg-primary-light text-white font-black text-2xl py-6 rounded-2xl shadow-card transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1">
-        IZABERI OVAJ LAPTOP I POŠALJI UPIT
-      </button>
     </div>
   </div>
 </main>
@@ -107,9 +107,9 @@ const API_URL = "https://products-api.sergej-kaldesic.workers.dev/";
 async function loadProduct() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("selected");
-  
+
   if (!id) {
-    document.body.innerHTML = `<div class="text-center py-32"><h1 class="text-4xl font-bold text-red-600">Proizvod nije pronađen</h1><a href="index.html" class="text-primary text-xl underline mt-6 inline-block">← Nazad</a></div>`;
+    document.body.innerHTML = `<div class="text-center py-32 text-4xl font-bold text-red-600">Proizvod nije pronađen</div>`;
     return;
   }
 
@@ -119,36 +119,44 @@ async function loadProduct() {
     const products = data.products || data;
     const product = products.find(p => p.id === id);
 
-    if (!product) throw new Error("Laptop nije pronađen");
+    if (!product) throw new Error("Not found");
 
     // SEO + naslov
     document.getElementById("pageTitle").textContent = `${product.title} - Laptopi Plus`;
     document.getElementById("title").textContent = product.title;
+    document.getElementById("shortDesc").textContent = product.shortDesc || "";
     document.getElementById("price").textContent = product.price ? `${product.price}€` : "Cena na upit";
-    document.getElementById("description").textContent = product.description || product.shortDesc || "Nema detaljnog opisa.";
-    document.getElementById("tagBadge").textContent = product.tag || "Premium";
+    document.getElementById("description").innerHTML = product.description || "Nema detaljnog opisa.";
 
     // Galerija
-    const images = product.images && product.images.length > 0 ? product.images : ["https://via.placeholder.com/800?text=Laptop"];
-    document.getElementById("mainImage").src = images[0];
+    const images = product.images?.length ? product.images : ["https://via.placeholder.com/1000?text=Laptop"];
+    const mainImg = document.getElementById("mainImage");
+    mainImg.src = images[0];
 
-    const thumbsContainer = document.getElementById("thumbnails");
-    thumbsContainer.innerHTML = images.map((src, i) => `
-      <img src="${src}" alt="Slika ${i+1}" class="w-28 h-28 object-cover rounded-xl cursor-pointer thumbnail shadow-md ${i===0?'active':''}"
-           onclick="document.getElementById('mainImage').src='${src}'; document.querySelectorAll('.thumbnail').forEach(t=>t.classList.remove('active')); this.classList.add('active')">
+    const thumbs = document.getElementById("thumbnails");
+    thumbs.innerHTML = images.map((src, i) => `
+      <img src="${src}" alt="Slika ${i+1}" 
+           class="rounded-xl cursor-pointer thumbnail shadow-md ${i===0?'active':''}"
+           onclick="document.getElementById('mainImage').src='${src}'; 
+                    document.querySelectorAll('.thumbnail').forEach(t=>t.classList.remove('active')); 
+                    this.classList.add('active')">
     `).join("");
 
-    // Specifikacije
-    const specsContainer = document.getElementById("specs");
-    const specKeys = ['CPU','RAM','GPU','Memorija','Ekran','Baterija','OS','Težina','Dimenzije','Portovi','Bežične konekcije','Kamera','Audio'];
-    specsContainer.innerHTML = specKeys.map(key => {
-      if (!product.specs?.[key]) return '';
-      return `
-        <div class="spec-item p-5 rounded-xl bg-white dark:bg-gray-700 shadow-sm">
-          <div class="font-medium text-gray-600 dark:text-gray-400">${key}</div>
-          <div class="font-bold text-xl text-gray-900 dark:text-white mt-1">${product.specs[key]}</div>
-        </div>`;
-    }).join("");
+    // Specifikacije – čiste linije kao na slici
+    const specsDiv = document.getElementById("specs");
+    const keys = ['CPU','RAM','GPU','Memorija','Ekran','Baterija','OS','Težina','Dimenzije','Portovi','Bežične konekcije','Kamera','Audio'];
+    
+    keys.forEach(key => {
+      if (product.specs?.[key]) {
+        const div = document.createElement("div");
+        div.className = "flex justify-between items-center py-5 border-b border-gray-200 dark:border-gray-700 last:border-0";
+        div.innerHTML = `
+          <span class="text-lg font-medium text-gray-600 dark:text-gray-400">${key}</span>
+          <span class="text-lg font-bold text-gray-900 dark:text-white">${product.specs[key]}</span>
+        `;
+        specsDiv.appendChild(div);
+      }
+    });
 
     // Dugme
     document.getElementById("chooseBtn").onclick = () => {
@@ -157,7 +165,7 @@ async function loadProduct() {
 
   } catch (err) {
     console.error(err);
-    document.body.innerHTML = `<div class="text-center py-32"><h1 class="text-4xl font-bold text-red-600">Greška pri učitavanju</h1><a href="index.html" class="text-primary text-xl underline mt-6 inline-block">← Nazad</a></div>`;
+    document.body.innerHTML = `<div class="text-center py-32 text-4xl font-bold text-red-600">Greška pri učitavanju</div>`;
   }
 }
 
