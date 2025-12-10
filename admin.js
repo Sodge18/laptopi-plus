@@ -31,7 +31,7 @@ async function fetchProducts() {
 
 // --- SIDEBAR ---
 function renderSidebar() {
-  sidebar.querySelectorAll('button.product-tab').forEach(b => b.remove());
+  sidebar.innerHTML = '';
   products.forEach((p, i) => {
     const btn = document.createElement('button');
     btn.textContent = p.title || 'Bez naziva';
@@ -39,107 +39,132 @@ function renderSidebar() {
     if(i === currentIndex) btn.classList.add('active');
     btn.addEventListener('click', () => {
       currentIndex = i;
-      updateActiveSidebarButton();
+      renderSidebar();
       renderProductDetails(currentIndex);
     });
     sidebar.appendChild(btn);
   });
 }
 
-// --- UPDATE ACTIVE BUTTON ---
-function updateActiveSidebarButton() {
-  sidebar.querySelectorAll('button.product-tab').forEach(btn => btn.classList.remove('active'));
-  if(currentIndex !== null){
-    const btns = sidebar.querySelectorAll('button.product-tab');
-    if(btns[currentIndex]) btns[currentIndex].classList.add('active');
-  }
-}
-
 // --- RENDER DETALJA ---
 function renderProductDetails(index) {
   const p = products[index];
   content.innerHTML = `
-      <div class="col-span-2 space-y-6">
+  <div class="grid grid-cols-3 gap-6">
+    <!-- Lijeva strana: Detalji i Specifikacije -->
+    <div class="col-span-2 space-y-6">
       <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-8 py-4 bg-white dark:bg-slate-900 sticky top-0 z-10">
         <h2 id="productHeader" class="text-slate-900 dark:text-white text-lg font-bold">
-          Detalji proizvoda
+          Detalji proizvoda: ${p.title || ''}
         </h2>
       </header>
-      </div
-      <!-- Lijeva strana: Detalji i Specifikacije -->
-      <div class="col-span-2 space-y-6">
-        <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Product Details</h3>
-          <div class="space-y-4">
-            <div>
-              <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="title">Naziv proizvoda</label>
-              <input id="title" type="text" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white" value="${p.title||''}"/>
-            </div>
-            <div>
-              <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="shortDesc">Kratak opis</label>
-              <input id="shortDesc" type="text" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white" value="${p.shortDesc||''}"/>
-            </div>
-            <div>
-              <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="description">Detaljan opis</label>
-              <textarea id="description" rows="5" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white">${p.description||''}</textarea>
-            </div>
+
+      <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+        <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Product Details</h3>
+        <div class="space-y-4">
+          <div>
+            <label for="title" class="text-sm font-medium text-slate-700 dark:text-slate-300">Naziv proizvoda</label>
+            <input id="title" type="text" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white" value="${p.title||''}"/>
           </div>
-        </div>
-        <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Specifikacije</h3>
-          <textarea id="specs" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white h-20">${p.specs.map(s=>`${s.label}:${s.value}`).join('\n')}</textarea>
+          <div>
+            <label for="shortDesc" class="text-sm font-medium text-slate-700 dark:text-slate-300">Kratak opis</label>
+            <input id="shortDesc" type="text" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white" value="${p.shortDesc||''}"/>
+          </div>
+          <div>
+            <label for="description" class="text-sm font-medium text-slate-700 dark:text-slate-300">Detaljan opis</label>
+            <textarea id="description" rows="5" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white">${p.description||''}</textarea>
+          </div>
         </div>
       </div>
 
-      <!-- Desna strana: Slike, Cena i Tagovi -->
-      <div class="col-span-1 space-y-6">
-        // --- Slike ---
-        <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Slike</h3>
-          <div class="grid grid-cols-2 gap-4" id="imageContainer">
-            ${(p.images||[]).map((src, i)=>`
-              <div class="relative group">
-                <img src="${src}" class="aspect-square w-full rounded-lg object-cover">
-                <button class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs" data-index="${i}" title="Obriši sliku">×</button>
-              </div>
-            `).join('')}
-            <div class="flex aspect-square w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary hover:text-primary transition-colors text-slate-500 dark:text-slate-400" id="uploadImage">
-              <div class="text-center">
-                <span class="material-symbols-outlined text-4xl">upload</span>
-                <p class="mt-1 text-sm">Upload Image</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Cena -->
-        <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Cena €</h3>
-          <input id="price" type="text" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white" value="${p.price==='Cena na upit'?'':p.price}" placeholder="0.00"/>
-        </div>
-
-        <!-- Tagovi -->
-        <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Tagovi</h3>
-          <div id="tagContainer" class="flex flex-wrap gap-2">
-            ${TAGS.map(tag => `<button type="button" data-tag="${tag}" class="tag-btn px-3 py-1 rounded-lg ${tag===p.tag?'active':''}">${tag}</button>`).join('')}
-          </div>
-        </div>
-
-        <!-- Save i Delete -->
-        <div class="flex gap-2">
-          <button id="saveBtn" class="bg-indigo-500 text-white px-4 py-2 rounded-lg flex-1">Sačuvaj</button>
-          <button id="deleteBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg flex-1">Obriši</button>
-        </div>
-        <span class="save-confirm" id="saveConfirm">Sačuvano!</span>
+      <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+        <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Specifikacije</h3>
+        <textarea id="specs" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white h-20">${p.specs.map(s=>`${s.label}:${s.value}`).join('\n')}</textarea>
       </div>
     </div>
+
+    <!-- Desna strana: Slike, Cena i Tagovi -->
+    <div class="col-span-1 space-y-6">
+      <!-- Slike -->
+      <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+        <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Slike</h3>
+        <div class="grid grid-cols-2 gap-4" id="imageContainer">
+          ${(p.images||[]).map((src,i)=>`
+            <div class="relative group">
+              <img src="${src}" class="aspect-square w-full rounded-lg object-cover">
+              <button class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs" data-index="${i}" title="Obriši sliku">×</button>
+            </div>
+          `).join('')}
+          <div class="flex aspect-square w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary hover:text-primary transition-colors text-slate-500 dark:text-slate-400" id="imageUpload">
+            <div class="text-center">
+              <span class="material-symbols-outlined text-4xl">upload</span>
+              <p class="mt-1 text-sm">Upload Image</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cena -->
+      <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+        <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Cena €</h3>
+        <input id="price" type="text" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white" value="${p.price==='Cena na upit'?'':p.price}" placeholder="0.00"/>
+      </div>
+
+      <!-- Tagovi -->
+      <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+        <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Tagovi</h3>
+        <div id="tagContainer" class="flex flex-wrap gap-2">
+          ${TAGS.map(tag => `<button type="button" data-tag="${tag}" class="tag-btn px-3 py-1 rounded-lg ${tag===p.tag?'active':''}">${tag}</button>`).join('')}
+        </div>
+      </div>
+
+      <!-- Save i Delete -->
+      <div class="flex gap-2">
+        <button id="saveBtn" class="bg-indigo-500 text-white px-4 py-2 rounded-lg flex-1">Sačuvaj</button>
+        <button id="deleteBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg flex-1">Obriši</button>
+      </div>
+      <span class="save-confirm" id="saveConfirm">Sačuvano!</span>
+    </div>
+  </div>
   `;
 
-  // Update header sa nazivom laptopa
-  const headerEl = document.getElementById('productHeader');
-  headerEl.textContent = `Detalji proizvoda: ${p.title || ''}`;
-  
+  const imageContainer = document.getElementById('imageContainer');
+
+  // --- DELETE IMAGE ---
+  imageContainer.addEventListener('click', e=>{
+    const btn = e.target.closest('button[data-index]');
+    if(!btn) return;
+    const idx = parseInt(btn.dataset.index);
+    if(isNaN(idx)) return;
+    products[currentIndex].images.splice(idx,1);
+    renderProductDetails(currentIndex);
+  });
+
+  // --- IMAGE UPLOAD ---
+  document.getElementById('imageUpload').addEventListener('click', ()=>{
+    const fileInput = document.createElement('input');
+    fileInput.type='file';
+    fileInput.accept='image/*';
+    fileInput.multiple=true;
+    fileInput.click();
+    fileInput.addEventListener('change', e=>{
+      const files = [...e.target.files];
+      if(files.length + (products[currentIndex].images?.length||0) > 30){ 
+        Swal.fire({icon:'error', text:'Maksimalno 30 slika!'}); 
+        return; 
+      }
+      files.forEach(file=>{
+        const reader = new FileReader();
+        reader.onload = ev=>{
+          if(!products[currentIndex].images) products[currentIndex].images=[];
+          products[currentIndex].images.push(ev.target.result);
+          renderProductDetails(currentIndex);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  });
+
   // --- INPUTS ---
   ['title','shortDesc','description','specs','price'].forEach(id=>{
     document.getElementById(id).addEventListener('input', debounce(()=>{
@@ -177,34 +202,8 @@ function renderProductDetails(index) {
     products[currentIndex].tag = btn.dataset.tag;
   });
 
-  // --- IMAGE UPLOAD ---
-  const imgInput = document.getElementById('imageUpload');
-  const imgContainer = document.getElementById('imagePreviewContainer');
-  imgInput.addEventListener('change', e=>{
-    const files = [...e.target.files];
-    if(files.length + (products[currentIndex].images?.length||0) > 30){ 
-      Swal.fire({icon:'error', text:'Maksimalno 30 slika!'}); 
-      return; 
-    }
-    files.forEach(file=>{
-      const reader = new FileReader();
-      reader.onload = ev=>{
-        const img = document.createElement('img');
-        img.src = ev.target.result;
-        img.className='product-image-preview';
-        imgContainer.appendChild(img);
-        if(!products[currentIndex].images) products[currentIndex].images=[];
-        products[currentIndex].images.push(ev.target.result);
-      };
-      reader.readAsDataURL(file);
-    });
-    e.target.value='';
-  });
-
-  // --- SAVE ---
+  // --- SAVE & DELETE ---
   document.getElementById('saveBtn').addEventListener('click', ()=>saveProduct(currentIndex));
-
-  // --- DELETE ---
   document.getElementById('deleteBtn').addEventListener('click', ()=>deleteProduct(currentIndex));
 }
 
@@ -222,7 +221,7 @@ async function saveProduct(index){
   const tag = document.getElementById('tagContainer').querySelector('.active')?.dataset.tag || '';
   const images = products[index].images || [];
 
-  if(!title||!shortDesc||!description||!specs||!tag||images.length===0){
+  if(!title||!shortDesc||!description||!tag||images.length===0){
     Swal.fire({icon:'error', text:'Popunite sva polja!'}); return;
   }
 
