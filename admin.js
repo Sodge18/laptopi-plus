@@ -49,9 +49,28 @@ function renderSidebar() {
 // --- RENDER DETALJA ---
 function renderProductDetails(index) {
   const p = products[index];
+
+  // Inicijalizuj default specs ako prazno
+  if(!p.specs || !p.specs.length){
+    p.specs = [
+      {label:'CPU', value:'', active:true},
+      {label:'RAM', value:'', active:true},
+      {label:'GPU', value:'', active:true},
+      {label:'Memorija', value:'', active:true},
+      {label:'Ekran', value:'', active:true},
+      {label:'Baterija', value:'', active:true},
+      {label:'OS', value:'', active:true},
+      {label:'Težina', value:'', active:false},
+      {label:'Dimenzije', value:'', active:false},
+      {label:'Portovi', value:'', active:false},
+      {label:'Bežične konekcije', value:'', active:false},
+      {label:'Kamera', value:'', active:false},
+      {label:'Audio', value:'', active:false},
+    ];
+  }
+
   content.innerHTML = `
   <div class="grid grid-cols-3 gap-6">
-    <!-- Lijeva strana: Detalji i Specifikacije -->
     <div class="col-span-2 space-y-6">
       <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-8 py-4 bg-white dark:bg-slate-900 sticky top-0 z-10">
         <h2 id="productHeader" class="text-slate-900 dark:text-white text-lg font-bold">
@@ -79,28 +98,34 @@ function renderProductDetails(index) {
 
       <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
         <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Specifikacije</h3>
-        <div id="specsContainer" class="space-y-2">
-          ${p.specs.map((s,i)=>`
-            <div class="flex gap-2">
-              <input type="text" placeholder="Naziv specifikacije" class="spec-label flex-1 rounded-lg border p-1" value="${s.label}"/>
-              <input type="text" placeholder="Vrednost" class="spec-value flex-1 rounded-lg border p-1" value="${s.value}"/>
-              <button type="button" class="remove-spec bg-red-500 text-white px-2 rounded">×</button>
+        <div id="activeSpecs" class="space-y-2">
+          ${p.specs.filter(s=>s.active).map((s,i)=>`
+            <div class="flex gap-2 items-center">
+              <input type="text" class="spec-label flex-1 rounded-lg border p-1" value="${s.label}"/>
+              <input type="text" class="spec-value flex-1 rounded-lg border p-1" value="${s.value}"/>
+              <button class="deactivate-spec bg-gray-400 text-white px-2 rounded">×</button>
             </div>
           `).join('')}
         </div>
+
+        <div id="inactiveSpecs" class="mt-4 text-sm text-gray-400">
+          <h4>Dodatne specifikacije (klikom aktiviraj)</h4>
+          ${p.specs.filter(s=>!s.active).map((s,i)=>`
+            <div class="flex gap-2 items-center opacity-50 cursor-pointer activate-spec" data-index="${i}">
+              <span>${s.label}</span>
+            </div>
+          `).join('')}
+        </div>
+
         <button type="button" id="addSpecBtn" class="mt-2 bg-green-500 text-white px-3 py-1 rounded">+ Dodaj specifikaciju</button>
       </div>
-
     </div>
 
-    <!-- Desna strana: Slike, Cena i Tagovi -->
     <div class="col-span-1 space-y-6">
-      <!-- Slike -->
+      <!-- Slike, cena i tagovi ostaje isto -->
       <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
         <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2">Slike</h3>
         <div class="mb-2 text-sm text-slate-600 dark:text-slate-400" id="imageCount">Trenutni broj slika: ${p.images.length}</div>
-        
-        <!-- Carousel preview -->
         <div id="imageCarousel" class="flex gap-2 overflow-x-auto pb-2">
           ${(p.images||[]).map((src,i)=>`
             <div class="relative flex-shrink-0 w-32 h-32 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
@@ -109,20 +134,16 @@ function renderProductDetails(index) {
             </div>
           `).join('')}
         </div>
-      
-        <!-- Upload button ispod carousel -->
         <div>
           <button id="imageUpload" class="w-full py-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary hover:text-primary text-slate-500 dark:text-slate-400">+ Nova fotografija</button>
         </div>
       </div>
 
-      <!-- Cena -->
       <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
         <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Cena €</h3>
         <input id="price" type="text" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white" value="${p.price==='Cena na upit'?'':p.price}" placeholder="0.00"/>
       </div>
 
-      <!-- Tagovi -->
       <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
         <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Tagovi</h3>
         <div id="tagContainer" class="flex flex-wrap gap-2">
@@ -130,7 +151,6 @@ function renderProductDetails(index) {
         </div>
       </div>
 
-      <!-- Save i Delete -->
       <div class="flex gap-2">
         <button id="saveBtn" class="bg-indigo-500 text-white px-4 py-2 rounded-lg flex-1">Sačuvaj</button>
         <button id="deleteBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg flex-1">Obriši</button>
@@ -140,59 +160,66 @@ function renderProductDetails(index) {
   </div>
   `;
 
-  const imageContainer = document.getElementById('imageContainer');
-  const specsContainer = document.getElementById('specsContainer');
-  
-  // SPECIFIKACIJE ///////////////////////////////////////////////////////////////
-  
-  // UPDATE proizvoda kada se menja polje
-  specsContainer.addEventListener('input', debounce(()=>{
+  const activeSpecsContainer = document.getElementById('activeSpecs');
+  const inactiveSpecsContainer = document.getElementById('inactiveSpecs');
+
+  // --- UPDATE aktivnih specova ---
+  activeSpecsContainer.addEventListener('input', debounce(()=>{
     if(currentIndex===null) return;
-    const newSpecs = Array.from(specsContainer.querySelectorAll('div')).map(div=>{
+    const newSpecs = Array.from(activeSpecsContainer.querySelectorAll('div')).map(div=>{
       const label = div.querySelector('.spec-label').value.trim();
       const value = div.querySelector('.spec-value').value.trim();
-      return {label,value};
-    }).filter(s=>s.label || s.value);
-    products[currentIndex].specs = newSpecs;
-  }, 300));
-  
-  // DODAJ novu specifikaciju
-  document.getElementById('addSpecBtn').addEventListener('click', ()=>{
-    products[currentIndex].specs.push({label:'', value:''});
-    renderProductDetails(currentIndex);
-  });
-  
-  // UKLONI specifikaciju
-  specsContainer.addEventListener('click', e=>{
-    if(e.target.classList.contains('remove-spec')){
+      return {label,value,active:true};
+    });
+    const inactiveSpecs = products[currentIndex].specs.filter(s=>!s.active);
+    products[currentIndex].specs = [...newSpecs, ...inactiveSpecs];
+  },300));
+
+  // --- Deaktiviraj spec ---
+  activeSpecsContainer.addEventListener('click', e=>{
+    if(e.target.classList.contains('deactivate-spec')){
       const div = e.target.closest('div');
-      const idx = Array.from(specsContainer.children).indexOf(div);
-      if(idx>-1){
-        products[currentIndex].specs.splice(idx,1);
-        renderProductDetails(currentIndex);
-      }
+      const index = Array.from(activeSpecsContainer.children).indexOf(div);
+      const spec = products[currentIndex].specs.filter(s=>s.active)[index];
+      const globalIndex = products[currentIndex].specs.indexOf(spec);
+      products[currentIndex].specs[globalIndex].active = false;
+      renderProductDetails(currentIndex);
     }
   });
 
-  // FOTOGRAFIJE ////////////////////////////////////////////////////////////////////////////////////
+  // --- Aktiviraj spec ---
+  inactiveSpecsContainer.addEventListener('click', e=>{
+    const div = e.target.closest('.activate-spec');
+    if(!div) return;
+    const idx = parseInt(div.dataset.index);
+    const spec = products[currentIndex].specs.filter(s=>!s.active)[idx];
+    const globalIndex = products[currentIndex].specs.indexOf(spec);
+    products[currentIndex].specs[globalIndex].active = true;
+    renderProductDetails(currentIndex);
+  });
 
+  // Dodavanje nove specifikacije
+  document.getElementById('addSpecBtn').addEventListener('click', ()=>{
+    products[currentIndex].specs.push({label:'', value:'', active:true});
+    renderProductDetails(currentIndex);
+  });
+
+  // --- SLIKA ---
   function updateImageCount() {
     const countEl = document.getElementById('imageCount');
     if(countEl) countEl.textContent = `Trenutni broj slika: ${products[currentIndex].images.length}`;
   }
-  
-  // DELETE IMAGE
+
   document.getElementById('imageCarousel').addEventListener('click', e=>{
     const btn = e.target.closest('button[data-index]');
     if(!btn) return;
     const idx = parseInt(btn.dataset.index);
     if(isNaN(idx)) return;
     products[currentIndex].images.splice(idx,1);
-    renderProductDetails(currentIndex); // rerender carousel
+    renderProductDetails(currentIndex);
     updateImageCount();
   });
-  
-  // IMAGE UPLOAD
+
   document.getElementById('imageUpload').addEventListener('click', ()=>{
     const fileInput = document.createElement('input');
     fileInput.type='file';
@@ -232,7 +259,6 @@ function renderProductDetails(index) {
     },300));
   });
 
-  // --- PRICE INPUT FILTER ---
   document.getElementById('price').addEventListener('input', e=>{
     let val = e.target.value.replace(/[^0-9.]/g,'');
     const parts = val.split('.');
@@ -260,7 +286,7 @@ async function saveProduct(index){
   const title = document.getElementById('title').value.trim();
   const shortDesc = document.getElementById('shortDesc').value.trim();
   const description = document.getElementById('description').value.trim();
-  const specs = products[index].specs || [];
+  const specs = products[index].specs.filter(s=>s.active) || [];
   const price = document.getElementById('price').value.trim() || 'Cena na upit';
   const tag = document.getElementById('tagContainer').querySelector('.active')?.dataset.tag || '';
   const images = products[index].images || [];
