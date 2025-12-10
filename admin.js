@@ -148,8 +148,10 @@ function renderProductDetails(index) {
   const imgContainer = document.getElementById('imagePreviewContainer');
   imgInput.addEventListener('change', e=>{
     const files = [...e.target.files];
-    if(files.length>30){ Swal.fire({icon:'error', text:'Maksimalno 30 slika!'}); return; }
-    imgContainer.innerHTML=''; products[currentIndex].images=[];
+    if(files.length + (products[currentIndex].images?.length || 0) > 30){ 
+      Swal.fire({icon:'error', text:'Maksimalno 30 slika!'}); 
+      return; 
+    }
     files.forEach(file=>{
       const reader = new FileReader();
       reader.onload = ev=>{
@@ -157,10 +159,13 @@ function renderProductDetails(index) {
         img.src = ev.target.result;
         img.className='product-image-preview';
         imgContainer.appendChild(img);
+        if(!products[currentIndex].images) products[currentIndex].images = [];
         products[currentIndex].images.push(ev.target.result);
       };
       reader.readAsDataURL(file);
     });
+    // resetuj input da može ponovo birati iste fajlove ako želiš
+    e.target.value = '';
   });
 
   // Save
