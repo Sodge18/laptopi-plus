@@ -42,12 +42,15 @@
             display: none;
         }
 
-        body:has([x-show='detailModalOpen'][style*='display: block;']),
         body:has([x-show='searchModalOpen'][style*='display: block;']) {
             overflow: hidden;
         }
         .carousel-item {
             scroll-snap-align: start;
+        }
+
+        .invalid-field {
+            border: 2px solid #f87171;
         }
     </style>
 </head>
@@ -114,83 +117,15 @@
     <div id="pagination-dots" class="flex justify-center items-center mt-12 space-x-2"></div>
 </main>
 
-<!-- MODAL ZA DETALJE PROIZVODA -->
-<div id="product-modal"
-     class="fixed inset-0 z-[70] hidden items-start justify-center bg-black bg-opacity-80 p-0 overflow-auto">
-
-    <div class="bg-white dark:bg-gray-800 rounded-none shadow-2xl w-full h-full max-w-[95%] max-h-[95%] m-auto flex flex-col">
-
-        <!-- Header -->
-        <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
-            <h3 id="modal-title"
-                class="text-3xl font-bold text-gray-900 dark:text-white"></h3>
-
-            <button onclick="closeModal()"
-                    class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
-                <span class="material-icons text-3xl">close</span>
-            </button>
-        </div>
-
-        <!-- Body -->
-        <div class="flex-1 overflow-y-auto p-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-
-                <!-- Info -->
-                <div>
-                    <div class="mb-8">
-                        <h4 id="modal-name"
-                            class="text-4xl font-bold text-gray-900 dark:text-white"></h4>
-                        <p id="modal-price"
-                           class="text-3xl font-bold text-primary mt-3"></p>
-                    </div>
-
-                    <div class="mb-10">
-                        <h5 class="font-semibold text-xl mb-4 text-gray-800 dark:text-gray-200">Opis</h5>
-                        <p id="modal-description"
-                           class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg"></p>
-                    </div>
-
-                    <div>
-                        <h5 class="font-semibold text-xl mb-4 text-gray-800 dark:text-gray-200">Specifikacije</h5>
-                        <div id="modal-specs" class="space-y-3"></div>
-                    </div>
-                </div>
-
-                <!-- Galerija -->
-                <div>
-                    <h5 class="font-semibold text-xl mb-4 text-gray-800 dark:text-gray-200">Galerija</h5>
-                    <div id="modal-gallery" class="grid grid-cols-2 gap-6">
-                        <!-- Auto-popunjavanje -->
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="p-6 border-t border-gray-200 dark:border-gray-700 text-right bg-gray-50 dark:bg-gray-900 sticky bottom-0">
-            <button onclick="selectAndCloseModal()"
-                    class="bg-primary text-white font-bold px-10 py-4 rounded-lg hover:bg-opacity-90 transition-all shadow-lg">
-                Izaberi ovaj laptop
-            </button>
-        </div>
-    </div>
-
-</div>
-
-
-<!-- ====================== CONTACT FORM SA PADAJUĆIM MENIJEM ====================== -->
+<!-- CONTACT FORM -->
 <section id="contact-form-section" class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
   <div class="bg-primary text-white rounded-2xl p-8 md:p-12">
     <div class="flex flex-col lg:flex-row gap-8 lg:gap-16">
-     
-      <!-- Lijevo -->
       <div class="lg:w-1/3">
         <h2 class="text-4xl font-bold mb-4">Spremni da kupite laptop?</h2>
         <p class="text-gray-300">Popunite formu i bićemo u kontaktu.</p>
       </div>
 
-      <!-- Forma -->
       <div class="lg:w-2/3">
         <form id="contact-form" novalidate>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -219,7 +154,6 @@
             </div>
           </div>
 
-          <!-- Padajući meni za laptope -->
           <div class="mt-6">
             <label class="block text-sm font-medium text-gray-200 mb-2">Koji laptop želite</label>
             <select id="laptop-select" class="w-full p-3 rounded-lg bg-gray-700 text-white" required>
@@ -228,7 +162,6 @@
             <p class="error-hint text-red-400 text-sm mt-1 hidden">Morate izabrati laptop</p>
           </div>
 
-          <!-- Poruka -->
           <div class="mt-6">
             <label class="block text-sm font-medium text-gray-200 mb-2">Poruka (nije obavezno)</label>
             <textarea id="poruka" rows="4" placeholder="Dodatne želje, pitanja..." class="w-full p-3 rounded-lg bg-gray-700 text-white"></textarea>
@@ -243,8 +176,6 @@
       </div>
     </div>
   </div>
-</section>
-
 </section>
 
 <!-- GRID — SVI PROIZVODI -->
@@ -262,7 +193,6 @@
     </div>
 </section>
 
-
 <!-- FOOTER -->
 <footer class="bg-background-light dark:bg-background-dark">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -272,30 +202,10 @@
     </div>
 </footer>
 
-
-<!-- ============================== -->
-<!--       JAVASCRIPT CORE         -->
-<!-- ============================== -->
-
 <script>
 const API_URL = "https://products-api.sergej-kaldesic.workers.dev/";
-let allProducts = [];  // globalno za grid + carousel
+let allProducts = [];
 
-const params = new URLSearchParams(window.location.search);
-const selectedId = params.get("selected");
-
-if (selectedId) {
-    // učitaj sve laptope
-    fetchProducts().then(() => {
-        const p = products.find(x => x.id === selectedId);
-        if (p) {
-            laptopSelectEl.value = p.title;
-            document.getElementById("contact-form-section").scrollIntoView({ behavior: "smooth" });
-        }
-    });
-}
-
-    
 /* =============================
    LOADING PRODUCTS (CAROUSEL + GRID)
 ============================= */
@@ -312,14 +222,13 @@ async function loadProducts() {
 
         renderCarousel(products);
         renderGrid(products);
-        populateLaptopDropdown(products); // popuni dropdown u formi
+        populateLaptopDropdown(products);
     } catch (e) {
         console.error(e);
     }
 }
 
 document.addEventListener("DOMContentLoaded", loadProducts);
-
 
 /* =============================
    RENDER CAROUSEL
@@ -335,17 +244,13 @@ function renderCarousel(products) {
 
     carousel.innerHTML = products.map(p => {
         const img = p.image || p.images?.[0] || "https://via.placeholder.com/600?text=Laptop";
-        const tag = p.tag ? `<span class="absolute top-4 left-4 bg-blue-100 text-blue-800 
-                             text-xs font-bold px-3 py-1 rounded-full">${p.tag.toUpperCase()}</span>` : "";
 
         return `
         <div class="carousel-item snap-center flex-shrink-0 w-full flex justify-center p-4">
             <div class="group relative flex flex-col w-full max-w-sm">
-                <div onclick='openModal(${JSON.stringify(p).replace(/'/g, "\\'")})' class="cursor-pointer">
+                <div onclick='goToProduct("${p.id}")' class="cursor-pointer">
                     <div class="relative w-full aspect-square bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden mb-6">
-                        <img src="${img}" class="w-full h-full object-contain p-8 group-hover:scale-105 
-                             transition-transform duration-300" alt="${p.title}">
-                        ${tag}
+                        <img src="${img}" class="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-300" alt="${p.title}">
                     </div>
                 </div>
 
@@ -355,9 +260,8 @@ function renderCarousel(products) {
                 <div class="text-center">
                     <p class="text-2xl font-bold">${p.price ? p.price + "€" : "Cena na upit"}</p>
 
-                    <button onclick='openModal(${JSON.stringify(p).replace(/'/g, "\\'")})'
-                            class="mt-2 bg-gray-200 dark:bg-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 
-                                   dark:hover:bg-gray-600 w-full transition">
+                    <button onclick='goToProduct("${p.id}")'
+                            class="mt-2 bg-gray-200 dark:bg-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 w-full transition">
                         Detalji
                     </button>
                 </div>
@@ -394,7 +298,6 @@ function scrollToSlide(i) {
 function updateActiveDot() {
     const carousel = document.getElementById("carousel");
     const dots = document.querySelectorAll("#pagination-dots button");
-
     const width = carousel.clientWidth;
     const active = Math.round(carousel.scrollLeft / width);
 
@@ -402,7 +305,6 @@ function updateActiveDot() {
         const isActive = i === active;
         d.classList.toggle("bg-primary", isActive);
         d.classList.toggle("w-8", isActive);
-
         d.classList.toggle("bg-gray-300", !isActive);
         d.classList.toggle("dark:bg-gray-600", !isActive);
         d.classList.toggle("w-3", !isActive);
@@ -416,9 +318,7 @@ function renderGrid(products) {
     const grid = document.getElementById("products-grid");
 
     if (!products.length) {
-        grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500 text-xl">
-            Nema dostupnih proizvoda.
-        </div>`;
+        grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500 text-xl">Nema dostupnih proizvoda.</div>`;
         return;
     }
 
@@ -427,10 +327,8 @@ function renderGrid(products) {
         const shortDesc = p.shortDesc || "";
 
         return `
-        <div onclick='openModal(${JSON.stringify(p).replace(/'/g, "\\'")})'
-             class="group relative flex flex-col text-center bg-gray-50 dark:bg-gray-800 rounded-2xl 
-                    overflow-hidden p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 cursor-pointer">
-
+        <div onclick='goToProduct("${p.id}")'
+             class="group relative flex flex-col text-center bg-gray-50 dark:bg-gray-800 rounded-2xl overflow-hidden p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 cursor-pointer">
             <div class="relative w-full h-48 mb-4">
                 <img src="${img}" alt="${p.title}"
                      class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
@@ -447,66 +345,6 @@ function renderGrid(products) {
 }
 
 /* =============================
-   MODAL HANDLING (DETALJI)
-============================= */
-let selectedProductGlobal = null;
-
-function openModal(product) {
-    selectedProductGlobal = product;
-
-    document.getElementById("modal-title").textContent = product.title;
-    document.getElementById("modal-name").textContent = product.title;
-    document.getElementById("modal-price").textContent = product.price ? product.price + "€" : "Cena na upit";
-    document.getElementById("modal-description").textContent = product.description || product.shortDesc || "";
-
-    const specs = document.getElementById("modal-specs");
-    specs.innerHTML = "";
-
-    // Novo: specs je objekat {CPU:"...", RAM:"..."}
-    if (product.specs && Object.keys(product.specs).length) {
-        Object.entries(product.specs).forEach(([label, value]) => {
-            specs.innerHTML += `
-                <div class="flex justify-between p-3 rounded-lg bg-gray-100 dark:bg-gray-700/50">
-                    <span class="font-medium">${label}</span>
-                    <span class="font-semibold">${value || "-"}</span>
-                </div>`;
-        });
-    } else {
-        specs.innerHTML = `<p class="text-gray-500 italic">Nema specifikacija.</p>`;
-    }
-
-    const gallery = document.getElementById("modal-gallery");
-    gallery.innerHTML = "";
-
-    const images = product.images?.length ? product.images :
-                    product.image ? [product.image] : [];
-
-    images.forEach(src => {
-        gallery.innerHTML += `
-            <div class="aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
-                <img src="${src}" loading="lazy" class="w-full h-full object-contain">
-            </div>`;
-    });
-
-    const modal = document.getElementById("product-modal");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-
-    // --- BLOKIRAJ BODY SCROLL ---
-    document.body.style.overflow = 'hidden';
-}
-
-
-function closeModal() {
-    const modal = document.getElementById("product-modal");
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
-
-    // --- VRATI BODY SCROLL ---
-    document.body.style.overflow = '';
-}
-
-/* =============================
    POPUNJAVANJE PADAJUĆEG MENIJA ZA LAPTOPE
 ============================= */
 function populateLaptopDropdown(products) {
@@ -516,7 +354,7 @@ function populateLaptopDropdown(products) {
     products.forEach(p => {
         const option = document.createElement("option");
         option.value = p.title;
-        option.textContent = p.title; // ili `${p.title} - ${p.price}€`
+        option.textContent = p.title;
         laptopSelect.appendChild(option);
     });
 }
@@ -525,8 +363,6 @@ function populateLaptopDropdown(products) {
    VALIDACIJA I SUBMIT FORME
 ============================= */
 const form = document.getElementById("contact-form");
-
-// poruka NIJE required → izbaci je iz liste
 const requiredFields = ["ime", "prezime", "kontakt-broj", "email"];
 const laptopSelectEl = document.getElementById("laptop-select");
 
@@ -555,74 +391,44 @@ function validateLaptop() {
     return true;
 }
 
-// Real-time validacija
-requiredFields.forEach(f => {
-    document.getElementById(f).addEventListener("input", () => validate(f));
-});
-laptopSelectEl.addEventListener("change", validateLaptop);
-
-form.addEventListener("submit", function(e) {
+form.addEventListener("submit", async e => {
     e.preventDefault();
+    let valid = requiredFields.every(f => validate(f));
+    valid = valid && validateLaptop();
 
-    let valid = true;
-    requiredFields.forEach(f => { if (!validate(f)) valid = false; });
-    if (!validateLaptop()) valid = false;
     if (!valid) return;
 
-    const ime      = document.getElementById("ime").value.trim();
-    const prezime  = document.getElementById("prezime").value.trim();
-    const email    = document.getElementById("email").value.trim();
-    const broj     = document.getElementById("kontakt-broj").value.trim();
-    const laptop   = laptopSelectEl.value.trim();
-    const poruka   = document.getElementById("poruka").value.trim();
+    const data = {
+        ime: form["ime"].value.trim(),
+        prezime: form["prezime"].value.trim(),
+        kontakt: form["kontakt-broj"].value.trim(),
+        email: form["email"].value.trim(),
+        laptop: laptopSelectEl.value,
+        poruka: form["poruka"].value.trim()
+    };
 
-    const subject = `Upit za laptop: ${ime} ${prezime}`;
+    try {
+        const res = await fetch("https://formsubmit.co/ajax/YOUR_EMAIL_HERE", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error("Greška slanja forme");
 
-    const body =
-`Poštovani,
-
-Dobili ste novi upit sa sajta Laptopi Plus.
-
-Ime i prezime: ${ime} ${prezime}
-Email: ${email}
-Kontakt broj: ${broj}
-Laptop: ${laptop}
-
-Poruka:
-${poruka}
-
-Srdačan pozdrav,
-Laptopi Plus`;
-
-    const mailtoLink =
-        `mailto:sergej.kaldesic@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    // JEDINO OVO OSTAVLJAŠ
-    window.location.href = mailtoLink;
+        alert("Upit uspešno poslat!");
+        form.reset();
+    } catch (err) {
+        console.error(err);
+        alert("Došlo je do greške prilikom slanja forme.");
+    }
 });
 
-function selectAndCloseModal() {
-    if(!selectedProductGlobal) return;
-
-    const laptopSelect = document.getElementById("laptop-select");
-    if(laptopSelect) {
-        laptopSelect.value = selectedProductGlobal.title;
-        laptopSelect.dispatchEvent(new Event('change'));
-    }
-
-    closeModal();
-
-    // Scroll do forme
-    const formSection = document.getElementById("contact-form-section");
-    if(formSection) {
-        formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+/* =============================
+   FUNKCIJA ZA OTVARANJE PRODUCT.HTML
+============================= */
+function goToProduct(id) {
+    window.location.href = `product.html?selected=${id}`;
 }
-
-
 </script>
-
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
 </body>
 </html>
