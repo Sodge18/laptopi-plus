@@ -62,6 +62,47 @@ function updateActiveSidebarButton() {
 // --- UPDATE UI ---
 function updateProductDetailsUI(index) {
   const p = products[index];
+  content.innerHTML = `
+    <div class="grid grid-cols-3 gap-8">
+      <div class="col-span-2 space-y-6">
+        <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Product Details</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="title">Naziv proizvoda</label>
+              <input class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white" type="text" id="title" value="${p.title||''}"/>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="shortDesc">Kratak opis</label>
+              <input class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white" type="text" id="shortDesc" value="${p.shortDesc||''}"/>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="description">Detaljan opis</label>
+              <textarea class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white" id="description" rows="5">${p.description||''}</textarea>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Specifikacije</h3>
+          <textarea id="specs" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white h-20">${p.specs.map(s=>`${s.label}:${s.value}`).join('\n')}</textarea>
+        </div>
+      </div>
+      <div class="col-span-1 space-y-6">
+        <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Slike</h3>
+          <div class="grid grid-cols-2 gap-4">
+            ${(p.images||[]).map(src=>`<img src="${src}" class="aspect-square w-full rounded-lg object-cover">`).join('')}
+            <div class="flex aspect-square w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary hover:text-primary transition-colors text-slate-500 dark:text-slate-400">
+              <div class="text-center">
+                <span class="material-symbols-outlined text-4xl">upload</span>
+                <p class="mt-1 text-sm">Upload Image</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
   document.getElementById('title').value = p.title || '';
   document.getElementById('shortDesc').value = p.shortDesc || '';
   document.getElementById('description').value = p.description || '';
