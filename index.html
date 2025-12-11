@@ -3,11 +3,9 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
     <script>
       // Hamburger meni za mobilni
       document.getElementById('menuBtn')?.addEventListener('click', () => {
@@ -16,7 +14,7 @@
       document.getElementById('closeMenu')?.addEventListener('click', () => {
         document.getElementById('mobileMenu').classList.add('hidden');
       });
-    
+   
       // Smooth scroll sa offsetom za fiksni header
       document.querySelectorAll('a[href^="#"]').forEach(a => {
         a.addEventListener('click', e => {
@@ -29,9 +27,8 @@
         });
       });
     </script>
-    
+   
     <title>Laptopi Plus</title>
-
     <script>
       // Smooth scroll za sve linkove sa #
       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -48,26 +45,30 @@
           }
         });
       });
-    </>
-    
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#333333"
-            },
-            fontFamily: {
-              display: ["Poppins", "sans-serif"]
-            }
-          }
-        }
-      }
     </script>
-
+   
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#333333",
+                        "background-light": "#ffffff",
+                        "background-dark": "#1f2937",
+                    },
+                    fontFamily: { display: ["Poppins", "sans-serif"] },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                        xl: "1.25rem",
+                        "2xl": "1.5rem",
+                    },
+                },
+            },
+        };
+    </script>
     <style>
         [x-cloak] { display: none !important; }
-
         .carousel-container {
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -75,58 +76,53 @@
         .carousel-container::-webkit-scrollbar {
             display: none;
         }
-
         .carousel-item {
             scroll-snap-align: start;
         }
-
         .invalid-field {
             border: 2px solid #f87171;
         }
-        
+       
     </style>
     <style>
-      article { 
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+      article {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      article:hover { 
+      article:hover {
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 30px rgba(51, 51, 51, 0.1);
       }
-      .invalid-field { 
-        border-color: #ef4444 !important; 
+      .invalid-field {
+        border-color: #ef4444 !important;
         box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
       }
     </style>
 </head>
-
 <body class="bg-background-light dark:bg-background-dark font-display text-gray-700 dark:text-gray-300">
-
-<!-- NAVBAR – MANJI, ČISTIJI, SA PLUSOM -->
-<header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-  <div class="container mx-auto px-6 py-4 flex items-center justify-between">
-    <!-- Logo sa plusom -->
-    <a href="#" class="flex items-center gap-2 text-2xl font-black text-primary">
-      <svg class="w-8 h-8" viewBox="0 0 48 48" fill="currentColor">
-        <rect x="20" y="8" width="8" height="32" rx="4"/>
-        <rect x="8" y="20" width="32" height="8" rx="4"/>
+<!-- NAVBAR – ČISTO, BEZ LOGA, SA APSTRAKTNIM PLUSOM -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-md">
+  <div class="container mx-auto px-6 py-5 flex items-center justify-between">
+   
+    <!-- LIJEVO: Laptopi Plus sa apstraktnim plusom -->
+    <a href="#" class="flex items-center gap-3 text-2xl md:text-3xl font-black text-primary hover:opacity-80 transition">
+      <!-- Apstraktni plus (SVG) -->
+      <svg class="w-9 h-9 md:w-11 md:h-11 text-primary" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="8" width="8" height="32" rx="4" fill="currentColor"/>
+        <rect x="8" y="20" width="32" height="8" rx="4" fill="currentColor"/>
       </svg>
-      Laptopi Plus
+      <span>Laptopi Plus</span>
     </a>
-
     <!-- Desktop meni -->
-    <nav class="hidden md:flex items-center space-x-10">
-      <a href="#products-grid" class="text-base font-medium hover:text-primary transition">Laptopi</a>
-      <a href="#contact-form-section" class="text-base font-medium hover:text-primary transition">Kontakt</a>
+    <nav class="hidden md:flex items-center space-x-12">
+      <a href="#products-grid" class="text-lg font-semibold hover:text-primary transition">Laptopi</a>
+      <a href="#contact-form-section" class="text-lg font-semibold hover:text-primary transition">Kontakt</a>
     </nav>
-
     <!-- Hamburger za mobilni -->
     <button id="menuBtn" class="md:hidden text-3xl">
       <span class="material-icons">menu</span>
     </button>
   </div>
-
   <!-- Mobilni meni -->
-  <div id="mobileMenu" class="fixed inset-0 bg-white z-40 hidden flex-col items-center justify-center gap-12 text-3xl font-bold">
+  <div id="mobileMenu" class="fixed inset-0 bg-white z-40 hidden flex-col items-center justify-center gap-16 text-4xl font-bold">
     <button id="closeMenu" class="absolute top-8 right-8 text-5xl">
       <span class="material-icons">close</span>
     </button>
@@ -134,37 +130,57 @@
     <a href="#contact-form-section" class="hover:text-primary transition">Kontakt</a>
   </div>
 </header>
-
-<!-- HERO – ČIST, ELEGANTO, BEZ TALASA I PREVELIKIH NASLOVA -->
-<section class="relative min-h-screen flex items-center justify-center text-white">
-  <!-- Glavna pozadina – čisti vertikalni gradijent -->
-  <div class="absolute inset-0 bg-gradient-to-b from-gray-900 via-[#0f172a] to-black"></div>
-
-  <!-- Sadržaj – manji, čistiji, savršen na telefonu -->
-  <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
-    <h1 class="text-5xl sm:text-6xl md:text-7xl font-black mb-6 leading-tight">
+<!-- HERO – SAVRŠEN VERTIKALNI GRADIENT + TALASI PREKO CELOG EKRANA -->
+<section class="relative h-screen flex items-center justify-center text-white overflow-hidden">
+  <!-- GLAVNA POZADINA – vertikalni gradijent -->
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-gray-900 via-[#0f172a] to-black"></div>
+  <!-- SUPTILNI TALASI – sada 100% širine i visine -->
+  <div class="absolute inset-0 -z-10 opacity-40">
+    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1440 800" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 400L80 380C160 360 320 320 480 310C640 300 800 320 960 350C1120 380 1280 420 1360 440L1440 460V800H0V400Z"
+            fill="url(#wave1)"/>
+      <defs>
+        <linearGradient id="wave1" x1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.3"/>
+          <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.2"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+  <!-- Sadržaj -->
+  <div class="relative z-10 text-center px-6 max-w-6xl mx-auto">
+    <h1 class="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-6 leading-none
+               bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent
+               drop-shadow-2xl">
       LAPTOPI PLUS
     </h1>
-    <p class="text-lg sm:text-xl md:text-2xl mb-12 text-white/90 font-light max-w-2xl mx-auto">
-      Premium laptopovi za posao, kreativnost i performanse
+    <p class="text-2xl md:text-4xl font-light text-white/90 mb-12 tracking-wide">
+      Laptopi za sve namene
     </p>
-
-    <div class="flex flex-col sm:flex-row gap-5 justify-center">
-      <a href="#contact-form-section" 
-         class="bg-white text-gray-900 font-bold text-lg px-10 py-5 rounded-xl hover:scale-105 transition shadow-xl">
-        Pošalji upit
+   
+    <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+      <a href="#contact-form-section"
+         class="group inline-flex items-center gap-4 bg-white text-gray-900 font-bold text-xl px-12 py-6
+                rounded-2xl shadow-2xl hover:shadow-white/30 transform hover:scale-105 transition-all duration-300">
+        Pošalji upit odmah
+        <svg class="w-7 h-7 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+        </svg>
       </a>
-      <a href="#products-grid" 
-         class="border border-white/40 text-white font-medium text-lg px-10 py-5 rounded-xl hover:bg-white/10 transition">
-        Pregled ponude ↓
+     
+      <a href="#products-grid"
+         class="inline-flex items-center gap-3 text-white/90 font-semibold text-xl px-10 py-6
+                border-2 border-white/30 rounded-2xl backdrop-blur-xl hover:bg-white/10
+                transform hover:scale-105 transition-all duration-300">
+        Pregled ponude
+        <span class="material-icons text-3xl">arrow_downward</span>
       </a>
     </div>
   </div>
-
-  <!-- Donji prelaz u svetlu pozadinu (da nema oštar rez) -->
-  <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent"></div>
+  <!-- Donji prelaz u svetlu pozadinu -->
+  <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 dark:from-gray-900 to-transparent"></div>
 </section>
-
 <!-- CAROUSEL -->
 <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="text-center mb-12">
@@ -172,16 +188,13 @@
             Naša ponuda laptopa
         </h2>
     </div>
-
     <div class="relative max-w-4xl mx-auto">
-
         <div id="carousel"
              class="carousel-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4">
             <div class="w-full flex justify-center items-center h-96">
                 <p class="text-gray-500">Učitavanje laptopova...</p>
             </div>
         </div>
-
         <!-- Strelice -->
         <button id="prev-btn"
                 class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-12
@@ -189,7 +202,6 @@
                        hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors z-10">
             <span class="material-icons text-gray-800 dark:text-white">arrow_back_ios_new</span>
         </button>
-
         <button id="next-btn"
                 class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-12
                        bg-gray-100 dark:bg-gray-700/50 p-3 rounded-full shadow-md
@@ -197,92 +209,86 @@
             <span class="material-icons text-gray-800 dark:text-white">arrow_forward_ios</span>
         </button>
     </div>
-
     <div id="pagination-dots" class="flex justify-center items-center mt-12 space-x-2"></div>
 </main>
-
-<!-- CONTACT FORM – KONAČNO SAVRŠEN: MANJI, ČISTIJI, MOBILNI PRIJATELJSKI -->
-<section id="contact-form-section" class="py-16 md:py-24 bg-gradient-to-b from-gray-900 via-[#0f172a] to-gray-900">
+<!-- CONTACT FORM – SAVRŠENO NA MOBILNOM + DESKTOPU -->
+<section id="contact-form-section" class="py-20 md:py-28 bg-gradient-to-b from-gray-900 via-[#0f172a] to-gray-900">
   <div class="container mx-auto px-6">
-    <!-- Naslov – manji i elegantniji -->
-    <div class="text-center mb-10 md:mb-14">
-      <h2 class="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
+    <!-- Naslov -->
+    <div class="text-center mb-12 md:mb-16">
+      <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight">
         Spremni za savršeni laptop?
       </h2>
-      <p class="text-lg md:text-xl text-white/90">
+      <p class="mt-4 text-lg sm:text-xl md:text-2xl text-white/90 font-medium">
         Ostavite upit – odgovaramo u roku od 24h
       </p>
     </div>
-
-    <!-- Forma – manja, čistija, lakša za telefon -->
-    <div class="max-w-2xl mx-auto">
-      <div class="bg-gray-800/90 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 md:p-10 border border-gray-700/60">
-        <form id="contact-form" novalidate class="space-y-8">
-          
-          <!-- 4 polja – 1 kolona na telefonu, 2 na većem ekranu -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <!-- Forma -->
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-gray-800/90 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 md:p-12 lg:p-16 border border-gray-700/60">
+        <form id="contact-form" novalidate class="space-y-10">
+         
+          <!-- 4 polja u 2 kolone na većim ekranima, 1 kolona na telefonu -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <div>
-              <label class="block text-white/90 text-base font-medium mb-2">Ime</label>
+              <label class="block text-white/90 text-lg font-semibold mb-3">Ime</label>
               <input id="ime" type="text" placeholder="Vaše ime" required
-                     class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white placeholder-gray-400
-                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-base"/>
+                     class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white placeholder-gray-400
+                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-lg"/>
               <p class="error-hint text-red-300 text-sm mt-2 hidden">Popunite polje</p>
             </div>
             <div>
-              <label class="block text-white/90 text-base font-medium mb-2">Prezime</label>
+              <label class="block text-white/90 text-lg font-semibold mb-3">Prezime</label>
               <input id="prezime" type="text" placeholder="Vaše prezime" required
-                     class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white placeholder-gray-400
-                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-base"/>
+                     class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white placeholder-gray-400
+                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-lg"/>
               <p class="error-hint text-red-300 text-sm mt-2 hidden">Popunite polje</p>
             </div>
             <div>
-              <label class="block text-white/90 text-base font-medium mb-2">Telefon</label>
+              <label class="block text-white/90 text-lg font-semibold mb-3">Telefon</label>
               <input id="kontakt-broj" type="tel" placeholder="061 234 567" required
-                     class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white placeholder-gray-400
-                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-base"/>
+                     class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white placeholder-gray-400
+                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-lg"/>
               <p class="error-hint text-red-300 text-sm mt-2 hidden">Popunite polje</p>
             </div>
             <div>
-              <label class="block text-white/90 text-base font-medium mb-2">Email</label>
+              <label class="block text-white/90 text-lg font-semibold mb-3">Email</label>
               <input id="email" type="email" placeholder="vas.email@gmail.com" required
-                     class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white placeholder-gray-400
-                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-base"/>
+                     class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white placeholder-gray-400
+                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-lg"/>
               <p class="error-hint text-red-300 text-sm mt-2 hidden">Popunite polje</p>
             </div>
           </div>
-
-          <!-- Laptop izbor -->
-          <div>
-            <label class="block text-white/90 text-base font-medium mb-2">Koji laptop vas zanima?</label>
-            <select id="laptop-select" required
-                    class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white
-                           focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-base">
-              <option value="">Izaberite model...</option>
-            </select>
-            <p class="error-hint text-red-300 text-sm mt-2 hidden">Izaberite laptop</p>
+          <!-- Laptop + Poruka -->
+          <div class="space-y-8">
+            <div>
+              <label class="block text-white/90 text-lg font-semibold mb-3">Koji laptop vas zanima?</label>
+              <select id="laptop-select" required
+                      class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white
+                             focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-lg">
+                <option value="">Izaberite model...</option>
+              </select>
+              <p class="error-hint text-red-300 text-sm mt-2 hidden">Izaberite laptop</p>
+            </div>
+            <div>
+              <label class="block text-white/90 text-lg font-semibold mb-3">Poruka (nije obavezno)</label>
+              <textarea id="poruka" rows="5" placeholder="Recite nam šta vam treba – budžet, namena..."
+                        class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white placeholder-gray-400
+                               focus:outline-none focus:border-white/60 focus:bg-gray-700 transition resize-none text-lg"></textarea>
+            </div>
           </div>
-
-          <!-- Poruka -->
-          <div>
-            <label class="block text-white/90 text-base font-medium mb-2">Poruka (nije obavezno)</label>
-            <textarea id="poruka" rows="4" placeholder="Recite nam šta vam treba – budžet, namena..."
-                      class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white placeholder-gray-400
-                             focus:outline-none focus:border-white/60 focus:bg-gray-700 transition resize-none text-base"></textarea>
-          </div>
-
           <!-- Dugme + telefon -->
-          <div class="space-y-6 pt-4">
+          <div class="pt-8 text-center">
             <button type="submit"
-                    class="w-full bg-white text-gray-900 font-bold text-lg md:text-xl py-5 md:py-6 rounded-xl hover:bg-gray-100
-                           transform hover:scale-105 transition-all duration-300 shadow-xl">
-              POŠALJI UPIT
+                    class="w-full bg-white text-gray-900 font-black text-xl md:text-2xl py-7 md:py-8 rounded-2xl hover:bg-gray-50
+                           transform hover:scale-105 transition-all duration-300 shadow-2xl">
+              POŠALJI UPIT ODMAH
             </button>
-
-            <div class="text-center pt-6 border-t border-white/20">
-              <p class="text-white/80 text-base mb-2">Ili nas pozovite direktno</p>
+            <div class="mt-10 pt-8 border-t border-white/20">
+              <p class="text-white/80 text-lg mb-3">Ili nas pozovite direktno</p>
               <a href="tel:+381637105383"
-                 class="inline-flex items-center gap-2 text-white font-bold text-xl hover:text-gray-200 transition group">
-                <span class="material-icons text-2xl group-hover:scale-110 transition">phone</span>
+                 class="inline-flex items-center gap-3 text-white font-black text-2xl md:text-3xl hover:text-gray-200 transition group">
+                <span class="material-icons text-3xl group-hover:scale-110 transition">phone_in_talk</span>
                 +381 63 710-5383
               </a>
             </div>
@@ -292,7 +298,6 @@
     </div>
   </div>
 </section>
-
 <!-- GRID — SVI NAŠI PROIZVODI (PROFESIONALNO IZDANJE) -->
 <section class="py-24 bg-gray-50 dark:bg-gray-900">
   <div class="container mx-auto px-6 lg:px-8">
@@ -305,7 +310,6 @@
         Kompletna ponuda laptopova
       </p>
     </div>
-
     <!-- Grid -->
     <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
       <!-- JS popunjava -->
@@ -315,12 +319,11 @@
     </div>
   </div>
 </section>
-
 <!-- FOOTER -->
 <footer class="bg-gray-800 text-gray-300 border-t border-gray-700">
   <div class="container mx-auto px-6 lg:px-8 py-12">
     <div class="flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-left">
-      
+     
       <!-- LIJEVA STRANA: Kontakt -->
       <div class="space-y-3">
         <p class="text-sm font-medium text-gray-400">Kontaktirajte nas direktno</p>
@@ -335,16 +338,15 @@
           </a>
         </div>
       </div>
-
       <!-- SREDINA / DESNO: Tekst + potpis -->
       <div class="space-y-4">
         <p class="text-sm">
           Laptopi Plus — Laptopi za sve namene
         </p>
         <p class="text-xs text-gray-500">
-          Developed by 
-          <a href="https://instagram.com/sodge.studio" 
-             target="_blank" 
+          Developed by
+          <a href="https://instagram.com/sodge.studio"
+             target="_blank"
              rel="noopener"
              class="font-medium text-gray-400 hover:text-white transition underline decoration-gray-500 hover:decoration-white">
             @sodge.studio
@@ -354,11 +356,9 @@
     </div>
   </div>
 </footer>
-
-</script>
+<script>
 const API_URL = "https://products-api.sergej-kaldesic.workers.dev/";
 let allProducts = [];
-
 /* =============================
    LOADING PRODUCTS (CAROUSEL + GRID)
 ============================= */
@@ -366,13 +366,10 @@ async function loadProducts() {
     try {
         const res = await fetch(API_URL);
         if (!res.ok) throw new Error("Greška API: " + res.status);
-
         const data = await res.json();
         const products = Array.isArray(data.products) ? data.products :
                          Array.isArray(data) ? data : [];
-
         allProducts = products;
-
         renderCarousel(products);
         renderGrid(products);
         populateLaptopDropdown(products);
@@ -380,25 +377,20 @@ async function loadProducts() {
         console.error(e);
     }
 }
-
 document.addEventListener("DOMContentLoaded", loadProducts);
-
 /* =============================
    RENDER CAROUSEL
 ============================= */
 function renderCarousel(products) {
     const carousel = document.getElementById("carousel");
     const dots = document.getElementById("pagination-dots");
-
     if (!products.length) {
         carousel.innerHTML = `<p class="text-center text-gray-500 py-20">Nema laptopova.</p>`;
         return;
     }
-
     carousel.innerHTML = products.map(p => {
         const img = p.image || p.images?.[0] || "https://via.placeholder.com/600?text=Laptop";
         const altText = p.title || "Laptop";
-
         return `
         <div class="carousel-item snap-center flex-shrink-0 w-full flex justify-center p-4">
             <div class="group relative flex flex-col w-full max-w-sm">
@@ -407,13 +399,10 @@ function renderCarousel(products) {
                         <img src="${img}" alt="${altText}" class="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-300">
                     </div>
                 </div>
-
                 <h3 class="font-semibold text-2xl text-center mb-2">${p.title}</h3>
                 <p class="text-gray-500 dark:text-gray-400 text-base text-center mb-4">${p.shortDesc || ""}</p>
-
                 <div class="text-center">
                     <p class="text-2xl font-bold">${p.price ? p.price + "€" : "Cena na upit"}</p>
-
                     <button onclick='goToProduct("${p.id}")'
                             class="mt-2 bg-gray-200 dark:bg-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 w-full transition">
                         Detalji
@@ -422,18 +411,15 @@ function renderCarousel(products) {
             </div>
         </div>`;
     }).join("");
-
     dots.innerHTML = products.map((_, i) =>
         `<button onclick="scrollToSlide(${i})"
                 class="w-3 h-3 rounded-full transition-all ${i===0 ? "bg-primary w-8" : "bg-gray-300 dark:bg-gray-600"}"></button>`
     ).join("");
-
     document.getElementById("prev-btn").onclick = () => scrollCarousel(-1);
     document.getElementById("next-btn").onclick = () => scrollCarousel(1);
     carousel.addEventListener("scroll", updateActiveDot);
     updateActiveDot();
 }
-
 /* =============================
    CAROUSEL NAVIGATION LOGIC
 ============================= */
@@ -442,20 +428,17 @@ function scrollCarousel(dir) {
     const itemWidth = carousel.querySelector(".carousel-item")?.clientWidth || carousel.clientWidth;
     carousel.scrollBy({ left: dir * itemWidth, behavior: "smooth" });
 }
-
 function scrollToSlide(i) {
     const carousel = document.getElementById("carousel");
     const itemWidth = carousel.querySelector(".carousel-item")?.clientWidth || carousel.clientWidth;
     carousel.scrollTo({ left: i * itemWidth, behavior: "smooth" });
 }
-
 function updateActiveDot() {
     const carousel = document.getElementById("carousel");
     const dots = document.querySelectorAll("#pagination-dots button");
     const items = carousel.querySelectorAll(".carousel-item");
     const itemWidth = items[0]?.clientWidth || carousel.clientWidth;
     const active = Math.round(carousel.scrollLeft / itemWidth);
-
     dots.forEach((d, i) => {
         const isActive = i === active;
         d.classList.toggle("bg-primary", isActive);
@@ -465,13 +448,11 @@ function updateActiveDot() {
         d.classList.toggle("w-3", !isActive);
     });
 }
-
 /* =============================
    RENDER GRID PRODUCTS
 ============================= */
 function renderGrid(products) {
     const grid = document.getElementById("products-grid");
-
     if (!products.length) {
         grid.innerHTML = `
           <div class="col-span-full text-center py-32">
@@ -479,22 +460,20 @@ function renderGrid(products) {
           </div>`;
         return;
     }
-
     grid.innerHTML = products.map(p => {
         const img = p.images?.[0] || p.image || "https://via.placeholder.com/800x600/cccccc/666666?text=Laptop";
         const hasTag = p.tag && p.tag.trim() !== "";
-
         return `
-        <article onclick="goToProduct('${p.id}')" 
-                 class="group cursor-pointer bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-2xl 
+        <article onclick="goToProduct('${p.id}')"
+                 class="group cursor-pointer bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-2xl
                         transition-all duration-500 overflow-hidden border border-gray-200 dark:border-gray-700
                         hover:border-primary/30 hover:-translate-y-3">
-          
+         
           <!-- Gornji deo: slika koja popunjava 100% -->
           <div class="relative h-64 overflow-hidden bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
-            <img src="${img}" alt="${p.title}" 
+            <img src="${img}" alt="${p.title}"
                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-            
+           
             <!-- Tag u gornjem desnom uglu -->
             ${hasTag ? `
             <div class="absolute top-4 right-4 z-10">
@@ -504,17 +483,15 @@ function renderGrid(products) {
               </span>
             </div>` : ''}
           </div>
-
           <!-- Donji deo: tekst -->
           <div class="p-8">
             <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 leading-tight">
               ${p.title}
             </h3>
-            
+           
             <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 line-clamp-3 leading-relaxed">
               ${p.shortDesc || "Visokokvalitetni laptop sa najnovijim specifikacijama."}
             </p>
-
             <!-- Cena + strelica -->
             <div class="flex items-end justify-between mt-auto">
               <div>
@@ -522,10 +499,9 @@ function renderGrid(products) {
                   ${p.price ? p.price + "€" : "Cena na upit"}
                 </div>
               </div>
-
-              <div class="text-primary font-semibold text-lg opacity-0 group-hover:opacity-100 
+              <div class="text-primary font-semibold text-lg opacity-0 group-hover:opacity-100
                           translate-x-4 group-hover:translate-x-0 transition-all duration-500 flex items-center gap-2">
-                Detalji 
+                Detalji
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
@@ -541,23 +517,19 @@ function renderGrid(products) {
 function populateLaptopDropdown(products) {
     const laptopSelect = document.getElementById("laptop-select");
     laptopSelect.innerHTML = '<option value="">Odaberite laptop</option>';
-
     products.forEach(p => {
         const option = document.createElement("option");
-        option.value = p.id;       // ← ID umesto title
+        option.value = p.id; // ← ID umesto title
         option.textContent = p.title;
         laptopSelect.appendChild(option);
     });
 }
-
-
 /* =============================
    VALIDACIJA I SUBMIT FORME
 ============================= */
 const form = document.getElementById("contact-form");
 const requiredFields = ["ime", "prezime", "kontakt-broj", "email"];
 const laptopSelectEl = document.getElementById("laptop-select");
-
 function validate(fieldId) {
     const el = document.getElementById(fieldId);
     const hint = el.nextElementSibling;
@@ -570,7 +542,6 @@ function validate(fieldId) {
     hint.classList.add("hidden");
     return true;
 }
-
 function validateLaptop() {
     const hint = laptopSelectEl.nextElementSibling;
     if (!laptopSelectEl.value.trim()) {
@@ -582,14 +553,11 @@ function validateLaptop() {
     hint.classList.add("hidden");
     return true;
 }
-
 form.addEventListener("submit", async e => {
     e.preventDefault();
     let valid = requiredFields.every(f => validate(f));
     valid = valid && validateLaptop();
-
     if (!valid) return;
-
     const data = {
         ime: form["ime"].value.trim(),
         prezime: form["prezime"].value.trim(),
@@ -598,7 +566,6 @@ form.addEventListener("submit", async e => {
         laptopId: laptopSelectEl.value, // ID laptopa
         poruka: form["poruka"].value.trim()
     };
-
     try {
         const res = await fetch("https://formsubmit.co/ajax/sergej.kaldesic@gmail.com", {
             method: "POST",
@@ -606,7 +573,6 @@ form.addEventListener("submit", async e => {
             body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error("Greška slanja forme");
-
         alert("Upit uspešno poslat!");
         form.reset();
     } catch (err) {
@@ -614,30 +580,25 @@ form.addEventListener("submit", async e => {
         alert("Došlo je do greške prilikom slanja forme.");
     }
 });
-
 /* =============================
    FUNKCIJA ZA OTVARANJE PRODUCT.HTML
 ============================= */
 function goToProduct(id) {
     window.location.href = `product.html?selected=${id}`;
 }
-
 // AUTOMATSKI ODABERI LAPTOP IZ URL PARAMETRA (iz product.html)
 function autoSelectLaptopFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const selectedId = params.get('selected');
   if (!selectedId) return;
-
   const select = document.getElementById('laptop-select');
   if (!select) return;
-
   // Pronađi i odaberi taj laptop
   const option = select.querySelector(`option[value="${selectedId}"]`);
   if (option) {
     select.value = selectedId;
     select.dispatchEvent(new Event('change')); // ako imaš dodatnu logiku na change
   }
-
   // Skroluj do forme ako je #contact-form-section u URL-u
   if (window.location.hash === '#contact-form-section') {
     document.querySelector('#contact-form-section')?.scrollIntoView({
@@ -648,11 +609,9 @@ function autoSelectLaptopFromUrl() {
     setTimeout(() => window.scrollBy(0, -120), 500);
   }
 }
-
 // Pokreni kada se učitaju proizvodi
 document.addEventListener("DOMContentLoaded", () => {
   loadProducts();
-
   // AUTOMATSKO ODABIRANJE LAPTOPA IZ product.html
   setTimeout(() => {
     const params = new URLSearchParams(window.location.search);
@@ -663,7 +622,6 @@ document.addEventListener("DOMContentLoaded", () => {
         select.value = selectedId;
       }
     }
-
     // Ako je #contact-form-section u URL-u → skroluj tamo
     if (window.location.hash === '#contact-form-section') {
       setTimeout(() => {
@@ -673,7 +631,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, 600);
 });
-    
+   
 </script>
 </body>
 </html>
