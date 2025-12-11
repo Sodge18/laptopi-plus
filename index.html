@@ -6,7 +6,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    < src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
 
     <script>
       // Hamburger meni za mobilni
@@ -48,9 +48,9 @@
           }
         });
       });
-    </script>
+    </>
     
-    <script>
+    <>
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -69,7 +69,7 @@
                 },
             },
         };
-    </script>
+    </>
 
     <style>
         [x-cloak] { display: none !important; }
@@ -107,24 +107,22 @@
 
 <body class="bg-background-light dark:bg-background-dark font-display text-gray-700 dark:text-gray-300">
 
-<!-- NAVBAR – ČISTO, BEZ LOGA, SA APSTRAKTNIM PLUSOM -->
-<header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-md">
-  <div class="container mx-auto px-6 py-5 flex items-center justify-between">
-    
-    <!-- LIJEVO: Laptopi Plus sa apstraktnim plusom -->
-    <a href="#" class="flex items-center gap-3 text-2xl md:text-3xl font-black text-primary hover:opacity-80 transition">
-      <!-- Apstraktni plus (SVG) -->
-      <svg class="w-9 h-9 md:w-11 md:h-11 text-primary" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="20" y="8" width="8" height="32" rx="4" fill="currentColor"/>
-        <rect x="8" y="20" width="32" height="8" rx="4" fill="currentColor"/>
+<!-- NAVBAR – MANJI, ČISTIJI, SA PLUSOM -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+  <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+    <!-- Logo sa plusom -->
+    <a href="#" class="flex items-center gap-2 text-2xl font-black text-primary">
+      <svg class="w-8 h-8" viewBox="0 0 48 48" fill="currentColor">
+        <rect x="20" y="8" width="8" height="32" rx="4"/>
+        <rect x="8" y="20" width="32" height="8" rx="4"/>
       </svg>
-      <span>Laptopi Plus</span>
+      Laptopi Plus
     </a>
 
     <!-- Desktop meni -->
-    <nav class="hidden md:flex items-center space-x-12">
-      <a href="#products-grid" class="text-lg font-semibold hover:text-primary transition">Laptopi</a>
-      <a href="#contact-form-section" class="text-lg font-semibold hover:text-primary transition">Kontakt</a>
+    <nav class="hidden md:flex items-center space-x-10">
+      <a href="#products-grid" class="text-base font-medium hover:text-primary transition">Laptopi</a>
+      <a href="#contact-form-section" class="text-base font-medium hover:text-primary transition">Kontakt</a>
     </nav>
 
     <!-- Hamburger za mobilni -->
@@ -134,7 +132,7 @@
   </div>
 
   <!-- Mobilni meni -->
-  <div id="mobileMenu" class="fixed inset-0 bg-white z-40 hidden flex-col items-center justify-center gap-16 text-4xl font-bold">
+  <div id="mobileMenu" class="fixed inset-0 bg-white z-40 hidden flex-col items-center justify-center gap-12 text-3xl font-bold">
     <button id="closeMenu" class="absolute top-8 right-8 text-5xl">
       <span class="material-icons">close</span>
     </button>
@@ -143,59 +141,34 @@
   </div>
 </header>
 
-<!-- HERO – SAVRŠEN VERTIKALNI GRADIENT + TALASI PREKO CELOG EKRANA -->
-<section class="relative h-screen flex items-center justify-center text-white overflow-hidden">
-  <!-- GLAVNA POZADINA – vertikalni gradijent -->
-  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-gray-900 via-[#0f172a] to-black"></div>
+<!-- HERO – ČIST, ELEGANTO, BEZ TALASA I PREVELIKIH NASLOVA -->
+<section class="relative min-h-screen flex items-center justify-center text-white">
+  <!-- Glavna pozadina – čisti vertikalni gradijent -->
+  <div class="absolute inset-0 bg-gradient-to-b from-gray-900 via-[#0f172a] to-black"></div>
 
-  <!-- SUPTILNI TALASI – sada 100% širine i visine -->
-  <div class="absolute inset-0 -z-10 opacity-40">
-    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1440 800" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 400L80 380C160 360 320 320 480 310C640 300 800 320 960 350C1120 380 1280 420 1360 440L1440 460V800H0V400Z"
-            fill="url(#wave1)"/>
-      <defs>
-        <linearGradient id="wave1" x1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.3"/>
-          <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.4"/>
-          <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.2"/>
-        </linearGradient>
-      </defs>
-    </svg>
-  </div>
-
-  <!-- Sadržaj -->
-  <div class="relative z-10 text-center px-6 max-w-6xl mx-auto">
-    <h1 class="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-6 leading-none
-               bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent
-               drop-shadow-2xl">
+  <!-- Sadržaj – manji, čistiji, savršen na telefonu -->
+  <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
+    <h1 class="text-5xl sm:text-6xl md:text-7xl font-black mb-6 leading-tight">
       LAPTOPI PLUS
     </h1>
-    <p class="text-2xl md:text-4xl font-light text-white/90 mb-12 tracking-wide">
-      Laptopi za sve namene
+    <p class="text-lg sm:text-xl md:text-2xl mb-12 text-white/90 font-light max-w-2xl mx-auto">
+      Premium laptopovi za posao, kreativnost i performanse
     </p>
-    
-    <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-      <a href="#contact-form-section"
-         class="group inline-flex items-center gap-4 bg-white text-gray-900 font-bold text-xl px-12 py-6
-                rounded-2xl shadow-2xl hover:shadow-white/30 transform hover:scale-105 transition-all duration-300">
-        Pošalji upit odmah
-        <svg class="w-7 h-7 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-        </svg>
+
+    <div class="flex flex-col sm:flex-row gap-5 justify-center">
+      <a href="#contact-form-section" 
+         class="bg-white text-gray-900 font-bold text-lg px-10 py-5 rounded-xl hover:scale-105 transition shadow-xl">
+        Pošalji upit
       </a>
-      
-      <a href="#products-grid"
-         class="inline-flex items-center gap-3 text-white/90 font-semibold text-xl px-10 py-6
-                border-2 border-white/30 rounded-2xl backdrop-blur-xl hover:bg-white/10
-                transform hover:scale-105 transition-all duration-300">
-        Pregled ponude
-        <span class="material-icons text-3xl">arrow_downward</span>
+      <a href="#products-grid" 
+         class="border border-white/40 text-white font-medium text-lg px-10 py-5 rounded-xl hover:bg-white/10 transition">
+        Pregled ponude ↓
       </a>
     </div>
   </div>
 
-  <!-- Donji prelaz u svetlu pozadinu -->
-  <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 dark:from-gray-900 to-transparent"></div>
+  <!-- Donji prelaz u svetlu pozadinu (da nema oštar rez) -->
+  <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent"></div>
 </section>
 
 <!-- CAROUSEL -->
@@ -234,89 +207,88 @@
     <div id="pagination-dots" class="flex justify-center items-center mt-12 space-x-2"></div>
 </main>
 
-<!-- CONTACT FORM – SAVRŠENO NA MOBILNOM + DESKTOPU -->
-<section id="contact-form-section" class="py-20 md:py-28 bg-gradient-to-b from-gray-900 via-[#0f172a] to-gray-900">
+<!-- CONTACT FORM – KONAČNO SAVRŠEN: MANJI, ČISTIJI, MOBILNI PRIJATELJSKI -->
+<section id="contact-form-section" class="py-16 md:py-24 bg-gradient-to-b from-gray-900 via-[#0f172a] to-gray-900">
   <div class="container mx-auto px-6">
-    <!-- Naslov -->
-    <div class="text-center mb-12 md:mb-16">
-      <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight">
+    <!-- Naslov – manji i elegantniji -->
+    <div class="text-center mb-10 md:mb-14">
+      <h2 class="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
         Spremni za savršeni laptop?
       </h2>
-      <p class="mt-4 text-lg sm:text-xl md:text-2xl text-white/90 font-medium">
+      <p class="text-lg md:text-xl text-white/90">
         Ostavite upit – odgovaramo u roku od 24h
       </p>
     </div>
 
-    <!-- Forma -->
-    <div class="max-w-4xl mx-auto">
-      <div class="bg-gray-800/90 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 md:p-12 lg:p-16 border border-gray-700/60">
-        <form id="contact-form" novalidate class="space-y-10">
+    <!-- Forma – manja, čistija, lakša za telefon -->
+    <div class="max-w-2xl mx-auto">
+      <div class="bg-gray-800/90 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 md:p-10 border border-gray-700/60">
+        <form id="contact-form" novalidate class="space-y-8">
           
-          <!-- 4 polja u 2 kolone na većim ekranima, 1 kolona na telefonu -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <!-- 4 polja – 1 kolona na telefonu, 2 na većem ekranu -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label class="block text-white/90 text-lg font-semibold mb-3">Ime</label>
+              <label class="block text-white/90 text-base font-medium mb-2">Ime</label>
               <input id="ime" type="text" placeholder="Vaše ime" required
-                     class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white placeholder-gray-400
-                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-lg"/>
+                     class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white placeholder-gray-400
+                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-base"/>
               <p class="error-hint text-red-300 text-sm mt-2 hidden">Popunite polje</p>
             </div>
             <div>
-              <label class="block text-white/90 text-lg font-semibold mb-3">Prezime</label>
+              <label class="block text-white/90 text-base font-medium mb-2">Prezime</label>
               <input id="prezime" type="text" placeholder="Vaše prezime" required
-                     class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white placeholder-gray-400
-                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-lg"/>
+                     class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white placeholder-gray-400
+                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-base"/>
               <p class="error-hint text-red-300 text-sm mt-2 hidden">Popunite polje</p>
             </div>
             <div>
-              <label class="block text-white/90 text-lg font-semibold mb-3">Telefon</label>
+              <label class="block text-white/90 text-base font-medium mb-2">Telefon</label>
               <input id="kontakt-broj" type="tel" placeholder="061 234 567" required
-                     class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white placeholder-gray-400
-                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-lg"/>
+                     class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white placeholder-gray-400
+                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-base"/>
               <p class="error-hint text-red-300 text-sm mt-2 hidden">Popunite polje</p>
             </div>
             <div>
-              <label class="block text-white/90 text-lg font-semibold mb-3">Email</label>
+              <label class="block text-white/90 text-base font-medium mb-2">Email</label>
               <input id="email" type="email" placeholder="vas.email@gmail.com" required
-                     class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white placeholder-gray-400
-                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-lg"/>
+                     class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white placeholder-gray-400
+                            focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-base"/>
               <p class="error-hint text-red-300 text-sm mt-2 hidden">Popunite polje</p>
             </div>
           </div>
 
-          <!-- Laptop + Poruka -->
-          <div class="space-y-8">
-            <div>
-              <label class="block text-white/90 text-lg font-semibold mb-3">Koji laptop vas zanima?</label>
-              <select id="laptop-select" required
-                      class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white
-                             focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-lg">
-                <option value="">Izaberite model...</option>
-              </select>
-              <p class="error-hint text-red-300 text-sm mt-2 hidden">Izaberite laptop</p>
-            </div>
+          <!-- Laptop izbor -->
+          <div>
+            <label class="block text-white/90 text-base font-medium mb-2">Koji laptop vas zanima?</label>
+            <select id="laptop-select" required
+                    class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white
+                           focus:outline-none focus:border-white/60 focus:bg-gray-700 transition text-base">
+              <option value="">Izaberite model...</option>
+            </select>
+            <p class="error-hint text-red-300 text-sm mt-2 hidden">Izaberite laptop</p>
+          </div>
 
-            <div>
-              <label class="block text-white/90 text-lg font-semibold mb-3">Poruka (nije obavezno)</label>
-              <textarea id="poruka" rows="5" placeholder="Recite nam šta vam treba – budžet, namena..." 
-                        class="w-full px-6 py-5 bg-gray-700/70 border border-gray-600 rounded-2xl text-white placeholder-gray-400
-                               focus:outline-none focus:border-white/60 focus:bg-gray-700 transition resize-none text-lg"></textarea>
-            </div>
+          <!-- Poruka -->
+          <div>
+            <label class="block text-white/90 text-base font-medium mb-2">Poruka (nije obavezno)</label>
+            <textarea id="poruka" rows="4" placeholder="Recite nam šta vam treba – budžet, namena..."
+                      class="w-full px-5 py-4 bg-gray-700/70 border border-gray-600 rounded-xl text-white placeholder-gray-400
+                             focus:outline-none focus:border-white/60 focus:bg-gray-700 transition resize-none text-base"></textarea>
           </div>
 
           <!-- Dugme + telefon -->
-          <div class="pt-8 text-center">
+          <div class="space-y-6 pt-4">
             <button type="submit"
-                    class="w-full bg-white text-gray-900 font-black text-xl md:text-2xl py-7 md:py-8 rounded-2xl hover:bg-gray-50
-                           transform hover:scale-105 transition-all duration-300 shadow-2xl">
-              POŠALJI UPIT ODMAH
+                    class="w-full bg-white text-gray-900 font-bold text-lg md:text-xl py-5 md:py-6 rounded-xl hover:bg-gray-100
+                           transform hover:scale-105 transition-all duration-300 shadow-xl">
+              POŠALJI UPIT
             </button>
 
-            <div class="mt-10 pt-8 border-t border-white/20">
-              <p class="text-white/80 text-lg mb-3">Ili nas pozovite direktno</p>
-              <a href="tel:+381637105383" 
-                 class="inline-flex items-center gap-3 text-white font-black text-2xl md:text-3xl hover:text-gray-200 transition group">
-                <span class="material-icons text-3xl group-hover:scale-110 transition">phone_in_talk</span>
+            <div class="text-center pt-6 border-t border-white/20">
+              <p class="text-white/80 text-base mb-2">Ili nas pozovite direktno</p>
+              <a href="tel:+381637105383"
+                 class="inline-flex items-center gap-2 text-white font-bold text-xl hover:text-gray-200 transition group">
+                <span class="material-icons text-2xl group-hover:scale-110 transition">phone</span>
                 +381 63 710-5383
               </a>
             </div>
@@ -389,7 +361,6 @@
   </div>
 </footer>
 
-<script>
 const API_URL = "https://products-api.sergej-kaldesic.workers.dev/";
 let allProducts = [];
 
@@ -708,6 +679,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 600);
 });
     
-</script>
+</>
 </body>
 </html>
