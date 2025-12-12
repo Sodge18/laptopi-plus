@@ -391,11 +391,10 @@ function renderCarousel(products) {
     </div>`;
   }).join("");
 
-    dots.innerHTML = products.map((_, i) =>
+  dots.innerHTML = products.map((_, i) =>
         `<button onclick="scrollToSlide(${i})"
-                class="w-3 h-3 rounded-full transition-all ${i===0 ? "bg-blue-600 w-8" : "bg-gray-600 "}"></button>`
+                class="w-3 h-3 rounded-full transition-all bg-gray-500"></button>`
     ).join("");
-
 
   document.getElementById("prev-btn").onclick = () => scrollCarousel(-1);
   document.getElementById("next-btn").onclick = () => scrollCarousel(1);
@@ -426,11 +425,10 @@ function updateActiveDot() {
   const itemWidth = items[0]?.clientWidth || carousel.clientWidth;
   const active = Math.round(carousel.scrollLeft / itemWidth);
   dots.forEach((d, i) => {
-    const isActive = i === active;
-    d.classList.toggle("bg-primary", isActive);
-    d.classList.toggle("w-8", isActive);
-    d.classList.toggle("bg-gray-300", !isActive);
-    d.classList.toggle("w-3", !isActive);
+    d.classList.toggle("bg-primary", i === active);
+    d.classList.toggle("bg-gray-500", i !== active);
+    d.classList.toggle("w-3", i !== active);
+    d.classList.toggle("w-3", i === active); // sve iste veličine
   });
 }
 
