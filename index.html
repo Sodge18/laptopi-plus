@@ -73,7 +73,7 @@
   <!-- GLAVNA POZADINA – vertikalni gradijent -->
   <div class="absolute inset-0 -z-10 bg-gradient-to-b from-gray-900 via-[#0f172a] to-black"></div>
   <!-- SUPTILNI TALASI – sada 100% širine i visine -->
-  <div class="absolute inset-0 -z-10 opacity-40">
+  <div class="absolute inset-0 -z-10 opacity-40 overflow-hidden">
     <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1440 800" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M0 400L80 380C160 360 320 320 480 310C640 300 800 320 960 350C1120 380 1280 420 1360 440L1440 460V800H0V400Z"
             fill="url(#wave1)"/>
@@ -117,7 +117,7 @@
     </div>
   </div>
   <!-- Donji prelaz u svetlu pozadinu -->
-  <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 dark:from-gray-900 to-transparent"></div>
+  <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none overflow-hidden"></div>
 </section>
 <!-- CAROUSEL -->
 <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -126,7 +126,7 @@
           Naša ponuda laptopa
         </h2>
     </div>
-    <div class="relative max-w-4xl mx-auto">
+    <div class="relative max-w-4xl mx-auto overflow-hidden">
         <div id="carousel"
              class="carousel-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4">
             <div class="w-full flex justify-center items-center h-96">
@@ -137,13 +137,13 @@
         <button id="prev-btn"
                 class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-12
                        bg-gray-100 p-3 rounded-full shadow-md
-                       hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors z-10">
+                       hover:bg-gray-200 transition-colors z-10">
             <span class="material-icons text-gray-800">arrow_back_ios_new</span>
         </button>
         <button id="next-btn"
                 class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-12
                        bg-gray-100 p-3 rounded-full shadow-md
-                       hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors z-10">
+                       hover:bg-gray-200 transition-colors z-10">
             <span class="material-icons text-gray-800">arrow_forward_ios</span>
         </button>
     </div>
@@ -381,7 +381,7 @@ function renderCarousel(products) {
         <div class="text-center">
           <p class="text-2xl font-bold">${p.price ? p.price + "€" : "Cena na upit"}</p>
           <button onclick='goToProduct("${p.id}")'
-                  class="mt-2 bg-gray-200 px-6 py-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 w-full transition">
+                  class="mt-2 bg-gray-200 px-6 py-2 rounded-full hover:bg-gray-300 w-full transition">
             Detalji
           </button>
         </div>
@@ -449,9 +449,9 @@ function renderGrid(products) {
     return `
     <article onclick="goToProduct('${p.id}')"
              class="group cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-2xl
-                    transition-all duration-500 overflow-hidden border border-gray-200 dark:border-gray-700
+                    transition-all duration-500 overflow-hidden border border-gray-200 
                     hover:border-primary/30 hover:-translate-y-3">
-      <div class="relative h-64 overflow-hidden bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+      <div class="relative h-64 overflow-hidden bg-gradient-to-b from-gray-100 to-gray-200">
         <img src="${img}" alt="${p.title}"
              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
         ${hasTag ? `<div class="absolute top-4 right-4 z-10">
