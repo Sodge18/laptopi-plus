@@ -249,6 +249,16 @@ function populateLaptopDropdown(products) {
     select.appendChild(opt);
   });
 }
+
+renderGrid(products);
+    populateLaptopDropdown(products);
+    autoSelectFromUrl();  // <-- DODAJ OVO OVDE
+  } catch (e) {
+    console.error(e);
+    document.getElementById("products-grid").innerHTML = '<div class="col-span-full text-center py-32"><p class="text-red-500 text-xl">Greška pri učitavanju proizvoda.</p></div>';
+  }
+}
+
 function goToProduct(id) {
   window.location.href = `product.html?selected=${id}#contact`;
 }
@@ -316,7 +326,6 @@ function autoSelectFromUrl() {
 }
 document.addEventListener("DOMContentLoaded", () => {
   loadProducts();
-  autoSelectFromUrl();
 });
 </script>
 </body>
