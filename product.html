@@ -35,19 +35,11 @@
       transform: translateY(-8px);
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     }
-    /* Bolji horizontalni skrol na telefonu */
-    .horizontal-scroll::-webkit-scrollbar {
-      height: 6px;
-    }
-    .horizontal-scroll::-webkit-scrollbar-thumb {
-      background-color: rgba(0,0,0,0.3);
-      border-radius: 3px;
-    }
   </style>
 </head>
 <body class="bg-white text-gray-900 min-h-screen flex flex-col">
 
-<!-- HEADER -->
+<!-- HEADER – isti kao na index.html -->
 <header class="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md">
   <div class="max-w-7xl mx-auto px-6">
     <div class="flex items-center justify-between h-16">
@@ -101,8 +93,8 @@
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-    <!-- LIJEVO: GALERIJA + DETALJAN OPIS ISPOD -->
-    <div class="space-y-12">
+    <!-- LIJEVO: GALERIJA + DETALJAN OPIS – sticky na desktopu -->
+    <div class="space-y-12 lg:sticky lg:top-20 lg:self-start">
       <!-- Galerija -->
       <div class="space-y-6">
         <div class="bg-gray-50 rounded-2xl overflow-hidden shadow-lg aspect-[4/3] flex items-center justify-center">
@@ -118,7 +110,7 @@
       </div>
     </div>
 
-    <!-- DESNO: SADRŽAJ -->
+    <!-- DESNO: SADRŽAJ (skroluje normalno) -->
     <div class="space-y-12">
       <div>
         <h1 id="title" class="text-5xl lg:text-6xl font-black mb-6"></h1>
@@ -135,9 +127,8 @@
     </div>
   </div>
 
-  <!-- OSTALI LAPTOPI – bolje za male ekrane -->
+  <!-- OSTALI LAPTOPI -->
   <div class="mt-24">
-    <!-- Naslov sa separatorima -->
     <div class="relative text-center mb-12">
       <div class="absolute inset-0 flex items-center">
         <div class="w-full border-t border-gray-300"></div>
@@ -146,8 +137,6 @@
         <h2 class="text-3xl font-bold">Ostali laptopi</h2>
       </div>
     </div>
-
-    <!-- Horizontalna galerija – manje kartice na telefonu -->
     <div class="overflow-x-auto pb-4 horizontal-scroll">
       <div id="otherProducts" class="flex gap-6"></div>
     </div>
@@ -210,7 +199,6 @@ async function loadProduct() {
     document.getElementById("shortDesc").textContent = product.shortDesc || "";
     document.getElementById("price").textContent = product.price ? `${product.price}€` : "Cena na upit";
 
-    // Galerija
     images = product.images && product.images.length ? product.images : [product.image || "https://via.placeholder.com/800?text=Laptop"];
     document.getElementById("mainImage").src = images[0];
 
@@ -221,7 +209,7 @@ async function loadProduct() {
            onclick="changeImage(${i})">
     `).join("");
 
-    // Detaljan opis – sada se prikazuje ispod galerije
+    // Detaljan opis – ispod galerije
     document.getElementById("fullDescription").innerHTML = product.description || "Nema detaljnog opisa.";
 
     // Specifikacije
@@ -266,12 +254,12 @@ async function loadProduct() {
     otherDiv.innerHTML = otherProducts.map(p => {
       const img = p.images?.[0] || p.image || "https://via.placeholder.com/400?text=Laptop";
       return `
-        <div onclick="window.location.href='product.html?selected=${p.id}'" class="other-product flex-shrink-0 w-full max-w-[320px] sm:max-w-[280px] lg:max-w-[300px] cursor-pointer bg-white rounded-2xl shadow-md overflow-hidden">
-          <img src="${img}" alt="${p.title}" class="w-full h-48 object-cover">
-          <div class="p-5">
-            <h3 class="text-lg font-bold mb-2 line-clamp-2">${p.title}</h3>
-            <p class="text-gray-600 text-sm mb-3 line-clamp-3">${p.shortDesc || ""}</p>
-            <p class="text-xl font-bold">${p.price ? p.price + "€" : "Cena na upit"}</p>
+        <div onclick="window.location.href='product.html?selected=${p.id}'" class="other-product flex-shrink-0 w-[90%] sm:w-64 lg:w-72 cursor-pointer bg-white rounded-2xl shadow-md overflow-hidden">
+          <img src="${img}" alt="${p.title}" class="w-full h-36 sm:h-40 object-cover">
+          <div class="p-4 sm:p-5">
+            <h3 class="text-base sm:text-lg font-bold mb-2 line-clamp-2">${p.title}</h3>
+            <p class="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-2">${p.shortDesc || ""}</p>
+            <p class="text-lg sm:text-xl font-bold">${p.price ? p.price + "€" : "Cena na upit"}</p>
           </div>
         </div>`;
     }).join("");
