@@ -247,12 +247,16 @@ form.addEventListener("submit", async e => {
     return;
   }
 
+  // Pronađi naziv laptopa po ID-ju
+  const selectedOption = form["laptop-select"].selectedOptions[0];
+  const laptopNaziv = selectedOption ? selectedOption.textContent : "Nije izabran";
+
   const data = {
     ime: form.ime.value.trim(),
     prezime: form.prezime.value.trim(),
     kontakt: form["kontakt-broj"].value.trim(),
     email: form.email.value.trim(),
-    laptopId: form["laptop-select"].value,
+    laptop: laptopNaziv,  // ← sada šalje IME laptopa
     poruka: form.poruka.value.trim()
   };
 
