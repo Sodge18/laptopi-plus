@@ -32,8 +32,8 @@
       transition: all 0.3s ease;
     }
     .other-product:hover {
-      transform: translateY(-12px);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     }
     #mainImage {
       transition: transform 0.5s ease;
@@ -96,7 +96,24 @@
 </div>
 
 <main class="container mx-auto px-6 py-12 max-w-7xl flex-grow">
-  <!-- Glavni grid – na telefonu sve u jednu kolonu -->
+  <!-- "Nazad" link -->
+  <div class="mb-8">
+    <a href="index.html" class="flex items-center gap-2 text-gray-700 hover:text-black transition text-lg font-medium">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Nazad na početnu
+    </a>
+  </div>
+
+  <!-- Na telefonu: naslov, kratak opis, cijena, dugme – prije galerije -->
+  <div class="lg:hidden space-y-8 mb-12">
+    <h1 id="title" class="text-4xl font-black"></h1>
+    <p id="shortDesc" class="text-xl text-gray-600 leading-relaxed"></p>
+    <p id="price" class="text-4xl font-black"></p>
+    <button id="chooseBtn" class="w-full bg-black text-white font-bold text-xl py-6 rounded-full hover:bg-gray-800 transition shadow-lg">
+      Izaberi Laptop
+    </button>
+  </div>
+
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
     <!-- LIJEVO (sticky na desktopu) -->
     <div class="space-y-12 lg:sticky lg:top-20 lg:self-start order-1">
@@ -109,16 +126,18 @@
       </div>
     </div>
 
-    <!-- DESNO – cijena, dugme, specifikacije -->
+    <!-- DESNO – specifikacije -->
     <div class="space-y-12 order-2">
-      <div>
-        <h1 id="title" class="text-5xl lg:text-6xl font-black mb-6"></h1>
-        <p id="shortDesc" class="text-xl text-gray-600 mb-8 leading-relaxed"></p>
-        <p id="price" class="text-5xl font-black mb-12"></p>
-        <button id="chooseBtn" class="w-full bg-black text-white font-bold text-xl py-6 rounded-full hover:bg-gray-800 transition shadow-lg">
+      <!-- Na desktopu: naslov, kratak opis, cijena, dugme – prije specifikacija -->
+      <div class="hidden lg:block">
+        <h1 id="title-lg" class="text-5xl lg:text-6xl font-black mb-6"></h1>
+        <p id="shortDesc-lg" class="text-xl text-gray-600 mb-8 leading-relaxed"></p>
+        <p id="price-lg" class="text-5xl font-black mb-12"></p>
+        <button id="chooseBtn-lg" class="w-full bg-black text-white font-bold text-xl py-6 rounded-full hover:bg-gray-800 transition shadow-lg">
           Izaberi Laptop
         </button>
       </div>
+
       <div>
         <h2 class="text-3xl font-bold mb-8">Tehničke specifikacije</h2>
         <div id="specs" class="space-y-4"></div>
@@ -134,7 +153,7 @@
     </div>
   </div>
 
-  <!-- OSTALI LAPTOPI – uže kartice na telefonu -->
+  <!-- OSTALI LAPTOPI -->
   <div class="mt-24">
     <div class="relative text-center mb-12">
       <div class="absolute inset-0 flex items-center">
@@ -150,7 +169,7 @@
   </div>
 </main>
 
-<!-- LIGHTBOX za glavnu galeriju -->
+<!-- LIGHTBOX -->
 <div id="lightbox" class="fixed inset-0 bg-black/95 z-[100] hidden flex items-center justify-center">
   <button onclick="closeLightbox()" class="absolute top-8 right-8 text-white hover:text-gray-300 text-5xl z-10">
     ×
@@ -216,10 +235,12 @@ async function loadProduct() {
 
     document.title = `${product.title} - Laptopi Plus`;
 
+    // Popuni naslov, opis, cijenu – na telefonu prije galerije
     document.getElementById("title").textContent = product.title;
     document.getElementById("shortDesc").textContent = product.shortDesc || "";
     document.getElementById("price").textContent = product.price ? `${product.price}€` : "Cena na upit";
 
+    // Galerija
     images = product.images && product.images.length ? product.images : [product.image || "https://via.placeholder.com/800?text=Laptop"];
     document.getElementById("mainImage").src = images[0];
 
@@ -230,7 +251,7 @@ async function loadProduct() {
            onclick="changeImage(${i})">
     `).join("");
 
-    // Detaljan opis – prikazuje se i lijevo (sticky) i na telefonu ispod specifikacija
+    // Detaljan opis
     document.getElementById("fullDescription").innerHTML = product.description || "Nema detaljnog opisa.";
 
     // Specifikacije
@@ -267,18 +288,16 @@ async function loadProduct() {
 
     document.getElementById("chooseBtn").onclick = () => {
       window.location.href = `index.html?selected=${product.id}#contact`;
-      // ili ako ti forma ima ID #contact-form-section:
-      // window.location.href = `index.html?selected=${product.id}#contact-form-section`;
     };
 
-    // OSTALI LAPTOPI – horizontalna galerija
+    // OSTALI LAPTOPI
     const otherDiv = document.getElementById("otherProducts");
     const otherProducts = allProducts.filter(p => p.id !== id);
     if (otherProducts.length > 0) {
       otherDiv.innerHTML = otherProducts.map(p => {
         const img = p.images?.[0] || p.image || "https://via.placeholder.com/400?text=Laptop";
         return `
-          <div onclick="window.location.href='product.html?selected=${p.id}'" class="other-product flex-shrink-0 w-[75%] sm:w-64 lg:w-80 min-w-[240px] cursor-pointer bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 overflow-hidden hover:shadow-2xl">
+          <div onclick="window.location.href='product.html?selected=${p.id}'" class="other-product flex-shrink-0 w-[75%] sm:w-64 lg:w-80 min-w-[240px] cursor-pointer bg-white rounded-2xl shadow-md overflow-hidden">
             <img src="${img}" alt="${p.title}" class="w-full h-40 object-cover">
             <div class="p-5">
               <h3 class="text-lg font-bold mb-2 line-clamp-2">${p.title}</h3>
@@ -290,7 +309,6 @@ async function loadProduct() {
     } else {
       otherDiv.innerHTML = "<p class='text-center text-gray-500 py-8'>Trenutno nema drugih laptopa.</p>";
     }
-
   } catch (err) {
     console.error(err);
     document.body.innerHTML = "<h1 class='text-center text-4xl mt-32 text-red-600'>Greška pri učitavanju proizvoda</h1>";
@@ -320,24 +338,18 @@ function openLightbox(index) {
   document.getElementById("lightboxImage").src = images[currentIndex];
   document.getElementById("lightbox").classList.remove("hidden");
 }
-
 function closeLightbox() {
   document.getElementById("lightbox").classList.add("hidden");
 }
-
 function prevLightbox() {
   currentIndex = (currentIndex - 1 + images.length) % images.length;
   document.getElementById("lightboxImage").src = images[currentIndex];
 }
-
 function nextLightbox() {
   currentIndex = (currentIndex + 1) % images.length;
   document.getElementById("lightboxImage").src = images[currentIndex];
 }
-
-// Otvori lightbox klikom na glavnu sliku
 document.getElementById("mainImage").addEventListener("click", () => openLightbox(currentIndex));
-  
 </script>
 </body>
 </html>
