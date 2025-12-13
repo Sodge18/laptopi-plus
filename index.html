@@ -36,36 +36,64 @@
 </head>
 
 <body class="bg-background-light font-display text-gray-700">
-<!-- NAVBAR – ČISTO, BEZ LOGA, SA APSTRAKTNIM PLUSOM -->
+<!-- NAVBAR – SA TELEFONOM I EMAIL-OM -->
 <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-md">
-  <div class="container mx-auto px-6 py-5 flex items-center justify-between">
-   
-    <!-- LIJEVO: Laptopi Plus sa apstraktnim plusom -->
-    <a href="#" class="flex items-center gap-3 text-2xl md:text-3xl font-black text-primary hover:opacity-80 transition">
-      <!-- Apstraktni plus (SVG) -->
-      <svg class="w-9 h-9 md:w-11 md:h-11 text-primary" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="20" y="8" width="8" height="32" rx="4" fill="currentColor"/>
-        <rect x="8" y="20" width="32" height="8" rx="4" fill="currentColor"/>
-      </svg>
-      <span>Laptopi Plus</span>
-    </a>
-    <!-- Desktop meni -->
-    <nav class="hidden md:flex items-center space-x-12">
-      <a href="#products-grid" class="text-lg font-semibold hover:text-primary transition">Laptopi</a>
-      <a href="#contact-form-section" class="text-lg font-semibold hover:text-primary transition">Kontakt</a>
-    </nav>
-    <!-- Hamburger za mobilni -->
-    <button id="menuBtn" class="md:hidden text-3xl">
-      <span class="material-icons">menu</span>
-    </button>
+  <div class="container mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+    
+    <!-- Gornji red: Logo + Kontakt (mobilni: samo logo, desktop: logo lijevo, kontakt desno) -->
+    <div class="w-full flex items-center justify-between md:justify-start">
+      <!-- Logo sa plusom -->
+      <a href="#" class="flex items-center gap-2 text-2xl font-black text-primary">
+        <svg class="w-8 h-8" viewBox="0 0 48 48" fill="currentColor">
+          <rect x="20" y="8" width="8" height="32" rx="4"/>
+          <rect x="8" y="20" width="32" height="8" rx="4"/>
+        </svg>
+        Laptopi Plus
+      </a>
+
+      <!-- Kontakt info – samo na desktopu -->
+      <div class="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-700">
+        <a href="tel:+381637105383" class="flex items-center gap-2 hover:text-primary transition">
+          <span class="material-icons text-lg">phone</span>
+          +381 63 710-5383
+        </a>
+        <a href="mailto:info@laptopiplus.rs" class="flex items-center gap-2 hover:text-primary transition">
+          <span class="material-icons text-lg">email</span>
+          info@laptopiplus.rs
+        </a>
+      </div>
+    </div>
+
+    <!-- Donji red: Meni + Hamburger -->
+    <div class="w-full flex items-center justify-between md:justify-end">
+      <!-- Desktop meni -->
+      <nav class="hidden md:flex items-center space-x-12">
+        <a href="#products-grid" class="text-base font-medium hover:text-primary transition">Laptopi</a>
+        <a href="#contact-form-section" class="text-base font-medium hover:text-primary transition">Kontakt</a>
+      </nav>
+
+      <!-- Hamburger za mobilni -->
+      <button id="menuBtn" class="md:hidden text-3xl">
+        <span class="material-icons">menu</span>
+      </button>
+    </div>
   </div>
+
   <!-- Mobilni meni -->
-  <div id="mobileMenu" class="fixed inset-0 bg-white z-40 hidden flex-col items-center justify-center gap-16 text-4xl font-bold">
+  <div id="mobileMenu" class="fixed inset-0 bg-white z-40 hidden flex-col items-center justify-center gap-12 text-3xl font-bold">
     <button id="closeMenu" class="absolute top-8 right-8 text-5xl">
       <span class="material-icons">close</span>
     </button>
     <a href="#products-grid" class="hover:text-primary transition">Laptopi</a>
     <a href="#contact-form-section" class="hover:text-primary transition">Kontakt</a>
+    <div class="pt-8 border-t border-gray-300 text-xl space-y-4">
+      <a href="tel:+381637105383" class="flex items-center gap-3 hover:text-primary transition">
+        <span class="material-icons">phone</span> +381 63 710-5383
+      </a>
+      <a href="mailto:info@laptopiplus.rs" class="flex items-center gap-3 hover:text-primary transition">
+        <span class="material-icons">email</span> info@laptopiplus.rs
+      </a>
+    </div>
   </div>
 </header>
 <!-- HERO – SAVRŠEN VERTIKALNI GRADIENT + TALASI PREKO CELOG EKRANA -->
