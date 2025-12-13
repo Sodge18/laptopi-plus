@@ -4,12 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Laptopi Plus</title>
-
   <!-- Tailwind + Fontovi -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
-
   <script>
     tailwind.config = {
       theme: {
@@ -29,7 +27,6 @@
       }
     }
   </script>
-
   <style>
     .product-card:hover img {
       transform: scale(1.05);
@@ -44,7 +41,7 @@
 </head>
 <body class="bg-white text-primary font-sans antialiased">
 
-<!-- HEADER -->
+<!-- HEADER – Telefon i email umjesto menija -->
 <header class="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md">
   <div class="max-w-7xl mx-auto px-6">
     <div class="flex items-center justify-between h-16">
@@ -56,11 +53,17 @@
         <span class="text-xl font-bold tracking-tight">Laptopi Plus</span>
       </a>
 
-      <!-- Navigacija -->
-      <nav class="hidden md:flex items-center gap-10">
-        <a href="#products" class="text-sm font-medium hover:text-gray-600 transition">Laptopi</a>
-        <a href="#contact" class="text-sm font-medium hover:text-gray-600 transition">Kontakt</a>
-      </nav>
+      <!-- Telefon i email – samo na desktopu -->
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a href="tel:+381637105383" class="flex items-center gap-2 hover:text-gray-600 transition">
+          <span class="material-symbols-outlined text-lg">phone</span>
+          +381 63 710-5383
+        </a>
+        <a href="mailto:bojicstefan66@gmail.com" class="flex items-center gap-2 hover:text-gray-600 transition">
+          <span class="material-symbols-outlined text-lg">email</span>
+          bojicstefan66@gmail.com
+        </a>
+      </div>
 
       <!-- Hamburger -->
       <button id="menuBtn" class="md:hidden">
@@ -70,13 +73,21 @@
   </div>
 </header>
 
-<!-- Mobilni meni -->
+<!-- Mobilni meni – sa kontaktom -->
 <div id="mobileMenu" class="fixed inset-0 bg-white z-40 hidden flex-col items-center justify-center gap-12 text-3xl font-bold">
   <button id="closeMenu" class="absolute top-8 right-8 text-5xl">
     <span class="material-symbols-outlined">close</span>
   </button>
-  <a href="#products" class="hover:text-primary transition">Laptopi</a>
-  <a href="#contact" class="hover:text-primary transition">Kontakt</a>
+  <div class="space-y-8 text-center">
+    <a href="tel:+381637105383" class="flex items-center justify-center gap-4 hover:text-primary transition text-2xl">
+      <span class="material-symbols-outlined text-3xl">phone</span>
+      +381 63 710-5383
+    </a>
+    <a href="mailto:bojicstefan66@gmail.com" class="flex items-center justify-center gap-4 hover:text-primary transition text-2xl">
+      <span class="material-symbols-outlined text-3xl">email</span>
+      bojicstefan66@gmail.com
+    </a>
+  </div>
 </div>
 
 <!-- HERO -->
@@ -102,16 +113,16 @@
   </div>
 </section>
 
-<!-- KONTAKT FORMA -->
-<section id="contact" class="py-24 bg-gray-50">
+<!-- KONTAKT FORMA – PLAVA POZADINA KAO FOOTER -->
+<section id="contact" class="py-24 bg-[#171717]">
   <div class="max-w-2xl mx-auto px-6">
     <div class="text-center mb-12">
-      <h2 class="text-4xl md:text-5xl font-bold mb-4">Kontaktirajte nas?</h2>
-      <p class="text-lg text-gray-600">Pošaljite upit – odgovaramo u roku od 24h</p>
+      <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white">Kontaktirajte nas?</h2>
+      <p class="text-lg text-gray-300">Pošaljite upit – odgovaramo u roku od 24h</p>
     </div>
     <div class="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-gray-200">
       <form id="contact-form" novalidate class="space-y-8">
-        <!-- Hidden polja za bolji mejl -->
+        <!-- Hidden polja -->
         <input type="hidden" name="_subject" value="Novi upit sa sajta Laptopi Plus">
         <input type="hidden" name="_replyto" value="{{email}}">
         <input type="hidden" name="_autoresponse" value="Hvala na upitu! Uskoro ćemo Vam se javiti sa ponudom. Laptopi Plus">
@@ -138,21 +149,41 @@
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
-  <div class="max-w-7xl mx-auto px-6 text-center">
-    <p class="mb-4">Laptopi Plus — Laptopi za sve namene</p>
-    <p class="text-sm">
-      Developed by <a href="https://instagram.com/sodge.studio" target="_blank" class="hover:text-white transition">@sodge.studio</a>
-    </p>
+<!-- FOOTER – Kontakt lijevo -->
+<footer class="bg-[#171717] text-gray-400 py-12 border-t border-gray-800">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-left">
+      <!-- Lijevo: Kontakt -->
+      <div class="space-y-2">
+        <a href="tel:+381637105383" class="flex items-center gap-3 text-white hover:text-gray-300 transition text-lg font-medium">
+          <span class="material-symbols-outlined text-xl">phone</span>
+          +381 63 710-5383
+        </a>
+        <a href="mailto:bojicstefan66@gmail.com" class="flex items-center gap-3 text-white hover:text-gray-300 transition text-lg font-medium">
+          <span class="material-symbols-outlined text-xl">email</span>
+          bojicstefan66@gmail.com
+        </a>
+      </div>
+      <!-- Desno: Tekst + potpis -->
+      <div class="space-y-4 text-center md:text-right">
+        <p class="text-sm">
+          Laptopi Plus — Laptopi za sve namene
+        </p>
+        <p class="text-xs text-gray-500">
+          Developed by
+          <a href="https://instagram.com/sodge.studio" target="_blank" rel="noopener" class="font-medium text-gray-400 hover:text-white transition underline decoration-gray-500 hover:decoration-white">
+            @sodge.studio
+          </a>
+        </p>
+      </div>
+    </div>
   </div>
 </footer>
 
+<!-- JS ostaje isti -->
 <script>
 const API_URL = "https://products-api.sergej-kaldesic.workers.dev/";
 let allProducts = [];
-
-// Load products
 async function loadProducts() {
   try {
     const res = await fetch(API_URL);
@@ -167,8 +198,6 @@ async function loadProducts() {
     document.getElementById("products-grid").innerHTML = '<div class="col-span-full text-center py-32"><p class="text-red-500 text-xl">Greška pri učitavanju proizvoda.</p></div>';
   }
 }
-
-// Render grid
 function renderGrid(products) {
   const grid = document.getElementById("products-grid");
   if (!products.length) {
@@ -192,8 +221,6 @@ function renderGrid(products) {
     </div>`;
   }).join("");
 }
-
-// Populate dropdown
 function populateLaptopDropdown(products) {
   const select = document.getElementById("laptop-select");
   select.innerHTML = '<option value="">Izaberite laptop...</option>';
@@ -204,26 +231,18 @@ function populateLaptopDropdown(products) {
     select.appendChild(opt);
   });
 }
-
-// Go to product page
 function goToProduct(id) {
-  window.location.href = `product.html?selected=${id}#contact-form-section`;
+  window.location.href = `product.html?selected=${id}#contact`;
 }
-
-// Mobile menu
 document.getElementById('menuBtn')?.addEventListener('click', () => {
   document.getElementById('mobileMenu').classList.remove('hidden');
 });
 document.getElementById('closeMenu')?.addEventListener('click', () => {
   document.getElementById('mobileMenu').classList.add('hidden');
 });
-
-// Form validation and submit
 const form = document.getElementById("contact-form");
 form.addEventListener("submit", async e => {
   e.preventDefault();
-
-  // Validacija
   let valid = true;
   const required = ["ime", "prezime", "kontakt-broj", "email"];
   required.forEach(id => {
@@ -241,55 +260,42 @@ form.addEventListener("submit", async e => {
   } else {
     document.getElementById("laptop-select").classList.remove("invalid-field");
   }
-
   if (!valid) {
     alert("Molimo popunite sva obavezna polja.");
     return;
   }
-
-  // Pronađi naziv laptopa po ID-ju
   const selectedOption = form["laptop-select"].selectedOptions[0];
   const laptopNaziv = selectedOption ? selectedOption.textContent : "Nije izabran";
-
   const data = {
     ime: form.ime.value.trim(),
     prezime: form.prezime.value.trim(),
     kontakt: form["kontakt-broj"].value.trim(),
     email: form.email.value.trim(),
-    laptop: laptopNaziv,  // ← sada šalje IME laptopa
+    laptop: laptopNaziv,
     poruka: form.poruka.value.trim()
   };
-
   try {
     const res = await fetch("https://formsubmit.co/ajax/daeaddb64808964d263c0dd4343594af", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify(data)
     });
-
     if (!res.ok) throw new Error("Greška");
-
     alert("Hvala! Vaš upit je uspješno poslat. Odgovorićemo vam u roku od 24h.");
     form.reset();
   } catch (err) {
     alert("Došlo je do greške prilikom slanja. Pokušajte ponovo ili pozovite direktno.");
   }
 });
-
-// Auto select from URL
 function autoSelectFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const selectedId = params.get('selected');
   if (selectedId) {
     const select = document.getElementById('laptop-select');
     if (select) select.value = selectedId;
-    if (window.location.hash === '#contact-form-section' || window.location.hash === '#contact') {
-      document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
-    }
+    document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
   }
 }
-
-// Init
 document.addEventListener("DOMContentLoaded", () => {
   loadProducts();
   autoSelectFromUrl();
