@@ -267,6 +267,8 @@ async function loadProduct() {
 
     document.getElementById("chooseBtn").onclick = () => {
       window.location.href = `index.html?selected=${product.id}#contact`;
+      // ili ako ti forma ima ID #contact-form-section:
+      // window.location.href = `index.html?selected=${product.id}#contact-form-section`;
     };
 
     // OSTALI LAPTOPI – horizontalna galerija
