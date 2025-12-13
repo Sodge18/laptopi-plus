@@ -37,6 +37,9 @@
     .product-card:hover {
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
+    .invalid-field {
+      border-color: #ef4444 !important;
+    }
   </style>
 </head>
 <body class="bg-white text-primary font-sans antialiased">
@@ -92,7 +95,6 @@
 <section id="products" class="px-6 pb-24">
   <div class="max-w-7xl mx-auto">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="products-grid">
-      <!-- JS popunjava -->
       <div class="col-span-full text-center py-32">
         <p class="text-gray-500 text-lg">Učitavanje proizvoda...</p>
       </div>
@@ -148,25 +150,27 @@ let allProducts = [];
 async function loadProducts() {
   try {
     const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("Greška API: " + res.status);
     const data = await res.json();
-    const products = Array.isArray(data.products) ? data.products : data;
+    const products = Array.isArray(data.products) ? data.products : (Array.isArray(data) ? data : []);
     allProducts = products;
     renderGrid(products);
     populateLaptopDropdown(products);
   } catch (e) {
     console.error(e);
+    document.getElementById("products-grid").innerHTML = '<div class="col-span-full text-center py-32"><p class="text-red-500 text-xl">Greška pri učitavanju proizvoda.</p></div>';
   }
 }
 
-// Render grid (minimalistički stil kao u primjeru)
+// Render grid
 function renderGrid(products) {
   const grid = document.getElementById("products-grid");
   if (!products.length) {
-    grid.innerHTML = `<div class="col-span-full text-center py-32"><p class="text-gray-500 text-xl">Nema dostupnih proizvoda.</p></div>`;
+    grid.innerHTML = '<div class="col-span-full text-center py-32"><p class="text-gray-500 text-xl">Nema dostupnih proizvoda.</p></div>';
     return;
   }
   grid.innerHTML = products.map(p => {
-    const img = p.images?.[0] || p.image || "https://via.placeholder.com/600";
+    const img = p.images?.[0] || p.image || "https://via.placeholder.com/600?text=No+Image";
     return `
     <div onclick="goToProduct('${p.id}')" class="product-card group flex flex-col cursor-pointer">
       <div class="relative w-full aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center p-8 transition-all duration-300 group-hover:bg-gray-200">
@@ -175,7 +179,7 @@ function renderGrid(products) {
       <div class="mt-4 space-y-1">
         <h3 class="text-lg font-semibold group-hover:underline decoration-1 underline-offset-4">${p.title}</h3>
         <div class="flex justify-between items-center">
-          <p class="text-gray-500 text-sm">${p.shortDesc || "Premium konfiguracija"}</p>
+          <p class="text-gray-500 text-sm">${p.shortDesc || "Premium laptop"}</p>
           <p class="font-medium">${p.price ? p.price + "€" : "Cena na upit"}</p>
         </div>
       </div>
@@ -197,7 +201,7 @@ function populateLaptopDropdown(products) {
 
 // Go to product page
 function goToProduct(id) {
-  window.location.href = `product.html?selected=${id}`;
+  window.location.href = `product.html?selected=${id}#contact-form-section`;
 }
 
 // Mobile menu
@@ -208,32 +212,78 @@ document.getElementById('closeMenu')?.addEventListener('click', () => {
   document.getElementById('mobileMenu').classList.add('hidden');
 });
 
-// Form submit
-document.getElementById("contact-form").addEventListener("submit", async e => {
+// Form validation and submit
+const form = document.getElementById("contact-form");
+form.addEventListener("submit", async e => {
   e.preventDefault();
+
+  // Validacija
+  let valid = true;
+  const required = ["ime", "prezime", "kontakt-broj", "email"];
+  required.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+      el.classList.add("invalid-field");
+      valid = false;
+    } else {
+      el.classList.remove("invalid-field");
+    }
+  });
+  if (!document.getElementById("laptop-select").value) {
+    document.getElementById("laptop-select").classList.add("invalid-field");
+    valid = false;
+  } else {
+    document.getElementById("laptop-select").classList.remove("invalid-field");
+  }
+
+  if (!valid) {
+    alert("Molimo popunite sva obavezna polja.");
+    return;
+  }
+
   const data = {
-    ime: e.target.ime.value.trim(),
-    prezime: e.target.prezime.value.trim(),
-    kontakt: e.target["kontakt-broj"].value.trim(),
-    email: e.target.email.value.trim(),
-    laptopId: e.target["laptop-select"].value,
-    poruka: e.target.poruka.value.trim()
+    ime: form.ime.value.trim(),
+    prezime: form.prezime.value.trim(),
+    kontakt: form["kontakt-broj"].value.trim(),
+    email: form.email.value.trim(),
+    laptopId: form["laptop-select"].value,
+    poruka: form.poruka.value.trim()
   };
+
   try {
-    await fetch("https://formsubmit.co/ajax/sergej.kaldesic@gmail.com", {
+    const res = await fetch("https://formsubmit.co/ajax/sergej.kaldesic@gmail.com", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify(data)
     });
-    alert("Upit poslat!");
-    e.target.reset();
+
+    if (!res.ok) throw new Error("Greška");
+
+    alert("Hvala! Vaš upit je uspješno poslat. Odgovorićemo vam u roku od 24h.");
+    form.reset();
   } catch (err) {
-    alert("Greška prilikom slanja.");
+    alert("Došlo je do greške prilikom slanja. Pokušajte ponovo ili pozovite direktno.");
   }
 });
 
+// Auto select from URL
+function autoSelectFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const selectedId = params.get('selected');
+  if (selectedId) {
+    const select = document.getElementById('laptop-select');
+    if (select) select.value = selectedId;
+    if (window.location.hash === '#contact-form-section' || window.location.hash === '#contact') {
+      document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+}
+
 // Init
-document.addEventListener("DOMContentLoaded", loadProducts);
+document.addEventListener("DOMContentLoaded", () => {
+  loadProducts();
+  autoSelectFromUrl();
+});
 </script>
 </body>
 </html>
