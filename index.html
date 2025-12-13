@@ -37,7 +37,7 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
     }
     .product-card:hover .card-bg {
-      background-color: #f0f0f0;
+      background-color: #e5e5e5;
     }
     .product-card:hover img {
       transform: scale(1.08);
@@ -230,8 +230,8 @@ function renderGrid(products) {
     const img = p.images?.[0] || p.image || "https://via.placeholder.com/600?text=No+Image";
     return `
     <div onclick="goToProduct('${p.id}')" class="product-card group flex flex-col cursor-pointer bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      <div class="card-bg relative w-full aspect-[4/3] bg-gray-100 flex items-center justify-center p-8 transition-all duration-300">
-        <img src="${img}" alt="${p.title}" class="object-contain w-full h-full mix-blend-multiply transition-transform duration-500">
+      <div class="card-bg relative w-full aspect-[4/3] bg-gray-100 overflow-hidden transition-all duration-300">
+        <img src="${img}" alt="${p.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
       </div>
       <div class="p-6 space-y-3">
         <h3 class="text-xl font-semibold">${p.title}</h3>
