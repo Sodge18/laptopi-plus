@@ -96,17 +96,20 @@
 </div>
 
 <main class="container mx-auto px-6 py-12 max-w-7xl flex-grow">
-
-  <!-- Na telefonu: naslov, kratak opis, cijena – prije galerije -->
-  <div class="lg:hidden space-y-8 mb-12">
-    <h1 id="title" class="text-4xl font-black"></h1>
-    <p id="shortDesc" class="text-xl text-gray-600 leading-relaxed"></p>
-    <p id="price" class="text-4xl font-black"></p>
+  <!-- "Nazad" link -->
+  <div class="mb-8">
+    <a href="index.html" class="flex items-center gap-2 text-gray-700 hover:text-black transition text-lg font-medium">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Nazad na početnu
+    </a>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
     <!-- LIJEVO (sticky na desktopu) -->
-    <div class="space-y-12 lg:sticky lg:top-20 lg:self-start order-1">
+    <div class="space-y-12 lg:sticky lg:top-20 lg:self-start">
+      <!-- Naziv laptopa – iznad galerije na svim ekranima -->
+      <h1 id="title" class="text-4xl lg:text-6xl font-black mb-8"></h1>
+
       <!-- Galerija -->
       <div class="space-y-6">
         <div class="bg-gray-50 rounded-2xl overflow-hidden shadow-lg aspect-[4/3]">
@@ -115,23 +118,18 @@
         <div id="thumbnails" class="grid grid-cols-5 gap-4"></div>
       </div>
 
-      <!-- DUGME "Izaberi Laptop" – ispod galerije na svim ekranima -->
-      <div class="mt-8">
+      <!-- Ispod galerije: cijena, kratak opis, dugme -->
+      <div class="space-y-8 mt-8">
+        <p id="price" class="text-4xl lg:text-5xl font-black"></p>
+        <p id="shortDesc" class="text-xl text-gray-600 leading-relaxed"></p>
         <button id="chooseBtn" class="w-full bg-black text-white font-bold text-xl py-6 rounded-full hover:bg-gray-800 transition shadow-lg">
           Izaberi Laptop
         </button>
       </div>
     </div>
 
-    <!-- DESNO – naslov, opis, cijena (samo na desktopu) + specifikacije -->
-    <div class="space-y-12 order-2">
-      <!-- Na desktopu: naslov, kratak opis, cijena -->
-      <div class="hidden lg:block">
-        <h1 id="title-lg" class="text-5xl lg:text-6xl font-black mb-6"></h1>
-        <p id="shortDesc-lg" class="text-xl text-gray-600 mb-8 leading-relaxed"></p>
-        <p id="price-lg" class="text-5xl font-black mb-12"></p>
-      </div>
-
+    <!-- DESNO – samo specifikacije -->
+    <div class="space-y-12">
       <div>
         <h2 class="text-3xl font-bold mb-8">Tehničke specifikacije</h2>
         <div id="specs" class="space-y-4"></div>
@@ -139,7 +137,7 @@
     </div>
   </div>
 
-  <!-- Detaljan opis – na telefonu ispod specifikacija -->
+  <!-- Detaljan opis – samo na telefonu ispod specifikacija -->
   <div class="mt-12 lg:hidden">
     <div class="prose prose-lg text-gray-700 leading-relaxed">
       <h2 class="text-3xl font-bold mb-6">Opis proizvoda</h2>
@@ -229,15 +227,12 @@ async function loadProduct() {
 
     document.title = `${product.title} - Laptopi Plus`;
 
-    // Naslov, kratak opis, cijena – na telefonu prije galerije
+    // Naslov
     document.getElementById("title").textContent = product.title;
-    document.getElementById("shortDesc").textContent = product.shortDesc || "";
-    document.getElementById("price").textContent = product.price ? `${product.price}€` : "Cena na upit";
 
-    // Na desktopu – dupliraj za desnu kolonu
-    document.getElementById("title-lg").textContent = product.title;
-    document.getElementById("shortDesc-lg").textContent = product.shortDesc || "";
-    document.getElementById("price-lg").textContent = product.price ? `${product.price}€` : "Cena na upit";
+    // Cijena i kratak opis – ispod galerije
+    document.getElementById("price").textContent = product.price ? `${product.price}€` : "Cena na upit";
+    document.getElementById("shortDesc").textContent = product.shortDesc || "";
 
     // Galerija
     images = product.images && product.images.length ? product.images : [product.image || "https://via.placeholder.com/800?text=Laptop"];
@@ -285,7 +280,7 @@ async function loadProduct() {
       specsDiv.appendChild(div);
     });
 
-    // Dugme – jedinstveno, ispod galerije
+    // Dugme
     document.getElementById("chooseBtn").onclick = () => {
       window.location.href = `index.html?selected=${product.id}#contact`;
     };
