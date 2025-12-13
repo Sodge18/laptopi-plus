@@ -28,6 +28,13 @@
       border-color: #000;
       transform: scale(1.05);
     }
+    .other-product {
+      transition: all 0.3s ease;
+    }
+    .other-product:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
 <body class="bg-white text-gray-900 min-h-screen flex flex-col">
@@ -36,15 +43,12 @@
 <header class="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md">
   <div class="max-w-7xl mx-auto px-6">
     <div class="flex items-center justify-between h-16">
-      <!-- Logo – tačno kao na index.html -->
       <a href="index.html" class="flex items-center gap-3">
         <div class="w-9 h-9 flex items-center justify-center bg-primary text-white rounded-lg">
           <span class="material-symbols-outlined text-xl">laptop_mac</span>
         </div>
         <span class="text-xl font-bold tracking-tight">Laptopi Plus</span>
       </a>
-
-      <!-- Telefon i email – samo na desktopu (kao na index.html) -->
       <div class="hidden md:flex items-center gap-8 text-sm font-medium">
         <a href="tel:+381637105383" class="flex items-center gap-2 hover:text-gray-600 transition">
           <span class="material-symbols-outlined text-lg">phone</span>
@@ -55,8 +59,6 @@
           bojicstefan66@gmail.com
         </a>
       </div>
-
-      <!-- Hamburger (za mobilni meni sa kontaktom) -->
       <button id="menuBtn" class="md:hidden">
         <span class="material-symbols-outlined text-2xl">menu</span>
       </button>
@@ -64,7 +66,7 @@
   </div>
 </header>
 
-<!-- Mobilni meni – isti kao na index.html -->
+<!-- Mobilni meni -->
 <div id="mobileMenu" class="fixed inset-0 bg-white z-40 hidden flex-col items-center justify-center gap-12 text-3xl font-bold">
   <button id="closeMenu" class="absolute top-8 right-8 text-5xl">
     <span class="material-symbols-outlined">close</span>
@@ -82,7 +84,7 @@
 </div>
 
 <main class="container mx-auto px-6 py-12 max-w-7xl flex-grow">
-  <!-- "Nazad" link sada u sadržaju, ispod headera -->
+  <!-- "Nazad" link ispod headera -->
   <div class="mb-8">
     <a href="index.html" class="flex items-center gap-2 text-gray-700 hover:text-black transition text-lg font-medium">
       <span class="material-symbols-outlined">arrow_back</span>
@@ -93,11 +95,9 @@
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
     <!-- LIJEVO: GALERIJA -->
     <div class="space-y-6">
-      <!-- Glavna slika -->
       <div class="bg-gray-50 rounded-2xl overflow-hidden shadow-lg aspect-[4/3] flex items-center justify-center">
         <img id="mainImage" src="" alt="Laptop" class="object-contain max-h-full max-w-full p-8">
       </div>
-      <!-- Thumbnailovi -->
       <div id="thumbnails" class="grid grid-cols-5 gap-4"></div>
     </div>
     <!-- DESNO: SADRŽAJ -->
@@ -106,25 +106,30 @@
         <h1 id="title" class="text-5xl lg:text-6xl font-black mb-6"></h1>
         <p id="shortDesc" class="text-xl text-gray-600 mb-8 leading-relaxed"></p>
         <p id="price" class="text-5xl font-black mb-12"></p>
-        <!-- Dugme -->
         <button id="chooseBtn" class="w-full bg-black text-white font-bold text-xl py-6 rounded-full hover:bg-gray-800 transition shadow-lg">
           Izaberi Laptop
         </button>
       </div>
-      <!-- Specifikacije -->
       <div>
         <h2 class="text-3xl font-bold mb-8">Tehničke specifikacije</h2>
         <div id="specs" class="space-y-4"></div>
       </div>
     </div>
   </div>
+
+  <!-- OSTALI LAPTOPI – horizontalna galerija -->
+  <div class="mt-24">
+    <h2 class="text-3xl font-bold mb-8 text-center">Ostali laptopi</h2>
+    <div class="overflow-x-auto pb-4 -mx-6 px-6">
+      <div id="otherProducts" class="flex gap-8"></div>
+    </div>
+  </div>
 </main>
 
-<!-- FOOTER – isti kao na index.html -->
+<!-- FOOTER -->
 <footer class="bg-[#171717] text-gray-400 py-12 border-t border-gray-800 mt-auto">
   <div class="max-w-7xl mx-auto px-6">
     <div class="flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-left">
-      <!-- Lijevo: Kontakt -->
       <div class="space-y-2">
         <a href="tel:+381637105383" class="flex items-center gap-3 text-white hover:text-gray-300 transition text-lg font-medium">
           <span class="material-symbols-outlined text-xl">phone</span>
@@ -135,7 +140,6 @@
           bojicstefan66@gmail.com
         </a>
       </div>
-      <!-- Desno: Tekst + potpis -->
       <div class="space-y-4 text-center md:text-right">
         <p class="text-sm">
           Laptopi Plus — Laptopi za sve namene
@@ -155,6 +159,7 @@
 const API_URL = "https://products-api.sergej-kaldesic.workers.dev/";
 let images = [];
 let currentIndex = 0;
+let allProducts = [];
 
 async function loadProduct() {
   const params = new URLSearchParams(window.location.search);
@@ -167,8 +172,8 @@ async function loadProduct() {
   try {
     const res = await fetch(API_URL);
     const data = await res.json();
-    const products = data.products || data;
-    const product = products.find(p => p.id === id);
+    allProducts = data.products || data;
+    const product = allProducts.find(p => p.id === id);
     if (!product) throw new Error("Not found");
 
     document.title = `${product.title} - Laptopi Plus`;
@@ -177,6 +182,7 @@ async function loadProduct() {
     document.getElementById("shortDesc").textContent = product.shortDesc || product.description || "";
     document.getElementById("price").textContent = product.price ? `${product.price}€` : "Cena na upit";
 
+    // Galerija glavnog proizvoda
     images = product.images && product.images.length ? product.images : [product.image || "https://via.placeholder.com/800?text=Laptop"];
     document.getElementById("mainImage").src = images[0];
 
@@ -187,6 +193,7 @@ async function loadProduct() {
            onclick="changeImage(${i})">
     `).join("");
 
+    // Specifikacije
     const specsDiv = document.getElementById("specs");
     const specKeys = {
       'CPU': 'Procesor',
@@ -203,7 +210,6 @@ async function loadProduct() {
       'Kamera': 'Kamera',
       'Audio': 'Audio'
     };
-
     Object.entries(product.specs || {}).forEach(([key, value]) => {
       const valStr = (value || "").toString().trim();
       if (!valStr || valStr === "-" || valStr.toLowerCase() === "n/a" || valStr.toLowerCase() === "nepoznato" || valStr === "null" || valStr === "undefined") {
@@ -219,9 +225,26 @@ async function loadProduct() {
       specsDiv.appendChild(div);
     });
 
+    // Dugme
     document.getElementById("chooseBtn").onclick = () => {
       window.location.href = `index.html?selected=${product.id}#contact`;
     };
+
+    // OSTALI LAPTOPI – horizontalna galerija
+    const otherDiv = document.getElementById("otherProducts");
+    const otherProducts = allProducts.filter(p => p.id !== id); // isključi trenutni
+    otherDiv.innerHTML = otherProducts.map(p => {
+      const img = p.images?.[0] || p.image || "https://via.placeholder.com/400?text=Laptop";
+      return `
+        <div onclick="window.location.href='product.html?selected=${p.id}'" class="other-product flex-shrink-0 w-80 cursor-pointer bg-white rounded-2xl shadow-md overflow-hidden">
+          <img src="${img}" alt="${p.title}" class="w-full h-48 object-cover">
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">${p.title}</h3>
+            <p class="text-gray-600 text-sm mb-4">${p.shortDesc || ""}</p>
+            <p class="text-2xl font-bold">${p.price ? p.price + "€" : "Cena na upit"}</p>
+          </div>
+        </div>`;
+    }).join("");
 
   } catch (err) {
     console.error(err);
@@ -237,7 +260,7 @@ function changeImage(index) {
   });
 }
 
-// Mobilni meni funkcionalnost
+// Mobilni meni
 document.getElementById('menuBtn')?.addEventListener('click', () => {
   document.getElementById('mobileMenu').classList.remove('hidden');
 });
