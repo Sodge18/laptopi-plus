@@ -32,8 +32,8 @@
       transition: all 0.3s ease;
     }
     .other-product:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      transform: translateY(-12px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
     }
   </style>
 </head>
@@ -270,7 +270,7 @@ async function loadProduct() {
       otherDiv.innerHTML = otherProducts.map(p => {
         const img = p.images?.[0] || p.image || "https://via.placeholder.com/400?text=Laptop";
         return `
-          <div onclick="window.location.href='product.html?selected=${p.id}'" class="other-product flex-shrink-0 w-[75%] sm:w-64 lg:w-80 min-w-[240px] cursor-pointer bg-white rounded-2xl shadow-md overflow-hidden">
+          <div onclick="window.location.href='product.html?selected=${p.id}'" class="other-product flex-shrink-0 w-[75%] sm:w-64 lg:w-80 min-w-[240px] cursor-pointer bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 overflow-hidden hover:shadow-2xl">
             <img src="${img}" alt="${p.title}" class="w-full h-40 object-cover">
             <div class="p-5">
               <h3 class="text-lg font-bold mb-2 line-clamp-2">${p.title}</h3>
