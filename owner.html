@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Dashboard - Istorija Laptopa</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+body { font-family:'Inter',sans-serif; background:#f6f7f8; color:#111; }
+.table { width:100%; border-collapse:collapse; }
+.table th, .table td { border:1px solid #ddd; padding:8px; text-align:left; }
+.table th { background:#197fe6; color:white; }
+.hidden { display:none; }
+</style>
+</head>
+<body class="p-6">
+
+<h1 class="text-2xl font-bold mb-4">Owner Dashboard - Istorija Laptopa</h1>
+
+<!-- Login -->
+<div id="loginDiv">
+  <label class="block mb-1">Šifra:</label>
+  <input type="password" id="ownerPassword" class="border p-2 rounded mb-2" placeholder="Unesite šifru">
+  <button id="loginBtn" class="bg-primary text-white px-4 py-2 rounded">Prijava</button>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard" class="hidden">
+  <table class="table mb-4">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Naziv</th>
+        <th>Status</th>
+        <th>Cijena</th>
+        <th>Datum dodavanja</th>
+        <th>Datum izmjene</th>
+        <th>Napomena</th>
+      </tr>
+    </thead>
+    <tbody id="historyBody">
+      <!-- Dinamički podaci -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+const OWNER_PASS = "tvoja_jaka_sifra"; // promijeni na nešto sigurno
+
+const loginDiv = document.getElementById("loginDiv");
+const dashboard = document.getElementById("dashboard");
+const loginBtn = document.getElementById("loginBtn");
+const ownerPassword = document.getElementById("ownerPassword");
+const historyBody = document.getElementById("historyBody");
+
+loginBtn.addEventListener("click", () => {
+  if(ownerPassword.value === OWNER_PASS){
+    loginDiv.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    fetchHistory();
+  } else {
+    Swal.fire({icon:'error', text:'Pogrešna šifra!'});
+  }
+});
+
+// --- Fetch istorije ---
+async function fetchHistory(){
+  try {
+    const res = await fetch('https://products-api.sergej-kaldesic.workers.dev/history'); // endpoint za istoriju
+    const data = await res.json();
+
+    // sortiraj po datumu dodavanja, najnoviji prvo
+    data.sort((a,b) => new Date(b.added) - new Date(a.added));
+
+    historyBody.innerHTML = data.map(l => `
+      <tr>
+        <td>${l.id}</td>
+        <td>${l.title}</td>
+        <td>${l.status}</td>
+        <td>${l.price || 'Cena na upit'}</td>
+        <td>${l.added}</td>
+        <td>${l.modified || '-'}</td>
+        <td>${l.note || ''}</td>
+      </tr>
+    `).join('');
+
+  } catch(err){
+    console.error(err);
+    Swal.fire({icon:'error', text:'Greška pri učitavanju istorije!'});
+  }
+}
+</script>
+
+</body>
+</html>
