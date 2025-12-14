@@ -67,19 +67,19 @@ loginBtn.addEventListener("click", () => {
 // --- Fetch istorije ---
 async function fetchHistory(){
   try {
-    const res = await fetch('https://products-api.sergej-kaldesic.workers.dev/history'); // endpoint za istoriju
+    const res = await fetch('https://products-api.sergej-kaldesic.workers.dev'); // <--- root
     const data = await res.json();
+    const products = data.products || [];
 
-    // sortiraj po datumu dodavanja, najnoviji prvo
-    data.sort((a,b) => new Date(b.added) - new Date(a.added));
+    products.sort((a,b) => new Date(b.added || 0) - new Date(a.added || 0));
 
-    historyBody.innerHTML = data.map(l => `
+    historyBody.innerHTML = products.map(l => `
       <tr>
         <td>${l.id}</td>
         <td>${l.title}</td>
-        <td>${l.status}</td>
+        <td>${l.status || 'N/A'}</td>
         <td>${l.price || 'Cena na upit'}</td>
-        <td>${l.added}</td>
+        <td>${l.added || '-'}</td>
         <td>${l.modified || '-'}</td>
         <td>${l.note || ''}</td>
       </tr>
