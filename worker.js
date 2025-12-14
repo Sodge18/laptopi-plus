@@ -20,16 +20,16 @@ export default {
       let arr = [];
       try { arr = JSON.parse(raw); } catch(e) {}
       if (!Array.isArray(arr)) arr = [];
+
       return new Response(JSON.stringify({ products: arr }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
-    // POST – ako pošalješ {clear: true} → briše sve
+    // POST – dodavanje ili izmena proizvoda
     if (request.method === "POST") {
       const body = await request.json().catch(() => ({}));
 
-      // OVDE JE MAGIJA: ako pošalješ {clear: true} → KV postaje prazan niz
       if (body.clear === true) {
         await KV.put(KEY, "[]");
         return new Response(JSON.stringify({ success: true, cleared: true }), {
@@ -37,7 +37,6 @@ export default {
         });
       }
 
-      // Inače normalno dodavanje/izmena
       let arr = [];
       let raw = await KV.get(KEY);
       if (raw) {
@@ -46,14 +45,28 @@ export default {
       }
 
       if (body && body.products && Array.isArray(body.products)) {
-        arr = body.products; // zameni sve
+        // Zameni sve proizvode (bulk update)
+        arr = body.products.map(p => ({
+          ...p,
+          added: p.added || new Date().toISOString(),
+          modified: p.modified || null
+        }));
       } else {
         const id = url.searchParams.get("id") || (body.id || crypto.randomUUID());
         const index = arr.findIndex(p => p.id === id);
+
         if (index > -1) {
-          arr[index] = { ...arr[index], ...body, id };
+          // Update proizvoda → postavi modified timestamp
+          arr[index] = { 
+            ...arr[index], 
+            ...body, 
+            id, 
+            modified: new Date().toISOString(),
+            added: arr[index].added || new Date().toISOString()
+          };
         } else {
-          arr.push({ ...body, id });
+          // Novi proizvod → postavi added timestamp
+          arr.push({ ...body, id, added: new Date().toISOString(), modified: null });
         }
       }
 
@@ -74,6 +87,7 @@ export default {
         try { arr = JSON.parse(raw); } catch(e) {}
         if (!Array.isArray(arr)) arr = [];
       }
+
       arr = arr.filter(p => p.id !== id);
       await KV.put(KEY, JSON.stringify(arr));
       return new Response(JSON.stringify({ success: true }), {
