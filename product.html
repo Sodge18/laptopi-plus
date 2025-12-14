@@ -169,6 +169,12 @@
     </div>
   </div>
 
+  <!-- Specifikacije – SAMO MOBILNI -->
+  <div class="mt-8 lg:hidden">
+    <h2 class="text-3xl font-bold mb-6">Tehničke specifikacije</h2>
+    <div id="specs-mobile" class="space-y-4"></div>
+  </div>
+
   <div class="lg:hidden mt-8">
     <button id="chooseBtn"
       class="w-full bg-black text-white font-bold text-xl py-6 rounded-full">
@@ -330,6 +336,12 @@ async function loadProduct() {
       `;
       specsDiv.appendChild(div);
     });
+
+    // Popunjavanje mobilnog diva istim sadržajem
+    const specsMobileDiv = document.getElementById("specs-mobile");
+    if (specsMobileDiv) {
+      specsMobileDiv.innerHTML = specsDiv.innerHTML;
+    }
 
     // Dugme (jedno za sve)
     const chooseBtn = document.getElementById("chooseBtn");
