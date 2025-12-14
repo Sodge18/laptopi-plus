@@ -61,37 +61,50 @@ loginBtn.addEventListener("click", () => {
     loginDiv.classList.add("hidden");
     dashboard.classList.remove("hidden");
     fetchHistory();
-    // Start auto-refresh
-    refreshInterval = setInterval(fetchHistory, 5000); // svake 5 sekundi
+    refreshInterval = setInterval(fetchHistory, 5000); // osvježavanje svakih 5s
   } else {
     Swal.fire({icon:'error', text:'Pogrešna šifra!'});
   }
 });
 
-// --- Fetch istorije ---
 async function fetchHistory(){
   try {
     const res = await fetch('https://products-api.sergej-kaldesic.workers.dev?history=true');
     const data = await res.json();
     const history = Array.isArray(data) ? data : [];
 
-    // Sortiraj po vremenu (zadnje izmjene ili dodavanje)
+    // Sortiraj po timestampu (najnovije prvo)
     history.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
 
     historyBody.innerHTML = history.map(entry => {
       const snapshot = entry.snapshot || {};
-      const status = entry.action === "DELETE" ? "Obrisan" : (snapshot.status || entry.action);
-      const added = snapshot.added || "-";
-      const modified = snapshot.modified || "-";
+      const action = entry.action;
+      const time = new Date(entry.timestamp).toLocaleString("sr-RS", {hour12:false});
+      
+      let changeDetails = "";
+      if(action === "UPDATE" && snapshot._before && snapshot._after){
+        // napravi listu šta se promijenilo
+        const diffs = [];
+        Object.keys(snapshot._after).forEach(key => {
+          const before = snapshot._before[key] ?? "-";
+          const after = snapshot._after[key] ?? "-";
+          if(JSON.stringify(before) !== JSON.stringify(after)){
+            diffs.push(`${key}: "${before}" → "${after}"`);
+          }
+        });
+        changeDetails = diffs.join("; ");
+      }
+
       return `
         <tr>
           <td>${snapshot.id || "-"}</td>
           <td>${snapshot.title || "-"}</td>
-          <td>${status}</td>
+          <td>${action}</td>
           <td>${snapshot.price || "Cena na upit"}</td>
-          <td>${added}</td>
-          <td>${modified}</td>
-          <td>${snapshot.note || ""}</td>
+          <td>${snapshot.added || "-"}</td>
+          <td>${snapshot.modified || "-"}</td>
+          <td>${changeDetails}</td>
+          <td>${time}</td>
         </tr>
       `;
     }).join('');
@@ -102,12 +115,10 @@ async function fetchHistory(){
   }
 }
 
-// Opcionalno: kad zatvoriš dashboard, zaustavi refresh
 window.addEventListener("beforeunload", () => {
   if(refreshInterval) clearInterval(refreshInterval);
 });
 </script>
-
 
 </body>
 </html>
