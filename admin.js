@@ -11,7 +11,6 @@ function debounce(fn, delay = 300) {
 const API_URL = "https://products-api.sergej-kaldesic.workers.dev/";
 let products = [];
 let currentIndex = null;
-
 const sidebar = document.getElementById("product-sidebar");
 const content = document.getElementById("product-details");
 const addBtn = document.getElementById("add-product-btn");
@@ -19,7 +18,6 @@ const TAGS = ["Novo", "Poslovni", "Gamer", "Premium"];
 
 // --- INIT ---
 init();
-
 async function init() {
   await fetchProducts();
   addBtn.addEventListener("click", addNewProduct);
@@ -67,12 +65,10 @@ function renderCurrentProduct() {
     `;
     return;
   }
-
   const p = products[currentIndex];
   const specsList = ["CPU","RAM","GPU","Memorija","Ekran","Baterija","OS","Težina","Dimenzije","Portovi","Bežične konekcije","Kamera","Audio"];
   if (!p.specs) p.specs = {};
   specsList.forEach(label => { if (!(label in p.specs)) p.specs[label] = ""; });
-
   content.innerHTML = `
     <div class="grid grid-cols-3 gap-6">
       <div class="col-span-2 space-y-6">
@@ -95,7 +91,6 @@ function renderCurrentProduct() {
             <textarea id="description" rows="5" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white">${p.description||''}</textarea>
           </div>
         </div>
-
         <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
           <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2">Specifikacije</h3>
           <div id="specsContainer" class="space-y-2">
@@ -108,7 +103,6 @@ function renderCurrentProduct() {
           </div>
         </div>
       </div>
-
       <div class="col-span-1 space-y-6">
         <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
           <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2">Slike</h3>
@@ -123,38 +117,31 @@ function renderCurrentProduct() {
           </div>
           <button id="imageUpload" class="w-full py-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary hover:text-primary text-slate-500 dark:text-slate-400">+ Nova fotografija</button>
         </div>
-
         <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
           <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2">Cena €</h3>
           <input id="price" value="${p.price==='Cena na upit'?'':p.price}" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-primary dark:text-white"/>
         </div>
-
         <div class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
           <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2">Tagovi</h3>
           <div id="tagContainer" class="flex flex-wrap gap-2">
             ${TAGS.map(tag => `<button type="button" data-tag="${tag}" class="tag-btn px-3 py-1 rounded-lg ${tag===p.tag?'active':''}">${tag}</button>`).join('')}
           </div>
         </div>
-
         <div class="flex gap-2">
           <button id="saveBtn" class="bg-indigo-500 text-white px-4 py-2 rounded-lg flex-1">Sačuvaj</button>
           <button id="deleteBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg flex-1">Obriši</button>
         </div>
-
         <span class="save-confirm hidden" id="saveConfirm">Sačuvano!</span>
       </div>
     </div>
   `;
-
   bindEvents();
 }
-
 
 // --- BIND EVENTS ---
 function bindEvents() {
   if (currentIndex === null) return;
   const p = products[currentIndex];
-
   // Inputs
   ["title","shortDesc","description","price"].forEach(id=>{
     document.getElementById(id).oninput = debounce(e=>{
@@ -168,7 +155,6 @@ function bindEvents() {
       renderSidebar();
     },300);
   });
-
   // Specs
   document.querySelectorAll(".spec-value").forEach(input=>{
     input.oninput = debounce(e=>{
@@ -176,7 +162,6 @@ function bindEvents() {
       p.specs[label] = input.value.trim();
     },300);
   });
-
   // Tags
   document.querySelectorAll(".tag-btn").forEach(btn=>{
     btn.onclick = ()=>{
@@ -185,9 +170,8 @@ function bindEvents() {
       btn.classList.add("active");
     };
   });
-
   // Image delete
-  document.querySelectorAll(".delete-image-btn").forEach(btn=>{
+  document.querySelectorAll("[data-index]").forEach(btn=>{  // popravka: koristi data-index umesto nepostojeće klase
     btn.onclick = ()=>{
       const idx = parseInt(btn.dataset.index);
       if (!isNaN(idx)) {
@@ -196,7 +180,6 @@ function bindEvents() {
       }
     };
   });
-
   // Image upload
   document.getElementById("imageUpload").onclick = ()=>{
     const fi = document.createElement("input");
@@ -215,7 +198,6 @@ function bindEvents() {
       });
     };
   };
-
   // Save & Delete
   document.getElementById("saveBtn").onclick = saveProduct;
   document.getElementById("deleteBtn").onclick = deleteProduct;
@@ -225,12 +207,10 @@ function bindEvents() {
 async function saveProduct() {
   if (currentIndex===null) return;
   const p = products[currentIndex];
-
   if (!p.title || !p.shortDesc || !p.description || !p.tag || (p.images||[]).length===0){
     Swal.fire({icon:"error", text:"Popunite sva polja!"});
     return;
   }
-
   try {
     await fetch(`${API_URL}?id=${p.id}`,{
       method:"POST",
@@ -257,7 +237,6 @@ async function deleteProduct() {
     cancelButtonText:"Otkaži"
   });
   if (!res.isConfirmed) return;
-
   try {
     await fetch(`${API_URL}?id=${p.id}`,{method:"DELETE"});
     products.splice(currentIndex,1);
