@@ -3,305 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner - Istorija izmena</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Uncial+Antiqua&family=Almendra:wght@400;700&display=swap" rel="stylesheet">
-
-  <title>Owner Dashboard - Istorija Laptopa</title>
-  
   <style>
-    body { 
-      font-family: 'Cinzel', serif; 
-      background: #0f0f1a; 
-      color: #e0e0e0; 
-      min-height: 100vh; 
-      position: relative; 
-      overflow-x: hidden; 
-    }
-    h1, h2 { 
-      font-family: 'Almendra', serif; 
-    }
-    .fantasy-heading { 
-      font-family: 'Uncial Antiqua', cursive; 
-      letter-spacing: 2px; 
-    }
-    .json-cell { 
-      font-family: monospace; 
-      white-space: pre-wrap; 
-      word-break: break-word; 
-    }
-    .toggle-btn { 
-      cursor: pointer; 
-      color: #64b5f6; 
-      text-decoration: underline; 
-    }
-    @media (max-width: 768px) {
-      .mobile-table { 
-        display: block; 
-      }
-      .mobile-table thead { 
-        display: none; 
-      }
-      .mobile-table tbody, .mobile-table tr, .mobile-table td { 
-        display: block; 
-        width: 100%; 
-      }
-      .mobile-table tr { 
-        margin-bottom: 1.5rem; 
-        padding: 1.5rem; 
-        background: rgba(30,30,50,0.8); 
-        border-radius: 0.75rem; 
-        box-shadow: 0 4px 12px rgba(0,0,0,0.6); 
-        border: 1px solid #333; 
-      }
-      .mobile-table td { 
-        border: none; 
-        padding: 0.5rem 0; 
-        position: relative; 
-        padding-left: 50%; 
-        text-align: right; 
-      }
-      .mobile-table td:before { 
-        content: attr(data-label); 
-        position: absolute; 
-        left: 0; 
-        width: 50%; 
-        padding-left: 1rem; 
-        font-weight: bold; 
-        text-align: left; 
-        color: #64b5f6; 
-      }
-    }
-    .ornament { 
-      border-top: 2px solid #64b5f6; 
-      width: 120px; 
-      margin: 1rem auto; 
-    }
-    .login-card { 
-      background: linear-gradient(135deg, #1a1a2e, #16213e); 
-      border: 2px solid #64b5f6; 
-      box-shadow: 0 0 30px rgba(100,181,246,0.3); 
-    }
+    body { font-family: system-ui, sans-serif; background: #f9fafb; }
+    pre { background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
   </style>
-  
 </head>
-<body class="p-4 md:p-8">
-  <div class="relative z-10">
-    
-    <!-- Login ekran -->
-    <div id="loginDiv" class="flex items-center justify-center min-h-screen">
-      <div class="login-card p-10 rounded-xl max-w-md w-full text-center mx-4">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4 fantasy-heading text-[#64b5f6]">Zabranjena Komora</h1>
-        <p class="text-lg mb-6 italic text-gray-300">„Ulazite u zonu vlasnika... gdje se čuvaju tajne drevnih artefakata i njihove sudbine.“</p>
-        <div class="ornament"></div>
-        <p class="text-sm mb-8 text-gray-400">Samo onaj koji poznaje pravu runu može proći.</p>
-        <label class="block text-xl mb-3 text-[#64b5f6]">Izgovorite šifru:</label>
-        <input type="password" id="ownerPassword" class="border-2 border-[#64b5f6] bg-[#16213e] p-4 rounded-lg w-full mb-6 text-white placeholder-gray-500 focus:outline-none focus:border-white transition" placeholder="Runska riječ...">
-        <button id="loginBtn" class="bg-[#64b5f6] hover:bg-[#42a5f5] text-black font-bold px-8 py-4 rounded-lg w-full transition transform hover:scale-105 shadow-lg">
-          <i class="fas fa-key mr-2"></i> Otvorite Vrata
-        </button>
-      </div>
+<body class="p-6">
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Istorija izmena proizvoda</h1>
+    <div class="flex gap-4 mb-6">
+      <input type="password" id="tokenInput" placeholder="Unesi AUTH token" class="px-4 py-2 border rounded-lg flex-1">
+      <button id="loadBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Učitaj</button>
+      <button id="refreshBtn" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700">Osvježi</button>
     </div>
 
-    <!-- Dashboard -->
-    <div id="dashboard" class="hidden">
-      <div class="bg-gradient-to-br from-[#1a1a2e]/90 to-[#16213e]/90 rounded-xl shadow-2xl p-6 md:p-8 mb-6 border border-[#333] mx-4 md:mx-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
-          <h2 class="text-3xl md:text-4xl font-bold fantasy-heading text-[#64b5f6]">Hronike Artefakata</h2>
-          <div class="flex flex-wrap gap-4">
-            <select id="actionFilter" class="bg-[#16213e] border border-[#64b5f6] rounded-lg px-5 py-3 text-white focus:outline-none focus:border-white transition">
-              <option value="">Sve sudbine</option>
-              <option value="CREATE">Rođenje artefakta</option>
-              <option value="UPDATE">Preobražaj</option>
-              <option value="DELETE">Uništenje</option>
-            </select>
-            <button id="refreshBtn" class="bg-[#64b5f6] hover:bg-[#42a5f5] text-black px-5 py-3 rounded-lg transition flex items-center gap-2 font-semibold">
-              <i class="fas fa-sync-alt"></i> Osvježi svitak
-            </button>
-            <button id="logoutBtn" class="bg-red-800 hover:bg-red-900 text-white px-5 py-3 rounded-lg transition flex items-center gap-2 font-semibold">
-              <i class="fas fa-sign-out-alt"></i> Napustite komoru
-            </button>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="min-w-full w-full bg-[#1a1a2e]/80 border border-[#333] rounded-lg mobile-table">
-            <thead class="bg-[#16213e] text-[#64b5f6]">
-              <tr>
-                <th class="px-6 py-4 text-left">ID</th>
-                <th class="px-6 py-4 text-left">Naziv Artefakta</th>
-                <th class="px-6 py-4 text-left">Sudbina</th>
-                <th class="px-6 py-4 text-left">Rođen</th>
-                <th class="px-6 py-4 text-left">Preobražen</th>
-                <th class="px-6 py-4 text-left">Detalji preobražaja</th>
-                <th class="px-6 py-4 text-left">Vrijeme zapisa</th>
-                <th class="px-6 py-4 text-left">Puni svitak</th>
-              </tr>
-            </thead>
-            <tbody id="historyBody" class="divide-y divide-[#333]">
-              <!-- Dinamički podaci -->
-            </tbody>
-          </table>
-        </div>
-
-        <div id="noData" class="text-center py-16 text-gray-400 hidden">
-          <i class="fas fa-scroll text-7xl mb-6 opacity-50"></i>
-          <p class="text-2xl italic">Hronike su prazne... još nema zapisa o sudbinama artefakata.</p>
-        </div>
-      </div>
-    </div>
+    <table class="w-full bg-white shadow rounded-lg overflow-hidden">
+      <thead class="bg-gray-800 text-white">
+        <tr>
+          <th class="px-4 py-3 text-left">Vrijeme</th>
+          <th class="px-4 py-3 text-left">Akcija</th>
+          <th class="px-4 py-3 text-left">Naziv</th>
+          <th class="px-4 py-3 text-left">Detalji</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody" class="divide-y"></tbody>
+    </table>
+    <p id="empty" class="text-center py-12 text-gray-500 hidden">Nema zapisa.</p>
   </div>
 
   <script>
-    const OWNER_PASS = "siteowner123";
-    const loginDiv = document.getElementById("loginDiv");
-    const dashboard = document.getElementById("dashboard");
-    const loginBtn = document.getElementById("loginBtn");
-    const ownerPassword = document.getElementById("ownerPassword");
-    const historyBody = document.getElementById("historyBody");
-    const actionFilter = document.getElementById("actionFilter");
-    const refreshBtn = document.getElementById("refreshBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const noData = document.getElementById("noData");
-    let refreshInterval = null;
+    const API_URL = "https://products-api.sergej-kaldesic.workers.dev";
+    let authToken = "";
 
-    loginBtn.addEventListener("click", login);
-    ownerPassword.addEventListener("keydown", e => { if (e.key === "Enter") login(); });
-
-    function login() {
-      if (ownerPassword.value === OWNER_PASS) {
-        loginDiv.classList.add("hidden");
-        dashboard.classList.remove("hidden");
-        fetchHistory();
-        refreshInterval = setInterval(fetchHistory, 15000);
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Runska riječ je pogrešna!',
-          text: 'Vrata ostaju zatvorena...',
-          background: '#1a1a2e',
-          color: '#e0e0e0',
-          confirmButtonColor: '#64b5f6'
-        });
-      }
-    }
-
-    logoutBtn.addEventListener("click", () => {
-      dashboard.classList.add("hidden");
-      loginDiv.classList.remove("hidden");
-      ownerPassword.value = "";
-      clearInterval(refreshInterval);
-    });
-
-    refreshBtn.addEventListener("click", fetchHistory);
-    actionFilter.addEventListener("change", fetchHistory);
-
-    function hasChanges(before, after) {
-      if (!before || !after) return false;
-      return Object.keys(after).some(key => JSON.stringify(before[key]) !== JSON.stringify(after[key]));
-    }
+    document.getElementById("loadBtn").onclick = () => {
+      authToken = document.getElementById("tokenInput").value.trim();
+      if (authToken) fetchHistory();
+    };
+    document.getElementById("refreshBtn").onclick = fetchHistory;
 
     async function fetchHistory() {
+      if (!authToken) return Swal.fire("Unesi token");
+      
       try {
-        const res = await fetch('https://products-api.sergej-kaldesic.workers.dev?history=true');
+        const res = await fetch(`${API_URL}?history=true`, {
+          headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (!res.ok) throw new Error("Neovlašten pristup");
+        
         let history = await res.json();
         if (!Array.isArray(history)) history = [];
 
         history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        const filter = actionFilter.value;
-        let filtered = filter ? history.filter(entry => entry.action === filter) : history;
-
-        if (filtered.length === 0) {
-          noData.classList.remove("hidden");
-          historyBody.innerHTML = "";
-          return;
-        }
-        noData.classList.add("hidden");
-
-        historyBody.innerHTML = filtered.map((entry, idx) => {
-          const action = entry.action || "UNKNOWN";
-          const time = new Date(entry.timestamp).toLocaleString("sr-RS", { hour12: false });
-
-          // Osnovni podaci iz snapshot-a (after za CREATE/UPDATE, ili direktno za DELETE)
-          const snapshot = entry.snapshot || {};
-          const id = snapshot.id || entry.id || "-";
-          const title = snapshot.title || "-";
-          const added = snapshot.added || "-";
-          const modified = snapshot.modified || "-";
-
-          let actionText, actionColor;
-          if (action === "CREATE") {
-            actionText = "Rođenje";
-            actionColor = "text-green-400";
-          } else if (action === "UPDATE") {
-            actionText = "Preobražaj";
-            actionColor = "text-blue-400";
-          } else if (action === "DELETE") {
-            actionText = "Uništenje";
-            actionColor = "text-red-500";
-          } else {
-            actionText = action;
-            actionColor = "text-gray-400";
-          }
-
-          let changeDetails = "-";
-
-          if (action === "UPDATE" && snapshot._before && snapshot._after && hasChanges(snapshot._before, snapshot._after)) {
-            const diffs = [];
-            // Prvo dodaj naziv laptopa
-            diffs.push(`<strong>Naziv laptopa:</strong> "${snapshot._after.title || title}"`);
-
-            // Zatim ostale promjene
-            Object.keys(snapshot._after).forEach(key => {
-              if (key.startsWith('_')) return; // preskoči _before, _after
-              const before = snapshot._before[key] ?? "-";
-              const after = snapshot._after[key] ?? "-";
-              if (JSON.stringify(before) !== JSON.stringify(after)) {
-                diffs.push(`${key}: "${before}" → "${after}"`);
-              }
-            });
-            changeDetails = diffs.join("<br>");
-          } else if (action === "UPDATE") {
-            // Ako nema promjena, ne prikazuj red
-            return '';
-          }
-
-          const jsonId = `json-${idx}`;
-          const fullSnapshot = { ...snapshot, action, timestamp: entry.timestamp };
-
+        const tbody = document.getElementById("historyBody");
+        tbody.innerHTML = history.map(entry => {
+          const time = new Date(entry.timestamp).toLocaleString("sr-RS");
+          const action = entry.action === "ADD" ? "Dodat" : entry.action === "UPDATE" ? "Ažuriran" : entry.action === "DELETE" ? "Obrisan" : entry.action;
+          const title = entry.snapshot?.title || entry.title || "-";
+          
           return `
-            <tr class="hover:bg-[#16213e] transition">
-              <td data-label="ID" class="px-6 py-4">${id}</td>
-              <td data-label="Naziv" class="px-6 py-4 font-medium">${title}</td>
-              <td data-label="Sudbina" class="px-6 py-4"><span class="${actionColor} font-bold">${actionText}</span></td>
-              <td data-label="Rođen" class="px-6 py-4">${added}</td>
-              <td data-label="Preobražen" class="px-6 py-4">${modified}</td>
-              <td data-label="Detalji" class="px-6 py-4 text-sm">${changeDetails}</td>
-              <td data-label="Vrijeme" class="px-6 py-4 text-sm">${time}</td>
-              <td data-label="Svitak" class="px-6 py-4">
-                <span class="toggle-btn" onclick="document.getElementById('${jsonId}').classList.toggle('hidden')">Prikaži/sakrij svitak</span>
-                <pre id="${jsonId}" class="json-cell hidden bg-[#0f0f1a] p-4 rounded mt-2 text-xs overflow-x-auto border border-[#333]">${JSON.stringify(fullSnapshot, null, 2)}</pre>
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3">${time}</td>
+              <td class="px-4 py-3 font-medium">${action}</td>
+              <td class="px-4 py-3">${title}</td>
+              <td class="px-4 py-3 text-sm">
+                <pre class="text-xs">${JSON.stringify(entry.snapshot || entry, null, 2)}</pre>
               </td>
             </tr>
           `;
         }).join('');
 
+        document.getElementById("empty").classList.toggle("hidden", history.length > 0);
       } catch (err) {
-        console.error(err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Drevni svitak je oštećen!',
-          text: 'Neuspjelo čitanje hronika.',
-          background: '#1a1a2e',
-          color: '#e0e0e0',
-          confirmButtonColor: '#64b5f6'
-        });
+        Swal.fire("Greška", err.message || "Neuspjelo učitavanje", "error");
       }
     }
-
-    window.addEventListener("beforeunload", () => clearInterval(refreshInterval));
   </script>
 </body>
 </html>
