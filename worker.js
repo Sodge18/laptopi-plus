@@ -1,11 +1,10 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    
-    // === KONFIGURACIJA (prebaci u env secrets kasnije) ===
-    const AUTH_TOKEN = env.AUTH_TOKEN; // wrangler secret put AUTH_TOKEN "tvoj-jako-jak-token"
-    const IMGUR_CLIENT_ID = env.IMGUR_CLIENT_ID; // wrangler secret put IMGUR_CLIENT_ID "tvoj-client-id"
-    const ALLOWED_ORIGIN = env.ALLOWED_ORIGIN || "https://tvoj-sajt.com"; // ili tvoj Cloudflare Pages domen
+   
+    const AUTH_TOKEN = env.AUTH_TOKEN;
+    const IMGUR_CLIENT_ID = env.IMGUR_CLIENT_ID;
+    const ALLOWED_ORIGIN = env.ALLOWED_ORIGIN || "*"; // Privremeno "*" za test, kasnije ograniči
 
     const corsHeaders = {
       "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
@@ -14,12 +13,27 @@ export default {
       "Content-Type": "application/json",
     };
 
-    // === OPTIONS (CORS preflight) ===
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders, status: 204 });
     }
 
-    // === Auth helper ===
+    const KV = env.KV_BINDING;
+    const PRODUCTS_KEY = "products";
+    const HISTORY_KEY = "products_history";
+    const MAX_HISTORY = 500;
+
+    async function logHistory(entry) {
+      let raw = await KV.get(HISTORY_KEY) || "[]";
+      let history = [];
+      try { history = JSON.parse(raw); } catch {}
+      if (!Array.isArray(history)) history = [];
+      history.push(entry);
+      if (history.length > MAX_HISTORY) {
+        history = history.slice(-MAX_HISTORY);
+      }
+      await KV.put(HISTORY_KEY, JSON.stringify(history));
+    }
+
     function checkAuth() {
       const authHeader = request.headers.get("Authorization");
       if (!authHeader || authHeader !== `Bearer ${AUTH_TOKEN}`) {
@@ -28,66 +42,44 @@ export default {
       return null;
     }
 
-    const KV = env.KV_BINDING;
-    const PRODUCTS_KEY = "products";
-    const HISTORY_KEY = "products_history";
-    const MAX_HISTORY = 500; // Ograniči history da ne raste beskonačno
-
-    // === Helper: Log history (sa limitom) ===
-    async function logHistory(entry) {
-      let raw = await KV.get(HISTORY_KEY) || "[]";
-      let history = [];
-      try { history = JSON.parse(raw); } catch {}
-      if (!Array.isArray(history)) history = [];
-
-      history.push(entry);
-      // Održavaj samo zadnjih MAX_HISTORY
-      if (history.length > MAX_HISTORY) {
-        history = history.slice(-MAX_HISTORY);
-      }
-      await KV.put(HISTORY_KEY, JSON.stringify(history));
-    }
-
-    // === GET: Public products (za sajt) ===
+    // === PUBLIC RUTE PRVO (bez auth-a) ===
+    
+    // GET proizvoda (za sajt i admin pregled)
     if (request.method === "GET" && !url.searchParams.has("history")) {
       let raw = await KV.get(PRODUCTS_KEY) || "[]";
       let products = [];
       try { products = JSON.parse(raw); } catch {}
       if (!Array.isArray(products)) products = [];
-
       return new Response(JSON.stringify({ products }), { headers: corsHeaders });
     }
 
-    // === GET: History (samo za owner, sa auth) ===
+    // GET history (za owner)
     if (request.method === "GET" && url.searchParams.get("history") === "true") {
       const authError = checkAuth();
       if (authError) return authError;
-
       const raw = await KV.get(HISTORY_KEY) || "[]";
       return new Response(raw, { headers: corsHeaders });
     }
 
-    // === POST: Upload slika (novi endpoint za admin) ===
-    if (request.method === "POST" && url.pathname.endsWith("/upload")) {
-      const authError = checkAuth();
-      if (authError) return authError;
+    // === SVE OSTALO ZAHTIJEVA AUTH ===
+    const authError = checkAuth();
+    if (authError) return authError;
 
+    // Upload slika
+    if (request.method === "POST" && url.pathname.endsWith("/upload")) {
       if (!IMGUR_CLIENT_ID) {
         return new Response(JSON.stringify({ error: "Imgur not configured" }), { status: 500 });
       }
-
       const formData = await request.formData();
       const image = formData.get("image");
       if (!image) {
         return new Response(JSON.stringify({ error: "No image" }), { status: 400 });
       }
-
       const imgurRes = await fetch("https://api.imgur.com/3/image", {
         method: "POST",
         headers: { "Authorization": `Client-ID ${IMGUR_CLIENT_ID}` },
         body: formData
       });
-
       const data = await imgurRes.json();
       if (data.success) {
         return new Response(JSON.stringify({ link: data.data.link }), { headers: corsHeaders });
@@ -96,14 +88,9 @@ export default {
       }
     }
 
-    // === POST / DELETE: Admin operacije (zahtijevaju auth) ===
-    const authError = checkAuth();
-    if (authError) return authError;
-
-    // === POST: Add / Update / Clear ===
+    // POST (add/update/clear)
     if (request.method === "POST") {
       const body = await request.json().catch(() => ({}));
-
       if (body.clear === true) {
         await KV.put(PRODUCTS_KEY, "[]");
         await logHistory({ action: "CLEAR_ALL", timestamp: new Date().toISOString() });
@@ -120,25 +107,14 @@ export default {
 
       if (index > -1) {
         const before = { ...products[index] };
-        products[index] = {
-          ...products[index],
-          ...body,
-          id,
-          modified: new Date().toISOString()
-        };
-        const after = products[index];
-
+        products[index] = { ...products[index], ...body, id, modified: new Date().toISOString() };
         await logHistory({
-          id, action: "UPDATE", title: after.title || "",
+          id, action: "UPDATE", title: products[index].title || "",
           timestamp: new Date().toISOString(),
-          snapshot: { _before: before, _after: after }
+          snapshot: { _before: before, _after: products[index] }
         });
       } else {
-        const newProduct = {
-          ...body, id,
-          added: new Date().toISOString(),
-          modified: null
-        };
+        const newProduct = { ...body, id, added: new Date().toISOString(), modified: null };
         products.push(newProduct);
         await logHistory({
           id, action: "ADD", title: newProduct.title || "",
@@ -151,7 +127,7 @@ export default {
       return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
     }
 
-    // === DELETE ===
+    // DELETE
     if (request.method === "DELETE") {
       const id = url.searchParams.get("id");
       if (!id) return new Response("Missing ID", { status: 400 });
