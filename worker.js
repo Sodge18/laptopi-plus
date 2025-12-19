@@ -60,9 +60,9 @@ export default {
       return new Response(raw, { headers: corsHeaders });
     }
 
-    // AUTH ZA SVE OSTALO
-    const authError = checkAuth();
-    if (authError) return authError;
+    // // AUTH ZA SVE OSTALO
+    // const authError = checkAuth();  
+    // if (authError) return authError;
 
     // UPLOAD
     if (request.method === "POST" && url.pathname.endsWith("/upload")) {
