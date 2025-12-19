@@ -4,7 +4,7 @@ export default {
   
     const AUTH_TOKEN = env.AUTH_TOKEN;
     const IMGUR_CLIENT_ID = env.IMGUR_CLIENT_ID;
-    const ALLOWED_ORIGIN = env.ALLOWED_ORIGIN || "*"; // Kasnije stavi "https://laptopiplus.pages.dev"
+    const ALLOWED_ORIGIN = env.ALLOWED_ORIGIN || "*"; // Kasnije promijeni na tvoj pages.dev domen
 
     const corsHeaders = {
       "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
@@ -37,7 +37,7 @@ export default {
       if (!authHeader || authHeader !== `Bearer ${AUTH_TOKEN}`) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
           status: 401,
-          headers: corsHeaders  // OVDE JE KLJUČNO!
+          headers: corsHeaders
         });
       }
       return null;
@@ -60,7 +60,7 @@ export default {
       return new Response(raw, { headers: corsHeaders });
     }
 
-    // AUTH OBAVEZAN ZA SVE OSTALO
+    // AUTH ZA SVE OSTALO
     const authError = checkAuth();
     if (authError) return authError;
 
@@ -96,14 +96,64 @@ export default {
       }
     }
 
-    // POST / DELETE – dodaj corsHeaders na sve return-ove
+    // POST (add/update/clear)
     if (request.method === "POST") {
-      // ... cijeli kod isti ...
+      const body = await request.json().catch(() => ({}));
+      if (body.clear === true) {
+        await KV.put(PRODUCTS_KEY, "[]");
+        await logHistory({ action: "CLEAR_ALL", timestamp: new Date().toISOString() });
+        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+      }
+      let raw = await KV.get(PRODUCTS_KEY) || "[]";
+      let products = [];
+      try { products = JSON.parse(raw); } catch {}
+      if (!Array.isArray(products)) products = [];
+      const id = body.id || crypto.randomUUID();
+      const index = products.findIndex(p => p.id === id);
+      if (index > -1) {
+        const before = { ...products[index] };
+        products[index] = { ...products[index], ...body, id, modified: new Date().toISOString() };
+        await logHistory({
+          id, action: "UPDATE", title: products[index].title || "",
+          timestamp: new Date().toISOString(),
+          snapshot: { _before: before, _after: products[index] }
+        });
+      } else {
+        const newProduct = { ...body, id, added: new Date().toISOString(), modified: null };
+        products.push(newProduct);
+        await logHistory({
+          id, action: "ADD", title: newProduct.title || "",
+          timestamp: new Date().toISOString(),
+          snapshot: newProduct
+        });
+      }
+      await KV.put(PRODUCTS_KEY, JSON.stringify(products));
       return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
     }
 
+    // DELETE
     if (request.method === "DELETE") {
-      // ... cijeli kod isti ...
+      const id = url.searchParams.get("id");
+      if (!id) {
+        return new Response(JSON.stringify({ error: "Missing ID" }), {
+          status: 400,
+          headers: corsHeaders
+        });
+      }
+      let raw = await KV.get(PRODUCTS_KEY) || "[]";
+      let products = [];
+      try { products = JSON.parse(raw); } catch {}
+      if (!Array.isArray(products)) products = [];
+      const deleted = products.find(p => p.id === id);
+      if (deleted) {
+        await logHistory({
+          id, action: "DELETE", title: deleted.title || "",
+          timestamp: new Date().toISOString(),
+          snapshot: deleted
+        });
+      }
+      products = products.filter(p => p.id !== id);
+      await KV.put(PRODUCTS_KEY, JSON.stringify(products));
       return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
     }
 
