@@ -237,25 +237,29 @@ function bindEvents() {
     uploadBtn.innerHTML = "Uploadujem...";
     uploadBtn.disabled = true;
 
+    const CLIENT_ID = "546c25a59c58ad7";  // Ovo je javni anonymous Imgur Client-ID (radi godinama)
+
     try {
       for (let file of files) {
         const formData = new FormData();
-        formData.append('reqtype', 'fileupload');
-        formData.append('fileToUpload', file);
+        formData.append('image', file);
 
         try {
-          const res = await fetch('https://catbox.moe/user/api.php', {
+          const res = await fetch('https://api.imgur.com/3/image', {
             method: 'POST',
+            headers: {
+              'Authorization': `Client-ID ${CLIENT_ID}`
+            },
             body: formData
           });
 
-          const url = await res.text();  // catbox vraća samo čisti URL kao tekst
+          const data = await res.json();
 
-          if (url && url.startsWith('https://files.catbox.moe/')) {
-            p.images.push(url.trim());  // direct URL!
-            renderCurrentProduct();  // refresh prikaz
+          if (data.success && data.data && data.data.link) {
+            p.images.push(data.data.link);  // direct URL: https://i.imgur.com/abc123.jpg
+            renderCurrentProduct();
           } else {
-            console.error('Loš odgovor od catbox:', url);
+            console.error('Greška od Imgur-a:', data);
             alert(`Greška pri uploadu slike ${file.name}`);
           }
         } catch (err) {
