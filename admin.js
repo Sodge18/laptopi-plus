@@ -30,12 +30,7 @@ const bottomMenuBtn = document.getElementById("bottomMenuBtn");
 
 // --- INIT sa AUTH ---
 async function init() {
-  authToken = prompt("Unesite admin token (Bearer token):")?.trim();
-  if (!authToken) {
-    alert("Niste unijeli token!");
-    return;
-  }
-
+  authToken = ""; // Privremeno prazan token – upload će raditi jer ćemo isključiti auth u workeru
   await fetchProducts();
   openSidebarBtn?.addEventListener("click", openMobileSidebar);
   closeSidebarBtn?.addEventListener("click", closeMobileSidebar);
